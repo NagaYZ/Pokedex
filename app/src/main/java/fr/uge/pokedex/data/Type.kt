@@ -22,7 +22,9 @@ enum class Type {
     UNKNOWN,
     SHADOW;
 
-    fun getType(id : Int): Type {
-        return Type.values()[id]
+    companion object {
+        fun getType(id : Int): Type {
+            return Type.values()[id - 1]
+        }
     }
 }

@@ -19,7 +19,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pokemonRepository.loadData(context = applicationContext)
-        println(pokemonRepository.getAllPokemon())
+        val pokemon = pokemonRepository.getAllPokemon()
+        println(pokemon)
+        println(pokemon.size)
+
         setContent {
             PokedexTheme {
                 // A surface container using the 'background' color from the theme
