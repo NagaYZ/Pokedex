@@ -10,11 +10,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
+    private val pokemonRepository : PokemonRepository = PokemonRepository()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pokemonRepository.loadData(context = applicationContext)
+        println(pokemonRepository.getAllPokemon())
         setContent {
             PokedexTheme {
                 // A surface container using the 'background' color from the theme
