@@ -9,22 +9,22 @@ class PokemonRepository {
     operator fun List<Any>.component6() = this[5]
 
     fun loadData(context : Context) {
-        loadPokemon(context)
-        loadTypes(context)
+        pokemon = getPokemonFromAssets(context).associateBy { it.id }
+        setPokemonType(context)
     }
 
-    private fun loadPokemon(context : Context) {
+    private fun getPokemonFromAssets(context : Context): List<Pokemon> {
         val reader = context.assets.open("csv/pokemon.csv").bufferedReader()
         val header = reader.readLine()
-        pokemon = reader.lineSequence().toList().slice(0 until MAX_POKEMON_ID)
+        return reader.lineSequence().toList().slice(0 until MAX_POKEMON_ID)
             .filter { it.isNotBlank() }
             .map {
                 val (id, identifier, _, height, weight, _) = it.split(',')
                 Pokemon(id.toLong(), identifier, Pair(Type.UNKNOWN, Type.UNKNOWN), height.toInt(), weight.toInt())
-            }.associateBy { it.id }
+            }.toList()
     }
 
-    private fun loadTypes(context : Context) {
+    private fun setPokemonType(context : Context) {
         val reader = context.assets.open("csv/pokemon_types.csv").bufferedReader()
         val header = reader.readLine()
 
@@ -58,7 +58,7 @@ class PokemonRepository {
     }
 
     companion object {
-        const val MAX_POKEMON_ID : Int = 251
+        const val MAX_POKEMON_ID : Int = 649
     }
 }
 
