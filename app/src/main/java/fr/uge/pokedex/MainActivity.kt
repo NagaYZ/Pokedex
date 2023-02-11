@@ -21,7 +21,6 @@ class MainActivity : ComponentActivity() {
         pokemonRepository.loadData(context = applicationContext)
         val pokemon = pokemonRepository.getAllPokemon()
         println(pokemon)
-        println(pokemon.size)
 
         setContent {
             PokedexTheme {
