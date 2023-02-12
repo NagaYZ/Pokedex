@@ -3,6 +3,7 @@ package fr.uge.pokedex.data
 object ProfilesService {
 
     private val profilesMap :HashMap<String,Profile> = HashMap()
+    private var currentProfile: Profile? = null
 
     fun addProfile(profile: Profile){
         this.profilesMap.put(profile.getProfileName(), profile)
@@ -20,5 +21,12 @@ object ProfilesService {
         profilesMap.remove(profile.getProfileName())
         profile.setProfileName(newProfileName)
         profilesMap.put(profile.getProfileName(), profile)
+    }
+    fun setCurrentProfile(profile: Profile){
+        this.currentProfile = profile
+    }
+
+    fun getCurrentProfile(): Profile? {
+        return this.currentProfile
     }
 }

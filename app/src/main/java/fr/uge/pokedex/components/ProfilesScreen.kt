@@ -90,6 +90,7 @@ fun ProfileItem(profile: Profile, navController: NavHostController, onDeleteProf
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
         Button(modifier = Modifier.padding(3.dp), onClick = {
+            ProfilesService.setCurrentProfile(profile)
             navController.navigate(Route.Pokedex.path)
         }) {
             Text(text = profile.getProfileName(), style = MaterialTheme.typography.button)

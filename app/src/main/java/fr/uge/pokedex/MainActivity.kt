@@ -15,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import fr.uge.pokedex.components.BottomNavigationMenu
 import fr.uge.pokedex.components.NavigationGraph
 import fr.uge.pokedex.components.Route
-import fr.uge.pokedex.data.ProfilesService
+import fr.uge.pokedex.components.TopBar
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
@@ -34,7 +34,10 @@ class MainActivity : ComponentActivity() {
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = currentBackStackEntry?.destination?.route
 
-                    Scaffold(bottomBar = { if(currentRoute != Route.Profiles.path) BottomNavigationMenu(navController)}) {
+//                    var currentProfile by remember { mutableStateOf(ProfilesService.getCurrentProfile()) }
+
+                    Scaffold(bottomBar = { if(currentRoute != Route.Profiles.path) BottomNavigationMenu(navController)},
+                        topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController)  }) {
                         Log.d("Padding",it.toString())
                         NavigationGraph(navController = navController)
                     }
