@@ -2,6 +2,7 @@ package fr.uge.pokedex
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import fr.uge.pokedex.data.Generation
 import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.data.Type
 
@@ -24,16 +25,15 @@ class PokemonRepositoryTest {
         if (pokemon != null) {
             assertFalse(pokemon.description.isBlank())
         }
-
-
     }
 
     @Test
     fun testGetAll() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val pokemonRepository = PokemonRepository(appContext)
+        val pokemonRepository = PokemonRepository(appContext, maxGeneration = Generation.GENERATION_I)
 
         val pokemon = pokemonRepository.getAll()
         assertFalse(pokemon.isEmpty())
+        assertEquals(Generation.GENERATION_I.maxId, pokemon.size)
     }
 }

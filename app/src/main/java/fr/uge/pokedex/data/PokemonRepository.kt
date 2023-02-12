@@ -2,8 +2,12 @@ package fr.uge.pokedex.data
 
 import android.content.Context
 
-class PokemonRepository(private val context: Context) {
-    private var pokemon: Map<Long, Pokemon> = emptyMap()
+class PokemonRepository(
+    val context: Context,
+    val dataLanguage: Language = Language.ENGLISH, // Language for name, genus and description
+    val maxGeneration: Generation = Generation.GENERATION_VII
+) {
+    lateinit var pokemon: Map<Long, Pokemon>
     private val parser = CsvParser()
 
     init {
@@ -34,7 +38,7 @@ class PokemonRepository(private val context: Context) {
         private fun getPokemonBuilderFromAssets(): List<Pokemon.Builder> {
             val reader = context.assets.open("csv/pokemon.csv").bufferedReader()
             val header = reader.readLine()
-            return reader.lineSequence().toList().slice(0 until Companion.MAX_POKEMON_ID)
+            return reader.lineSequence().toList().slice(0 until maxGeneration.maxId)
                 .filter { it.isNotBlank() }
                 .map {
                     val (id, identifier, _, height, weight, _) = it.split(',')
@@ -54,7 +58,7 @@ class PokemonRepository(private val context: Context) {
                 .filter { it.isNotBlank() }
                 .forEach {
                     val (pokemonId, typeId, slot) = it.split(',')
-                    if (pokemonId.toInt() > Companion.MAX_POKEMON_ID) return
+                    if (pokemonId.toInt() > maxGeneration.maxId) return
 
                     val type = Type.getType(typeId.toInt())
                     when (slot.toInt()) {
@@ -72,7 +76,7 @@ class PokemonRepository(private val context: Context) {
             while (lines.hasNext()) {
                 val (speciesId, versionId, languageId, descFirstLine) = lines.next()
                     .split(",", limit = 4)
-                if (speciesId.toInt() > Companion.MAX_POKEMON_ID) break
+                if (speciesId.toInt() > maxGeneration.maxId) break
 
                 // Parsing a multiline value, specific to this file
                 val descSb = StringBuilder(descFirstLine)
@@ -80,7 +84,7 @@ class PokemonRepository(private val context: Context) {
                     descSb.append(" ").append(lines.next())
                 }
 
-                if (languageId.toInt() != Companion.LANGUAGE_ID) continue
+                if (Language.getLanguage(languageId.toInt()) != dataLanguage) continue
                 val description = descSb.toString()
                     .removeSurrounding("\"")
 
@@ -96,8 +100,8 @@ class PokemonRepository(private val context: Context) {
                 .filter { it.isNotBlank() }
                 .forEach {
                     val (speciesId, languageId, name, genus) = it.split(',')
-                    if (speciesId.toInt() <= Companion.MAX_POKEMON_ID &&
-                        languageId.toInt() == LANGUAGE_ID
+                    if (speciesId.toInt() <= maxGeneration.maxId &&
+                        Language.getLanguage(languageId.toInt()) == dataLanguage
                     ) {
                         pokemonBuilderMap[speciesId.toLong()]?.name(name)?.genus(genus)
                     }
@@ -111,11 +115,6 @@ class PokemonRepository(private val context: Context) {
         private fun setPokemonEvolutions(pokemonBuilderMap: Map<Long?, Pokemon.Builder>) {
             //TODO
         }
-    }
-
-    companion object {
-        const val MAX_POKEMON_ID: Int = 649 // Gen 1 to 5
-        const val LANGUAGE_ID = 9 // English
     }
 }
 

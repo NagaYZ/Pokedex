@@ -11,9 +11,14 @@ enum class Language {
     SPANISH,
     ITALIAN,
     ENGLISH,
-    CZECH;
+    CZECH,
+    JAPANESE_ALT,
+    CHINESE_SIMPLIFIED,
+    PORTUGUESE;
 
-    fun getLanguage(id: Int): Language {
-        return Language.values()[id - 1]
+    companion object {
+        fun getLanguage(id: Int): Language {
+            return Language.values()[id - 1]
+        }
     }
 }
