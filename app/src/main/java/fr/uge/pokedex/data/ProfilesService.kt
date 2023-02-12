@@ -4,16 +4,16 @@ object ProfilesService {
 
     private val profilesMap :HashMap<String,Profile> = HashMap()
 
-    fun addProfile(profile: Profile) :Unit{
+    fun addProfile(profile: Profile){
         this.profilesMap.put(profile.getProfileName(), profile)
     }
 
-    fun deleteProfile(profile: Profile) :Unit{
+    fun deleteProfile(profile: Profile){
         profilesMap.remove(profile.getProfileName())
     }
 
     fun getProfiles() :MutableList<Profile>{
-        return profilesMap.values.toMutableList();
+        return profilesMap.values.toMutableList()
     }
 
     fun editProfile(profile: Profile, newProfileName:String){

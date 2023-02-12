@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.*
@@ -21,11 +22,13 @@ fun ProfilesScreen(navController: NavHostController){
 
     var showNewProfileDialog by remember {mutableStateOf(false)}
     var showEditProfileDialog by remember {mutableStateOf(false)}
-    var profilesArray by remember { mutableStateOf(ProfilesService.getProfiles()) }
+    var profilesList by remember { mutableStateOf(ProfilesService.getProfiles()) }
 
-    var profileToEdit: Profile by remember { mutableStateOf(Profile("")) }
+    var profileByRememberToEdit: Profile by remember { mutableStateOf(Profile("")) }
 
-        if(profilesArray.isEmpty()){
+        if(profilesList.isEmpty()){
+
+            //User enter the app for the first time so we need to propose him to create a new profile
             Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,30 +44,43 @@ fun ProfilesScreen(navController: NavHostController){
             }
         }
         else{
+
             Text(text = "Profiles", style = MaterialTheme.typography.h3)
 
+            //Profile list
             Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                profilesArray.forEach{profile: Profile ->
+                profilesList.forEach{ profile: Profile ->
                     ProfileItem(profile = profile, navController = navController,
-                        onDeleteProfile = {profile: Profile ->
-                            ProfilesService.deleteProfile(profile)
-                            profilesArray = ProfilesService.getProfiles()
-                    }, onEditProfile = {profile: Profile ->
-                            profileToEdit = profile
+                        onDeleteProfile = {profileToDelete: Profile ->
+                            ProfilesService.deleteProfile(profileToDelete)
+                            profilesList = ProfilesService.getProfiles()
+                    }, onEditProfile = {profileToEdit: Profile ->
+                            profileByRememberToEdit = profileToEdit
                             showEditProfileDialog = true
                     })
                 }
             }
+
+            //Add new profile button
+            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.End) {
+                Button(modifier = Modifier.padding(20.dp), onClick = {
+                    showNewProfileDialog = true
+                }) {
+                    Icon(Icons.Rounded.Add, "Add profile")
+                }
+            }
         }
 
-        NewProfileDialog(show = showNewProfileDialog, close = {showNewProfileDialog = false}, onProfileNameAccept = { profileName ->
+        //Dialog when the user needs to create a new profile
+        ProfileDialog(show = showNewProfileDialog, close = {showNewProfileDialog = false}, onProfileNameAccept = { profileName ->
             ProfilesService.addProfile(Profile(profileName))
-            profilesArray = ProfilesService.getProfiles()
+            profilesList = ProfilesService.getProfiles()
         })
 
-        NewProfileDialog(show = showEditProfileDialog, close = {showEditProfileDialog = false}, onProfileNameAccept = { profileName ->
-            profileToEdit?.let { ProfilesService.editProfile(it, profileName) }
-            profilesArray = ProfilesService.getProfiles()
+        //Dialog when the user needs to edit a profile
+        ProfileDialog(show = showEditProfileDialog, close = {showEditProfileDialog = false}, onProfileNameAccept = { profileName ->
+            ProfilesService.editProfile(profileByRememberToEdit, profileName)
+            profilesList = ProfilesService.getProfiles()
         })
 
 }
@@ -94,7 +110,7 @@ fun ProfileItem(profile: Profile, navController: NavHostController, onDeleteProf
 }
 
 @Composable
-fun NewProfileDialog(show :Boolean, close :() -> Unit, onProfileNameAccept :(profileName:String) -> Unit){
+fun ProfileDialog(show :Boolean, close :() -> Unit, onProfileNameAccept :(profileName:String) -> Unit){
     if (!show) return
 
     Dialog(onDismissRequest = { close.invoke()}) {

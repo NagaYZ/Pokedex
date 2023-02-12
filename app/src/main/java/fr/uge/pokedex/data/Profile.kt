@@ -1,12 +1,6 @@
 package fr.uge.pokedex.data
 
-class Profile {
-
-    private var profileName : String
-
-    constructor(profileName : String){
-        this.profileName = profileName
-    }
+class Profile(private var profileName: String) {
 
     fun getProfileName() :String{
         return profileName
