@@ -15,8 +15,12 @@ import fr.uge.pokedex.components.NavigationGraph
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var pokemonRepository : PokemonRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pokemonRepository = PokemonRepository(applicationContext)
+        println(pokemonRepository.getAll())
         setContent {
             PokedexTheme {
 
