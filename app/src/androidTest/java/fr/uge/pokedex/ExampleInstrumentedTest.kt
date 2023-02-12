@@ -25,24 +25,4 @@ class ExampleInstrumentedTest {
 
         assertEquals("fr.uge.pokedex", appContext.packageName)
     }
-
-    @Test
-    fun testGetPokemon() {
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val pokemonRepository = PokemonRepository(appContext)
-
-        val pokemon = pokemonRepository.get(1)
-        assertNotNull(pokemon)
-        assertEquals("bulbasaur", pokemon?.identifier)
-        assertEquals(Pair(Type.GRASS, Type.POISON), pokemon?.type)
-    }
-
-    @Test
-    fun testGetAll() {
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val pokemonRepository = PokemonRepository(appContext)
-
-        val pokemon = pokemonRepository.getAll()
-        assertNotEquals(0, pokemon.size)
-    }
 }

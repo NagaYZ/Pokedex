@@ -20,7 +20,8 @@ enum class Type {
     DARK,
     FAIRY,
     UNKNOWN,
-    SHADOW;
+    SHADOW,
+    NONE;
 
     companion object {
         fun getType(id : Int): Type {
