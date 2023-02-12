@@ -14,14 +14,10 @@ import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
-    private val pokemonRepository : PokemonRepository = PokemonRepository()
+    private val pokemonRepository : PokemonRepository = PokemonRepository(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pokemonRepository.loadData(context = applicationContext)
-        val pokemon = pokemonRepository.getAllPokemon()
-        println(pokemon)
-
         setContent {
             PokedexTheme {
                 // A surface container using the 'background' color from the theme
