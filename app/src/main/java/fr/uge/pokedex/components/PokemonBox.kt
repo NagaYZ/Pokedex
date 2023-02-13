@@ -8,7 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -21,42 +23,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.R
 import fr.uge.pokedex.data.Type
-import fr.uge.pokedex.ui.theme.Purple200
 
 @Preview
 @Composable
 fun PokemonBox() {
-    Column(
+    Row(
         Modifier
-            .background(MaterialTheme.colors.background)
-            .width(180.dp)
+            .fillMaxWidth()
+            .background(Color(0xFFEEEEE5))
+            .height(70.dp)
+            .padding(8.dp),
     ) {
         Image(
             painter = painterResource(id = R.drawable.icon_pkm_1),
             contentDescription = "Pokemon icon",
-            contentScale = ContentScale.FillWidth,
             modifier = Modifier
-                .background(Color.White)
-                .fillMaxWidth()
-                .border(width = 4.dp, color = Color.LightGray)
+                .background(Color(0x9AFFFFFF))
+                .aspectRatio(1f)
+                .fillMaxHeight()
+                .border(width = 1.dp, color = Color.LightGray)
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Bulbasaur",
-            fontSize = 18.sp,
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth(),
-            style = MaterialTheme.typography.h3.copy(
-                shadow = Shadow(
-                    color = Color.LightGray,
-                    offset = Offset(x = 0f, y = 3f),
-                    blurRadius = 0.1f
-                )
-            ),
-        )
-        PokemonTypeDisplay(type = Pair(Type.GRASS, Type.POISON))
-        Spacer(modifier = Modifier.height(4.dp))
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Bulbasaur",
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp),
+                style = MaterialTheme.typography.h3.copy(
+                    shadow = Shadow(
+                        color = Color.LightGray,
+                        offset = Offset(x = 0f, y = 3f),
+                        blurRadius = 0.1f
+                    )
+                ),
+                color = Color(0xFF2E2E2D)
+            )
+            PokemonTypeDisplay(type = Pair(Type.GRASS, Type.POISON))
+        }
     }
 }
 
@@ -64,8 +70,7 @@ fun PokemonBox() {
 @Composable
 fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.GRASS, Type.POISON)) {
     Row(
-        Modifier
-            .padding(5.dp)
+        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
     ) {
         TypeBox(type.first)
         TypeBox(type.second)
@@ -75,7 +80,7 @@ fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.GRASS, Type.POISON)) {
 @Preview
 @Composable
 fun TypeBox(type: Type = Type.NORMAL) {
-    if(type == Type.NONE) {
+    if (type == Type.NONE) {
         return
     }
     Text(
