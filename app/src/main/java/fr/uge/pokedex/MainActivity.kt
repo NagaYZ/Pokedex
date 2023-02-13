@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import fr.uge.pokedex.components.BottomNavigationMenu
 import fr.uge.pokedex.components.NavigationGraph
+import fr.uge.pokedex.components.PokemonBox
 import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
@@ -23,6 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pokemonRepository = PokemonRepository(applicationContext)
+
         setContent {
             PokedexTheme {
                 val navController: NavHostController = rememberNavController()
@@ -31,7 +33,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
                     Scaffold(bottomBar = { BottomNavigationMenu(navController)}) {
                         Log.d("Padding",it.toString())
                         NavigationGraph(navController = navController)
