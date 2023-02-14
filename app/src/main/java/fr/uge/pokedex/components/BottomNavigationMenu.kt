@@ -8,11 +8,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import fr.uge.pokedex.data.PokemonRepository
 
 
 sealed class Route(val title: String, val path: String){
@@ -26,7 +28,7 @@ fun NavigationGraph(navController: NavHostController){
     NavHost(navController = navController, startDestination =  Route.Pokedex.path){
         composable(route = Route.Pokedex.path){
             //Call pokedex composable
-            Text(text = "Pokedex screen", style = MaterialTheme.typography.h1)
+            DisplayPokedex(pokemons = PokemonRepository(LocalContext.current).getAll().toList(), context = LocalContext.current)
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
