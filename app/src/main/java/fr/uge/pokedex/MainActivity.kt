@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pokemonRepository = PokemonRepository(applicationContext)
+
         setContent {
             PokedexTheme {
                 val navController: NavHostController = rememberNavController()

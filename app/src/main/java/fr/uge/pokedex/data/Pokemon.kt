@@ -43,6 +43,4 @@ data class Pokemon(
         fun build() = Pokemon(id!!, identifier!!, type, height!!, weight!!, name!!,
                 description!!, genus!!)
     }
-
-
 }
