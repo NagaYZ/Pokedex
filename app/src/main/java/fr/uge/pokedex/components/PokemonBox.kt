@@ -10,12 +10,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,56 +22,116 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.R
 import fr.uge.pokedex.data.Type
+import fr.uge.pokedex.ui.theme.PokedexTheme
 
 @Preview
 @Composable
-fun PokemonBox() {
+fun PokemonBoxDisplay() {
+    Column(
+        modifier = Modifier
+            .width(180.dp)
+            .background(MaterialTheme.colors.background)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.pokemon_1),
+            contentDescription = "Pokemon icon",
+            modifier = Modifier
+                .background(Color.White)
+                .aspectRatio(1f)
+                .fillMaxWidth()
+                .border(width = 1.dp, color = Color.LightGray)
+        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier.padding(vertical = 4.dp)
+        ) {
+            PokemonBoxTitle(name = "Bulbasaur")
+            Spacer(modifier = Modifier.width(3.dp))
+            Text(
+                text = "#001",
+                color = Color.LightGray,
+                fontStyle = FontStyle.Italic,
+                textAlign = TextAlign.Center
+            )
+        }
+        PokemonTypeDisplay(type = Pair(Type.GRASS, Type.POISON))
+    }
+
+}
+
+@Preview
+@Composable
+fun PokemonListDisplay() {
     Row(
         Modifier
             .fillMaxWidth()
-            .background(Color(0xFFEEEEE5))
+            .background(MaterialTheme.colors.background)
             .height(70.dp)
             .padding(8.dp),
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.icon_pkm_1),
-            contentDescription = "Pokemon icon",
-            modifier = Modifier
-                .background(Color(0x9AFFFFFF))
-                .aspectRatio(1f)
-                .fillMaxHeight()
-                .border(width = 1.dp, color = Color.LightGray)
-        )
+        PokemonIcon(R.drawable.icon_pkm_1)
         Column(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Bulbasaur",
-                fontSize = 18.sp,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp),
-                style = MaterialTheme.typography.h3.copy(
-                    shadow = Shadow(
-                        color = Color.LightGray,
-                        offset = Offset(x = 0f, y = 3f),
-                        blurRadius = 0.1f
-                    )
-                ),
-                color = Color(0xFF2E2E2D)
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                PokemonBoxTitle(name = "Bulbasaur")
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = "#001",
+                    color = Color.LightGray,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center
+                )
+            }
             PokemonTypeDisplay(type = Pair(Type.GRASS, Type.POISON))
         }
     }
 }
 
+@Composable
+fun PokemonIcon(iconResource: Int) {
+    Image(
+        painter = painterResource(id = iconResource),
+        contentDescription = "Pokemon icon",
+        modifier = Modifier
+            .background(Color.White)
+            .aspectRatio(1f)
+            .fillMaxHeight()
+            .border(width = 1.dp, color = Color.LightGray)
+    )
+}
+
+@Composable
+fun PokemonBoxTitle(name: String) {
+    Text(
+        text = name,
+        fontSize = 18.sp,
+        modifier = Modifier.padding(horizontal = 3.dp),
+        style = MaterialTheme.typography.h3.copy(
+            shadow = Shadow(
+                color = Color.LightGray,
+                offset = Offset(x = 0f, y = 3f),
+                blurRadius = 0.1f
+            )
+        )
+    )
+}
+
 @Preview
 @Composable
 fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.GRASS, Type.POISON)) {
-    Row(
-        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
-    ) {
+    Row() {
         TypeBox(type.first)
+        Spacer(modifier = Modifier.width(3.dp))
         TypeBox(type.second)
     }
 }
@@ -94,7 +153,6 @@ fun TypeBox(type: Type = Type.NORMAL) {
             )
         ),
         modifier = Modifier
-            .padding(horizontal = 2.dp)
             .width(80.dp)
             .border(
                 width = 2.dp,

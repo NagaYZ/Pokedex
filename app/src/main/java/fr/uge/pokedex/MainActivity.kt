@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import fr.uge.pokedex.components.BottomNavigationMenu
 import fr.uge.pokedex.components.NavigationGraph
-import fr.uge.pokedex.components.PokemonBox
 import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
