@@ -13,17 +13,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import fr.uge.pokedex.data.ProfilesService
 
 
 sealed class Route(val title: String, val path: String){
     object Pokedex : Route("Pokedex","pokedex")
     object Favorite : Route("Favorite","favorite")
     object Teams : Route("Teams","teams")
+    object Profiles : Route("Profiles","profiles")
 }
 
 @Composable
 fun NavigationGraph(navController: NavHostController){
-    NavHost(navController = navController, startDestination =  Route.Pokedex.path){
+    NavHost(navController = navController, startDestination =  Route.Profiles.path){
         composable(route = Route.Pokedex.path){
             //Call pokedex composable
             Text(text = "Pokedex screen", style = MaterialTheme.typography.h1)
@@ -35,6 +37,11 @@ fun NavigationGraph(navController: NavHostController){
         composable(route = Route.Teams.path){
             //Call teams composable
             Text(text = "Teams screen", style = MaterialTheme.typography.h1)
+        }
+        composable(route = Route.Profiles.path){
+            //Call teams composable
+//            Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
+            ProfilesScreen(navController)
         }
     }
 }
