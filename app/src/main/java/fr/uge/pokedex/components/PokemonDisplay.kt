@@ -1,15 +1,20 @@
 package fr.uge.pokedex.components
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -20,59 +25,74 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.pokedex.R
+import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
-import fr.uge.pokedex.ui.theme.PokedexTheme
 
-@Preview
 @Composable
-fun PokemonBoxDisplay() {
+fun PokemonBoxDisplay(
+    pokemon: Pokemon,
+    context: Context,
+    onClick: () ->  Unit = {},
+    onClickFavorite: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
+            .clickable(onClick = onClick)
             .width(180.dp)
             .background(MaterialTheme.colors.background)
             .padding(8.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.pokemon_1),
-            contentDescription = "Pokemon icon",
-            modifier = Modifier
-                .background(Color.White)
-                .aspectRatio(1f)
-                .fillMaxWidth()
-                .border(width = 1.dp, color = Color.LightGray)
-        )
+        PokemonSprite(spriteResource = pokemon.getSprite(context))
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier.padding(vertical = 4.dp)
         ) {
-            PokemonBoxTitle(name = "Bulbasaur")
+            PokemonBoxTitle(name = pokemon.name)
             Spacer(modifier = Modifier.width(3.dp))
             Text(
-                text = "#001",
+                text = "#${pokemon.id.toString().padStart(3, '0')}",
                 color = Color.LightGray,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center
             )
         }
-        PokemonTypeDisplay(type = Pair(Type.GRASS, Type.POISON))
+        PokemonTypeDisplay(type = pokemon.type)
     }
-
+    FavoriteButton(onClick = onClickFavorite)
 }
 
-@Preview
 @Composable
-fun PokemonListDisplay() {
+private fun PokemonSprite(spriteResource: Int) {
+    Image(
+        painter = painterResource(id = spriteResource),
+        contentDescription = "Pokemon sprite",
+        modifier = Modifier
+            .background(Color.White)
+            .aspectRatio(1f)
+            .fillMaxWidth()
+            .border(width = 1.dp, color = Color.LightGray)
+    )
+}
+
+@Composable
+fun PokemonListDisplay(
+    pokemon: Pokemon,
+    context: Context,
+    onClick: () ->  Unit = {},
+    onClickFavorite: () -> Unit = {}
+) {
     Row(
         Modifier
+            .clickable(onClick = onClick)
             .fillMaxWidth()
             .background(MaterialTheme.colors.background)
             .height(70.dp)
             .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        PokemonIcon(R.drawable.icon_pkm_1)
+        PokemonIcon(pokemon.getIcon(context))
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -83,22 +103,41 @@ fun PokemonListDisplay() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-                PokemonBoxTitle(name = "Bulbasaur")
+                PokemonBoxTitle(name = pokemon.name)
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(
-                    text = "#001",
+                    text = "#${pokemon.id.toString().padStart(3, '0')}",
                     color = Color.LightGray,
                     fontStyle = FontStyle.Italic,
                     textAlign = TextAlign.Center
                 )
             }
-            PokemonTypeDisplay(type = Pair(Type.GRASS, Type.POISON))
+            PokemonTypeDisplay(type = pokemon.type)
         }
+        Spacer(modifier = Modifier.weight(1.0f))
+        FavoriteButton(onClick = onClickFavorite)
+    }
+}
+
+@Preview
+@Composable
+private fun FavoriteButton(filled : Boolean = false, onClick: () -> Unit = {}) {
+    IconButton(
+        onClick = onClick,
+    ) {
+        Icon(
+            if (filled) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+            contentDescription = "Favorite",
+            modifier = Modifier
+                .size(ButtonDefaults.IconSize)
+                .scale(1.25f),
+            tint = Color.LightGray
+        )
     }
 }
 
 @Composable
-fun PokemonIcon(iconResource: Int) {
+private fun PokemonIcon(iconResource: Int) {
     Image(
         painter = painterResource(id = iconResource),
         contentDescription = "Pokemon icon",
@@ -111,7 +150,7 @@ fun PokemonIcon(iconResource: Int) {
 }
 
 @Composable
-fun PokemonBoxTitle(name: String) {
+private fun PokemonBoxTitle(name: String) {
     Text(
         text = name,
         fontSize = 18.sp,
@@ -128,7 +167,7 @@ fun PokemonBoxTitle(name: String) {
 
 @Preview
 @Composable
-fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.GRASS, Type.POISON)) {
+private fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.ELECTRIC, Type.DRAGON)) {
     Row() {
         TypeBox(type.first)
         Spacer(modifier = Modifier.width(3.dp))
@@ -138,7 +177,7 @@ fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.GRASS, Type.POISON)) {
 
 @Preview
 @Composable
-fun TypeBox(type: Type = Type.NORMAL) {
+private fun TypeBox(type: Type = Type.NORMAL) {
     if (type == Type.NONE) {
         return
     }
@@ -176,7 +215,7 @@ fun TypeBox(type: Type = Type.NORMAL) {
     )
 }
 
-fun typeToColor(type: Type): Color {
+private fun typeToColor(type: Type): Color {
     return when (type) {
         Type.NORMAL -> Color(0xFFBBBCAD)
         Type.FIGHTING -> Color(0xFFA1533E)
