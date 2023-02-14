@@ -13,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import fr.uge.pokedex.data.ProfilesService
 
 
 sealed class Route(val title: String, val path: String){

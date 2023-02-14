@@ -13,16 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
-import fr.uge.pokedex.data.Profile
-import fr.uge.pokedex.data.ProfilesService
+import fr.uge.pokedex.database.PokedexAppDatabaseConnection
+import fr.uge.pokedex.database.Profile
+import fr.uge.pokedex.database.ProfilesService
 
 
 @Composable
 fun ProfilesScreen(navController: NavHostController){
 
+    val profileDao = PokedexAppDatabaseConnection.connection.profileDao()
+
     var showNewProfileDialog by remember {mutableStateOf(false)}
     var showEditProfileDialog by remember {mutableStateOf(false)}
-    var profilesList by remember { mutableStateOf(ProfilesService.getProfiles()) }
+    var profilesList by remember { mutableStateOf(profileDao.getProfiles()) }
 
     var profileByRememberToEdit: Profile by remember { mutableStateOf(Profile("")) }
 
@@ -52,8 +55,8 @@ fun ProfilesScreen(navController: NavHostController){
                 profilesList.forEach{ profile: Profile ->
                     ProfileItem(profile = profile, navController = navController,
                         onDeleteProfile = {profileToDelete: Profile ->
-                            ProfilesService.deleteProfile(profileToDelete)
-                            profilesList = ProfilesService.getProfiles()
+                            profileDao.deleteProfile(profileToDelete)
+                            profilesList = profileDao.getProfiles()
                     }, onEditProfile = {profileToEdit: Profile ->
                             profileByRememberToEdit = profileToEdit
                             showEditProfileDialog = true
@@ -73,14 +76,15 @@ fun ProfilesScreen(navController: NavHostController){
 
         //Dialog when the user needs to create a new profile
         ProfileDialog(show = showNewProfileDialog, close = {showNewProfileDialog = false}, onProfileNameAccept = { profileName ->
-            ProfilesService.addProfile(Profile(profileName))
-            profilesList = ProfilesService.getProfiles()
+            profileDao.addProfile(Profile(profileName))
+            profilesList = profileDao.getProfiles()
         })
 
         //Dialog when the user needs to edit a profile
         ProfileDialog(show = showEditProfileDialog, close = {showEditProfileDialog = false}, onProfileNameAccept = { profileName ->
-            ProfilesService.editProfile(profileByRememberToEdit, profileName)
-            profilesList = ProfilesService.getProfiles()
+            profileByRememberToEdit.profileName = profileName
+            profileDao.updateProfile(profileByRememberToEdit)
+            profilesList = profileDao.getProfiles()
         })
 
 }
@@ -93,7 +97,7 @@ fun ProfileItem(profile: Profile, navController: NavHostController, onDeleteProf
             ProfilesService.setCurrentProfile(profile)
             navController.navigate(Route.Pokedex.path)
         }) {
-            Text(text = profile.getProfileName(), style = MaterialTheme.typography.button)
+            Text(text = profile.profileName, style = MaterialTheme.typography.button)
         }
 
         Button(modifier = Modifier.padding(3.dp), onClick = {

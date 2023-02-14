@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import fr.uge.pokedex.data.ProfilesService
+import fr.uge.pokedex.database.ProfilesService
 
 @Composable
 fun TopBar(navController: NavHostController){
@@ -33,7 +33,7 @@ fun TopBar(navController: NavHostController){
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly) {
-            currentProfile?.let { Text(text = it.getProfileName(), style = MaterialTheme.typography.button, modifier = Modifier.padding(12.dp)) }
+            currentProfile?.let { Text(text = it.profileName, style = MaterialTheme.typography.button, modifier = Modifier.padding(12.dp)) }
         }
     }
 }
