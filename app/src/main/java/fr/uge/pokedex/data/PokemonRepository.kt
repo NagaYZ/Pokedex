@@ -28,29 +28,29 @@ class PokemonRepository(
         operator fun List<Any>.component6() = this[5]
 
         fun loadData() {
-            val pokemonBuilderMap = getPokemonBuilderFromAssets().associateBy { it.id }
-            setPokemonType(pokemonBuilderMap)
-            setPokemonDescription(pokemonBuilderMap)
-            setPokemonNameAndGenus(pokemonBuilderMap)
-            pokemon = pokemonBuilderMap.values.map { it.build() }.associateBy { it.id }
+            pokemon = getPokemonFromAssets().associateBy { it.id }
+            setPokemonType()
+            setPokemonDescription()
+            setPokemonNameAndGenus()
         }
 
-        private fun getPokemonBuilderFromAssets(): List<Pokemon.Builder> {
+        private fun getPokemonFromAssets(): List<Pokemon> {
             val reader = context.assets.open("csv/pokemon.csv").bufferedReader()
             val header = reader.readLine()
             return reader.lineSequence().toList().slice(0 until maxGeneration.maxId)
                 .filter { it.isNotBlank() }
                 .map {
                     val (id, identifier, _, height, weight, _) = it.split(',')
-                    Pokemon.Builder()
-                        .id(id.toLong())
-                        .identifier(identifier)
-                        .height(height.toInt())
-                        .weight(weight.toInt())
+                    Pokemon(
+                        id = id.toLong(),
+                        identifier = identifier,
+                        height = height.toInt(),
+                        weight = weight.toInt()
+                    )
                 }.toList()
         }
 
-        private fun setPokemonType(pokemonBuilderMap: Map<Long?, Pokemon.Builder>) {
+        private fun setPokemonType() {
             val reader = context.assets.open("csv/pokemon_types.csv").bufferedReader()
             val header = reader.readLine()
 
@@ -62,13 +62,13 @@ class PokemonRepository(
 
                     val type = Type.getType(typeId.toInt())
                     when (slot.toInt()) {
-                        1 -> pokemonBuilderMap[pokemonId.toLong()]?.firstType(type)
-                        2 -> pokemonBuilderMap[pokemonId.toLong()]?.secondType(type)
+                        1 -> pokemon[pokemonId.toLong()]?.type?.copy(first = type)
+                        2 -> pokemon[pokemonId.toLong()]?.type?.copy(second = type)
                     }
                 }
         }
 
-        private fun setPokemonDescription(pokemonBuilderMap: Map<Long?, Pokemon.Builder>) {
+        private fun setPokemonDescription() {
             val reader = context.assets.open("csv/pokemon_species_flavor_text.csv").bufferedReader()
             val header = reader.readLine()
 
@@ -88,11 +88,11 @@ class PokemonRepository(
                 val description = descSb.toString()
                     .removeSurrounding("\"")
 
-                pokemonBuilderMap[speciesId.toLong()]?.description(description)
+                pokemon[speciesId.toLong()]?.description = description
             }
         }
 
-        private fun setPokemonNameAndGenus(pokemonBuilderMap: Map<Long?, Pokemon.Builder>) {
+        private fun setPokemonNameAndGenus() {
             val reader = context.assets.open("csv/pokemon_species_names.csv").bufferedReader()
             val header = reader.readLine()
 
@@ -103,16 +103,17 @@ class PokemonRepository(
                     if (speciesId.toInt() <= maxGeneration.maxId &&
                         Language.getLanguage(languageId.toInt()) == dataLanguage
                     ) {
-                        pokemonBuilderMap[speciesId.toLong()]?.name(name)?.genus(genus)
+                        pokemon[speciesId.toLong()]?.name = name
+                        pokemon[speciesId.toLong()]?.genus = genus
                     }
                 }
         }
 
-        private fun setPokemonLocation(pokemonBuilderMap: Map<Long?, Pokemon.Builder>) {
+        private fun setPokemonLocation() {
             //TODO
         }
 
-        private fun setPokemonEvolutions(pokemonBuilderMap: Map<Long?, Pokemon.Builder>) {
+        private fun setPokemonEvolutions() {
             //TODO
         }
     }
