@@ -6,8 +6,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
 import androidx.compose.runtime.getValue
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -16,14 +18,17 @@ import fr.uge.pokedex.components.BottomNavigationMenu
 import fr.uge.pokedex.components.NavigationGraph
 import fr.uge.pokedex.components.Route
 import fr.uge.pokedex.components.TopBar
+import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var pokemonRepository : PokemonRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pokemonRepository = PokemonRepository(applicationContext)
         setContent {
             PokedexTheme {
-
                 val navController: NavHostController = rememberNavController()
 
                 Surface(
@@ -42,7 +47,7 @@ class MainActivity : ComponentActivity() {
                         NavigationGraph(navController = navController)
                     }
                 }
-                
+
             }
         }
     }
