@@ -20,10 +20,6 @@ import fr.uge.pokedex.ui.theme.PokedexTheme
 
 @Composable
 fun DisplayPokedex(context: Context, pokemons: List<Pokemon>) {
-
-
-
-
     LazyVerticalGrid(columns = GridCells.Fixed(1), horizontalArrangement = Arrangement.spacedBy(40.dp), verticalArrangement = Arrangement.spacedBy(50.dp), contentPadding = PaddingValues(30.dp, 30.dp)) {
         items(pokemons) {
             PokemonListDisplay(pokemon = it, context = context)
