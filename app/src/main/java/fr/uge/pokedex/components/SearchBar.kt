@@ -34,7 +34,8 @@ fun SearchBar( pokemons: List<Pokemon>) : List<Pokemon>{
             onValueChange = { search = it },
             placeholder = { Text("Recherche par nom") }
         )
-        result_List = pokemons.filter{it.name.contains(search)}.toMutableList()
+
+        result_List = pokemons.filter{it.name.contains(if(search.isNotEmpty()) search.replaceFirst(search.first(), search.first().uppercaseChar()) else search)}.toMutableList()
 
         IconButton(onClick = {}) {
             Icon(Icons.Default.Search, contentDescription = "Recherche")
