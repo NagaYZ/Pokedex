@@ -28,7 +28,9 @@ fun NavigationGraph(navController: NavHostController){
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
         composable(route = Route.Pokedex.path){
             //Call pokedex composable
-            DisplayPokedex(pokemons = PokemonRepository(LocalContext.current).getAll().toList(), context = LocalContext.current)
+            Column() {
+                DisplayPokedex(context = LocalContext.current, pokemons = SearchBar(PokemonRepository(LocalContext.current).getAll().toList()))
+            }
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
