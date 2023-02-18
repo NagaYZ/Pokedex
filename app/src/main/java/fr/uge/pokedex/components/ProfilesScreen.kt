@@ -15,11 +15,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.database.PokedexAppDatabaseConnection
 import fr.uge.pokedex.database.Profile
-import fr.uge.pokedex.database.ProfilesService
 
 
 @Composable
-fun ProfilesScreen(navController: NavHostController){
+fun ProfilesScreen(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit){
 
     val profileDao = PokedexAppDatabaseConnection.connection.profileDao()
 
@@ -60,7 +59,7 @@ fun ProfilesScreen(navController: NavHostController){
                     }, onEditProfile = {profileToEdit: Profile ->
                             profileByRememberToEdit = profileToEdit
                             showEditProfileDialog = true
-                    })
+                    }, setCurrentProfile)
                 }
             }
 
@@ -90,11 +89,11 @@ fun ProfilesScreen(navController: NavHostController){
 }
 
 @Composable
-fun ProfileItem(profile: Profile, navController: NavHostController, onDeleteProfile :(profile: Profile) -> Unit, onEditProfile :(profile: Profile) -> Unit){
+fun ProfileItem(profile: Profile, navController: NavHostController, onDeleteProfile :(profile: Profile) -> Unit, onEditProfile :(profile: Profile) -> Unit, setCurrentProfile :(profile : Profile) -> Unit){
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
         Button(modifier = Modifier.padding(3.dp), onClick = {
-            ProfilesService.setCurrentProfile(profile)
+            setCurrentProfile.invoke(profile)
             navController.navigate(Route.Pokedex.path)
         }) {
             Text(text = profile.profileName, style = MaterialTheme.typography.button)
