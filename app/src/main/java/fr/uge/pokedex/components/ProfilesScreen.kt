@@ -24,7 +24,7 @@ fun ProfilesScreen(navController: NavHostController, setCurrentProfile :(profile
 
     var showNewProfileDialog by remember {mutableStateOf(false)}
     var showEditProfileDialog by remember {mutableStateOf(false)}
-    var profilesList by remember { mutableStateOf(profileDao.getProfiles()) }
+    var profilesList by remember { mutableStateOf(profileDao.getAllProfiles()) }
 
     var profileByRememberToEdit: Profile by remember { mutableStateOf(Profile("")) }
 
@@ -55,7 +55,7 @@ fun ProfilesScreen(navController: NavHostController, setCurrentProfile :(profile
                     ProfileItem(profile = profile, navController = navController,
                         onDeleteProfile = {profileToDelete: Profile ->
                             profileDao.deleteProfile(profileToDelete)
-                            profilesList = profileDao.getProfiles()
+                            profilesList = profileDao.getAllProfiles()
                     }, onEditProfile = {profileToEdit: Profile ->
                             profileByRememberToEdit = profileToEdit
                             showEditProfileDialog = true
@@ -76,14 +76,14 @@ fun ProfilesScreen(navController: NavHostController, setCurrentProfile :(profile
         //Dialog when the user needs to create a new profile
         ProfileDialog(show = showNewProfileDialog, close = {showNewProfileDialog = false}, onProfileNameAccept = { profileName ->
             profileDao.addProfile(Profile(profileName))
-            profilesList = profileDao.getProfiles()
+            profilesList = profileDao.getAllProfiles()
         })
 
         //Dialog when the user needs to edit a profile
         ProfileDialog(show = showEditProfileDialog, close = {showEditProfileDialog = false}, onProfileNameAccept = { profileName ->
             profileByRememberToEdit.profileName = profileName
             profileDao.updateProfile(profileByRememberToEdit)
-            profilesList = profileDao.getProfiles()
+            profilesList = profileDao.getAllProfiles()
         })
 
 }

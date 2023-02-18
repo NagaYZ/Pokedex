@@ -1,8 +1,6 @@
 package fr.uge.pokedex.database
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity
 class Profile(
@@ -10,14 +8,19 @@ class Profile(
     var profileName: String
 ) {
 
+    @ColumnInfo(name = "id")
     @PrimaryKey(autoGenerate = true)
-    private var id: Int = 0
+    private var id: Long = 0
 
-    fun getId(): Int {
+    fun getId(): Long {
         return this.id
     }
 
-    fun setId(id :Int) {
+    fun setId(id :Long) {
         this.id = id
+    }
+
+    override fun toString(): String {
+        return "Profile(profileName='$profileName', id=$id)"
     }
 }

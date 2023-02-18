@@ -6,7 +6,7 @@ import androidx.room.*
 interface ProfileDao {
 
     @Insert
-    fun addProfile(vararg profiles: Profile)
+    fun addProfile(profile: Profile): Long
 
     @Delete
     fun deleteProfile(profile: Profile)
@@ -15,5 +15,16 @@ interface ProfileDao {
     fun updateProfile(profile: Profile)
 
     @Query("SELECT * FROM profile")
-    fun getProfiles() :List<Profile>
+    fun getAllProfiles() :List<Profile>
+
+    @Query("DELETE FROM profile")
+    fun deleteAllProfiles()
+
+    @Transaction
+    @Query("SELECT * FROM profile")
+    fun getAllProfilesWithFavorites(): List<ProfileWithFavorites>
+
+    @Transaction
+    @Query("SELECT * FROM profile WHERE id = :profileId")
+    fun getProfileWithFavorites(profileId :Long): ProfileWithFavorites
 }
