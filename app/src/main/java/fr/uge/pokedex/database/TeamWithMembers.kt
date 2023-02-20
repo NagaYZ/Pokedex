@@ -8,6 +8,4 @@ data class TeamWithMembers(
 
     @Relation(parentColumn = "team_id", entityColumn = "team_id")
     val teamMembers : List<TeamMember>
-) {
-
-}
+)

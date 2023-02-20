@@ -1,7 +1,6 @@
 package fr.uge.pokedex.database
 
 import androidx.room.*
-import fr.uge.pokedex.components.Route
 
 @Dao
 interface ProfileDao {
@@ -20,10 +19,6 @@ interface ProfileDao {
 
     @Query("DELETE FROM profile")
     fun deleteAllProfiles()
-
-    @Transaction
-    @Query("SELECT * FROM profile")
-    fun getAllProfilesWithFavorites(): List<ProfileWithFavorites>
 
     @Transaction
     @Query("SELECT * FROM profile WHERE id = :profileId")

@@ -81,7 +81,7 @@ fun ProfilesScreen(navController: NavHostController, setCurrentProfile :(profile
 
         //Dialog when the user needs to edit a profile
         ProfileDialog(show = showEditProfileDialog, close = {showEditProfileDialog = false}, onProfileNameAccept = { profileName ->
-            profileByRememberToEdit.profileName = profileName
+            profileByRememberToEdit.setProfileName(profileName)
             profileDao.updateProfile(profileByRememberToEdit)
             profilesList = profileDao.getAllProfiles()
         })
@@ -96,7 +96,7 @@ fun ProfileItem(profile: Profile, navController: NavHostController, onDeleteProf
             setCurrentProfile.invoke(profile)
             navController.navigate(Route.Pokedex.path)
         }) {
-            Text(text = profile.profileName, style = MaterialTheme.typography.button)
+            Text(text = profile.getProfileName(), style = MaterialTheme.typography.button)
         }
 
         Button(modifier = Modifier.padding(3.dp), onClick = {

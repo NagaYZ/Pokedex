@@ -22,7 +22,6 @@ import fr.uge.pokedex.components.NavigationGraph
 import fr.uge.pokedex.components.Route
 import fr.uge.pokedex.components.TopBar
 import fr.uge.pokedex.data.PokemonRepository
-import fr.uge.pokedex.database.Favorite
 import fr.uge.pokedex.database.PokedexAppDatabaseConnection
 import fr.uge.pokedex.database.Profile
 import fr.uge.pokedex.ui.theme.PokedexTheme
@@ -39,17 +38,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             PokedexTheme {
                 val navController: NavHostController = rememberNavController()
-
-//                PokedexAppDatabaseConnection.connection.profileDao().deleteAllProfiles()
-//                PokedexAppDatabaseConnection.connection.favoriteDao().deleteAllFavorites()
-//
-//                val profileMatId:Long = PokedexAppDatabaseConnection.connection.profileDao().addProfile(Profile("Mat"))
-//
-//                PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(2, profileMatId))
-//
-//                Log.d("FavoritesInProfile", PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profileMatId).toString())
-//                Log.d("Favorites", PokedexAppDatabaseConnection.connection.favoriteDao().getFavorites().toString())
-
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),

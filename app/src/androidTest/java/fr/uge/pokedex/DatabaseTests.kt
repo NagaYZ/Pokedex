@@ -40,10 +40,10 @@ class DatabaseTests {
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
 
         val profileMat = profileDao.getProfile(profileMatId)
-        profileMat.profileName = "Jean"
+        profileMat.setProfileName("Jean")
         profileDao.updateProfile(profileMat)
 
-        assertEquals("Jean", profileDao.getProfile(profileMat.getId()).profileName)
+        assertEquals("Jean", profileDao.getProfile(profileMat.getId()).getProfileName())
     }
 
     @Test
@@ -52,7 +52,6 @@ class DatabaseTests {
         val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
         val favoriteDao : FavoriteDao = PokedexAppDatabaseConnection.connection.favoriteDao()
         profileDao.deleteAllProfiles()
-        favoriteDao.deleteAllFavorites()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
         favoriteDao.addFavorite(Favorite(2, profileMatId))
@@ -69,7 +68,6 @@ class DatabaseTests {
         val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
         val favoriteDao : FavoriteDao = PokedexAppDatabaseConnection.connection.favoriteDao()
         profileDao.deleteAllProfiles()
-        favoriteDao.deleteAllFavorites()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
         favoriteDao.addFavorite(Favorite(2, profileMatId))

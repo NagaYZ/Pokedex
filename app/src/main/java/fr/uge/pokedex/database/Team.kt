@@ -35,7 +35,7 @@ class Team(
         return this.profileId
     }
 
-    fun setProfileId(id :Long) {
+    fun setProfileId(profileId :Long) {
         this.profileId = profileId
     }
 

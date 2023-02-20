@@ -32,7 +32,7 @@ fun TopBar(navController: NavHostController, currentProfile: Profile){
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly) {
-            Text(text = currentProfile.profileName, style = MaterialTheme.typography.button, modifier = Modifier.padding(12.dp))
+            Text(text = currentProfile.getProfileName(), style = MaterialTheme.typography.button, modifier = Modifier.padding(12.dp))
         }
     }
 }

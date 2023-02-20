@@ -10,10 +10,4 @@ interface FavoriteDao {
 
     @Delete
     fun deleteFavorite(favorite: Favorite)
-
-    @Query("SELECT * FROM favorite")
-    fun getFavorites() :List<Favorite>
-
-    @Query("DELETE FROM favorite")
-    fun deleteAllFavorites()
 }

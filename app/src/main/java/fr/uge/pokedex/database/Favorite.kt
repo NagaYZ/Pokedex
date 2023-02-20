@@ -28,7 +28,7 @@ class Favorite (
         return this.profileId
     }
 
-    fun setProfileId(id :Long) {
+    fun setProfileId(profileId :Long) {
         this.profileId = profileId
     }
 
@@ -36,7 +36,7 @@ class Favorite (
         return this.pokemonId
     }
 
-    fun setPokemonId(id :Long) {
+    fun setPokemonId(pokemonId :Long) {
         this.pokemonId = pokemonId
     }
 
