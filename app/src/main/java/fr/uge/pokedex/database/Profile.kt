@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity
 class Profile(
-    @ColumnInfo(name = "first_name")
+    @ColumnInfo(name = "profile_name")
     var profileName: String
 ) {
 
