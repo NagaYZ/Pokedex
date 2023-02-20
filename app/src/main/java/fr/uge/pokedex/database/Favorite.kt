@@ -1,12 +1,9 @@
 package fr.uge.pokedex.database
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
-import androidx.room.PrimaryKey
 
-@Entity(foreignKeys = [ForeignKey(entity = Profile::class, parentColumns = arrayOf("id"), childColumns = arrayOf("profile_id"), onDelete = CASCADE)])
+@Entity(foreignKeys = [ForeignKey(entity = Profile::class, parentColumns = arrayOf("id"), childColumns = arrayOf("profile_id"), onDelete = CASCADE)], indices = [Index(value = ["profile_id"])])
 class Favorite (
     @ColumnInfo(name = "pokemon_id")
     private var pokemonId: Long,
@@ -44,7 +41,7 @@ class Favorite (
     }
 
     override fun toString(): String {
-        return "Favorite(pokemonId=$pokemonId, profileId=$profileId, id=$id)"
+        return "Favorite(pokemonId=$pokemonId)"
     }
 
 

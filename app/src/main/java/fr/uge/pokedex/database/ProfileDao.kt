@@ -1,6 +1,7 @@
 package fr.uge.pokedex.database
 
 import androidx.room.*
+import fr.uge.pokedex.components.Route
 
 @Dao
 interface ProfileDao {
@@ -27,4 +28,12 @@ interface ProfileDao {
     @Transaction
     @Query("SELECT * FROM profile WHERE id = :profileId")
     fun getProfileWithFavorites(profileId :Long): ProfileWithFavorites
+
+    @Query("SELECT * FROM profile WHERE id = :profileId")
+    fun getProfile(profileId :Long): Profile
+
+    @Transaction
+    @Query("SELECT * FROM profile WHERE id = :profileId")
+    fun getProfileWithTeam(profileId :Long): ProfileWithTeam
+
 }

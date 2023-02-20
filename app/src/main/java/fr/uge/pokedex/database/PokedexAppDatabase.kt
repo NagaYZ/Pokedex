@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Profile::class, Favorite::class], version = 3)
+@Database(entities = [Profile::class, Favorite::class, Team::class, TeamMember::class], version = 5)
 abstract class PokedexAppDatabase : RoomDatabase() {
     abstract fun profileDao(): ProfileDao
     abstract fun favoriteDao(): FavoriteDao
+    abstract fun teamDao(): TeamDao
+    abstract fun teamMemberDao(): TeamMemberDao
 }
 
 object PokedexAppDatabaseConnection{

@@ -21,6 +21,8 @@ class Profile(
     }
 
     override fun toString(): String {
-        return "Profile(profileName='$profileName', id=$id)"
+        return "Profile(profileName='$profileName')"
     }
+
+
 }
