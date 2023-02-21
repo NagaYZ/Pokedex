@@ -2,6 +2,7 @@ package fr.uge.pokedex
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import fr.uge.pokedex.data.EvolutionTrigger
 import fr.uge.pokedex.data.Generation
 import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.data.Type
@@ -20,11 +21,17 @@ class PokemonRepositoryTest {
 
         val pokemon = pokemonRepository.get(1)
         println(pokemon)
+
         assertNotNull(pokemon)
         assertEquals("bulbasaur", pokemon?.identifier)
         assertEquals(Pair(Type.GRASS, Type.POISON), pokemon?.type)
         if (pokemon != null) {
             assertFalse(pokemon.description.isBlank())
+            assertFalse(pokemon.genus.isBlank())
+            assertTrue(pokemon.evolvesInto?.speciesId == 2)
+            assertNull(pokemon.evolvesFrom)
+            assertTrue(pokemon.evolvesInto?.evolutionTrigger == EvolutionTrigger.LEVEL_UP)
+            assertTrue(pokemon.evolvesInto?.minimumLevel == 16)
         }
     }
 

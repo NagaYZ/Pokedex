@@ -32,6 +32,7 @@ class PokemonRepository(
             setPokemonType()
             setPokemonDescription()
             setPokemonNameAndGenus()
+            setPokemonEvolutions()
         }
 
         private fun parseCSVLines(filename: String, action: (String) -> Unit) {
@@ -116,8 +117,29 @@ class PokemonRepository(
         }
 
         private fun setPokemonEvolutions() {
+            // First setting up lineage
+            parseCSVLines("csv/pokemon_species.csv") { line ->
+                val (id, identifier, generationId, evolvesFromSpeciesId, _) = line.split(',')
+                if(id.toInt() <= maxGeneration.maxId && evolvesFromSpeciesId.isNotBlank()) {
+                    pokemon[id.toLong()]?.evolvesFrom = Evolution(evolvesFromSpeciesId.toInt())
+                    pokemon[evolvesFromSpeciesId.toLong()]?.evolvesInto = Evolution(id.toInt())
+                }
+            }
+
+            // Then fill the evolution triggers
             parseCSVLines("csv/pokemon_evolution.csv") { line ->
-                //TODO
+                val (id, evolvedSpeciesId, evolutionTriggerId, tiggerItemId, minimumLevel, _) = line.split(',')
+                if(evolvedSpeciesId.toInt() <= maxGeneration.maxId) {
+                    var evolvesFromSpeciesId = pokemon[evolvedSpeciesId.toLong()]?.evolvesFrom?.speciesId
+                    val evolutionTrigger = EvolutionTrigger.getEvolutionTrigger(evolutionTriggerId.toInt())
+
+                    pokemon[evolvedSpeciesId.toLong()]?.evolvesFrom?.evolutionTrigger = evolutionTrigger
+                    pokemon[evolvesFromSpeciesId?.toLong()]?.evolvesInto?.evolutionTrigger = evolutionTrigger
+                    if(evolutionTrigger == EvolutionTrigger.LEVEL_UP && minimumLevel.isNotBlank()) {
+                        pokemon[evolvedSpeciesId.toLong()]?.evolvesFrom?.minimumLevel = minimumLevel.toInt()
+                        pokemon[evolvesFromSpeciesId?.toLong()]?.evolvesInto?.minimumLevel = minimumLevel.toInt()
+                    }
+                }
             }
         }
     }
