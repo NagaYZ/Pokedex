@@ -7,6 +7,6 @@ enum class Generation(val maxId: Int) {
     GENERATION_IV(493),
     GENERATION_V(649),
     GENERATION_VI(721),
-    GENERATION_VII(802),
+    GENERATION_VII(802);
     //TODO("Add more generations")
 }

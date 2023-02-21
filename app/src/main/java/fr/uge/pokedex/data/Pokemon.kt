@@ -10,7 +10,12 @@ data class Pokemon(
     var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE),
     var name: String = "",
     var description: String = "",
-    var genus: String = ""
+    var genus: String = "",
+
+    // Id of the pokemon locations, use LocationRepository.get for more details
+    var locations: List<Int> = emptyList(),
+    var evolvesFrom: Evolution? = null,
+    var evolvesInto: Evolution? = null
 ) {
     fun getSprite(context: Context): Int {
         return context.resources.getIdentifier("pokemon_$id", "drawable", context.packageName)

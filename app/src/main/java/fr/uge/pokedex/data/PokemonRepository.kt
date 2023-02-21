@@ -34,6 +34,15 @@ class PokemonRepository(
             setPokemonNameAndGenus()
         }
 
+        private fun parseCSVLines(filename: String, action: (String) -> Unit) {
+            val reader = context.assets.open(filename).bufferedReader()
+            val header = reader.readLine()
+
+            reader.lineSequence().toList()
+                .filter { it.isNotBlank() }
+                .forEach(action)
+        }
+
         private fun getPokemonFromAssets(): List<Pokemon> {
             val reader = context.assets.open("csv/pokemon.csv").bufferedReader()
             val header = reader.readLine()
@@ -51,21 +60,17 @@ class PokemonRepository(
         }
 
         private fun setPokemonType() {
-            val reader = context.assets.open("csv/pokemon_types.csv").bufferedReader()
-            val header = reader.readLine()
+            parseCSVLines("csv/pokemon_types.csv") { line ->
+                val (pokemonId, typeId, slot) = line.split(',')
+                if (pokemonId.toInt() > maxGeneration.maxId) return@parseCSVLines
 
-            reader.lineSequence().toList()
-                .filter { it.isNotBlank() }
-                .forEach {
-                    val (pokemonId, typeId, slot) = it.split(',')
-                    if (pokemonId.toInt() > maxGeneration.maxId) return
-
-                    val type = Type.getType(typeId.toInt())
-                    when (slot.toInt()) {
-                        1 -> pokemon[pokemonId.toLong()]?.type?.copy(first = type)
-                        2 -> pokemon[pokemonId.toLong()]?.type?.copy(second = type)
-                    }
+                val type = Type.getType(typeId.toInt())
+                val currentPokemon = pokemon[pokemonId.toLong()]
+                when (slot.toInt()) {
+                    1 -> currentPokemon?.type = currentPokemon?.type?.copy(first = type)!!
+                    2 -> currentPokemon?.type = currentPokemon?.type?.copy(second = type)!!
                 }
+            }
         }
 
         private fun setPokemonDescription() {
@@ -93,28 +98,27 @@ class PokemonRepository(
         }
 
         private fun setPokemonNameAndGenus() {
-            val reader = context.assets.open("csv/pokemon_species_names.csv").bufferedReader()
-            val header = reader.readLine()
-
-            reader.lineSequence().toList()
-                .filter { it.isNotBlank() }
-                .forEach {
-                    val (speciesId, languageId, name, genus) = it.split(',')
-                    if (speciesId.toInt() <= maxGeneration.maxId &&
-                        Language.getLanguage(languageId.toInt()) == dataLanguage
-                    ) {
-                        pokemon[speciesId.toLong()]?.name = name
-                        pokemon[speciesId.toLong()]?.genus = genus
-                    }
+            parseCSVLines("csv/pokemon_species_names.csv") { line ->
+                val (speciesId, languageId, name, genus) = line.split(',')
+                if (speciesId.toInt() <= maxGeneration.maxId &&
+                    Language.getLanguage(languageId.toInt()) == dataLanguage
+                ) {
+                    pokemon[speciesId.toLong()]?.name = name
+                    pokemon[speciesId.toLong()]?.genus = genus
                 }
+            }
         }
 
         private fun setPokemonLocation() {
-            //TODO
+            parseCSVLines("csv/encounters.csv") { line ->
+                //TODO
+            }
         }
 
         private fun setPokemonEvolutions() {
-            //TODO
+            parseCSVLines("csv/pokemon_evolution.csv") { line ->
+                //TODO
+            }
         }
     }
 }

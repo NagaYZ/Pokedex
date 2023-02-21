@@ -19,6 +19,7 @@ class PokemonRepositoryTest {
         val pokemonRepository = PokemonRepository(appContext)
 
         val pokemon = pokemonRepository.get(1)
+        println(pokemon)
         assertNotNull(pokemon)
         assertEquals("bulbasaur", pokemon?.identifier)
         assertEquals(Pair(Type.GRASS, Type.POISON), pokemon?.type)
