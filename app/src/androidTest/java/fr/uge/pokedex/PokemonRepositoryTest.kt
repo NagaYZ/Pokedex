@@ -4,7 +4,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import fr.uge.pokedex.data.EvolutionTrigger
 import fr.uge.pokedex.data.Generation
-import fr.uge.pokedex.data.PokemonRepository
+import fr.uge.pokedex.data.repository.PokemonRepository
 import fr.uge.pokedex.data.Type
 
 import org.junit.Test
@@ -41,6 +41,7 @@ class PokemonRepositoryTest {
         val pokemonRepository = PokemonRepository(appContext, maxGeneration = Generation.GENERATION_I)
 
         val pokemon = pokemonRepository.getAll()
+        println(pokemon)
         assertFalse(pokemon.isEmpty())
         assertEquals(Generation.GENERATION_I.maxId, pokemon.size)
     }
