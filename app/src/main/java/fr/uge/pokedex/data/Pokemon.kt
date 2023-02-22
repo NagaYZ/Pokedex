@@ -11,7 +11,7 @@ data class Pokemon(
     var name: String = "",
     var description: String = "",
     var genus: String = "",
-    var locations: MutableSet<LocationArea> = HashSet(),
+    var locations: MutableSet<Location> = HashSet(),
     var evolvesFrom: Evolution? = null,
     var evolvesInto: Evolution? = null
 ) {

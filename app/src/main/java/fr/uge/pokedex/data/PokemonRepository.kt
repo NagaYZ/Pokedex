@@ -2,7 +2,6 @@ package fr.uge.pokedex.data
 
 import android.content.Context
 
-@Suppress("UNUSED_VARIABLE")
 class PokemonRepository(
     val context: Context,
     val languageData: Language = Language.ENGLISH, // For names, descriptions, genus and locations
@@ -23,6 +22,7 @@ class PokemonRepository(
         return data.values
     }
 
+    @Suppress("UNUSED_VARIABLE")
     inner class PokemonParser {
 
         // Custom operator to allow destructuring of list containing 5 elements
@@ -33,6 +33,7 @@ class PokemonRepository(
             setPokemonType(pokemon)
             setPokemonDescription(pokemon)
             setPokemonNameAndGenus(pokemon)
+            setPokemonLocation(pokemon)
             setPokemonEvolutions(pokemon)
             return pokemon
         }
@@ -114,7 +115,40 @@ class PokemonRepository(
         }
 
         private fun setPokemonLocation(pokemon: Map<Long, Pokemon>) {
-            //TODO
+            val locations = HashMap<Long, Location>()
+
+            parseLines("csv/locations.csv") { line ->
+                val (id, regionId, _) = line.split(',')
+                val region = if(regionId.isBlank()) Region.UNKNOWN else Region.values()[regionId.toInt() - 1]
+                locations[id.toLong()] = Location(id.toLong(), region = region)
+            }
+
+            parseLines("csv/location_names.csv") { line ->
+                val (locationId, localLanguageId, name, subtitle) = line.split(',')
+                if(languageData == Language.values()[localLanguageId.toInt() - 1]) {
+                    locations[locationId.toLong()]?.name = name
+                }
+            }
+
+            parseLines("csv/location_areas.csv") { line ->
+                val (id, locationId, gameIndex, identifier) = line.split(',')
+                locations[locationId.toLong()]?.area = Area(id.toLong())
+            }
+
+            val locationsByAreaId = locations.values.associateBy { it.area?.id }
+
+            parseLines("csv/location_area_prose.csv") { line ->
+                val (locationAreaId, localLanguageId, name) = line.split(',')
+                locationsByAreaId[locationAreaId.toLong()]?.name = name
+            }
+
+            parseLines("csv/encounters.csv") { line ->
+                val (id, versionId, locationAreaId, encounterSlotId, pokemonId, _) = line.split(',')
+                val location = locationsByAreaId[locationAreaId.toLong()]
+                if(location != null) {
+                    pokemon[pokemonId.toLong()]?.locations?.add(location)
+                }
+            }
         }
 
         private fun setPokemonEvolutions(pokemon: Map<Long, Pokemon>) {
