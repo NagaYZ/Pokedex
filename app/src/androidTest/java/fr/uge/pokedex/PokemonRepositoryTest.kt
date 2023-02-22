@@ -1,13 +1,11 @@
 package fr.uge.pokedex
 
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.*
-
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.junit.Assert.*
 
 @RunWith(AndroidJUnit4::class)
 class PokemonRepositoryTest {
@@ -35,13 +33,24 @@ class PokemonRepositoryTest {
             assertTrue(pokemon.captureRate == 45)
             assertTrue(pokemon.growRate == GrowRate.MEDIUM_SLOW)
             assertTrue(pokemon.hatchCounter == 20)
+
+            val baseStats = Stats(
+                hp = 45,
+                attack = 49,
+                defense = 49,
+                specialAttack = 65,
+                specialDefense = 65,
+                speed = 45
+            )
+            assertTrue(pokemon.baseStats == baseStats)
         }
     }
 
     @Test
     fun testGetAll() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val pokemonRepository = PokemonRepository(appContext, maxGeneration = Generation.GENERATION_I)
+        val pokemonRepository =
+            PokemonRepository(appContext, maxGeneration = Generation.GENERATION_I)
 
         val pokemon = pokemonRepository.getAll()
         assertFalse(pokemon.isEmpty())

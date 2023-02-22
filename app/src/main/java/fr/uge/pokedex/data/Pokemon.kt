@@ -8,8 +8,8 @@ import kotlin.collections.HashSet
 data class Pokemon(
     val id: Long,
     val identifier: String,
-    val height: Int, // unit is 1/10th of a m, ex: 7 = 0.7m
-    val weight: Int, // unit is 1/10th of a kg, ex: 69 = 6.9kg
+    val height: Int, // unit is 1/10th of a meter, ex: 7 = 0.7m
+    val weight: Int, // unit is 1/10th of a kilogram, ex: 69 = 6.9kg
     var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE),
     var name: String = "",
     val descriptions: MutableMap<Version, String> = EnumMap(Version::class.java),
@@ -19,10 +19,11 @@ data class Pokemon(
     var evolvesInto: MutableSet<Evolution> = HashSet(),
     var eggGroups: MutableSet<EggGroup> = HashSet(),
     var baseExperience: Int = 0,
-    var captureRate: Int = 0,
-    var baseHappiness: Int = 50,
-    var hatchCounter: Int = 20,
-    var growRate: GrowRate = GrowRate.MEDIUM
+    var captureRate: Int = 0, // 0 to 255
+    var baseHappiness: Int = 50, // 0 to 255
+    var hatchCounter: Int = 20, // number of cycles (steps) for an egg to hatch
+    var growRate: GrowRate = GrowRate.MEDIUM,
+    val baseStats: Stats = Stats()
 ) {
     @SuppressLint("DiscouragedApi")
     @Suppress("unused")
