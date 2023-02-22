@@ -98,7 +98,8 @@ class PokemonRepository(
                 val description = descSb.toString()
                     .removeSurrounding("\"")
 
-                pokemon[speciesId.toLong()]?.description = description
+                val version = Version.values()[versionId.toInt() - 1]
+                pokemon[speciesId.toLong()]?.descriptions?.set(version, description)
             }
         }
 
@@ -139,7 +140,7 @@ class PokemonRepository(
 
             parseLines("csv/location_area_prose.csv") { line ->
                 val (locationAreaId, localLanguageId, name) = line.split(',')
-                locationsByAreaId[locationAreaId.toLong()]?.name = name
+                locationsByAreaId[locationAreaId.toLong()]?.area?.name = name
             }
 
             parseLines("csv/encounters.csv") { line ->

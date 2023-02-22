@@ -20,15 +20,14 @@ class PokemonRepositoryTest {
         val pokemonRepository = PokemonRepository(appContext)
 
         val pokemon = pokemonRepository.get(1)
-        println(pokemon)
 
         assertNotNull(pokemon)
         assertEquals("bulbasaur", pokemon?.identifier)
         assertEquals(Pair(Type.GRASS, Type.POISON), pokemon?.type)
         if (pokemon != null) {
-            assertFalse(pokemon.description.isBlank())
+            assertFalse(pokemon.descriptions.values.isEmpty())
             assertFalse(pokemon.genus.isBlank())
-            assertTrue(pokemon.evolvesInto?.speciesId == 2)
+            assertTrue(pokemon.evolvesInto?.evolvedSpeciesId == 2)
             assertNull(pokemon.evolvesFrom)
             assertTrue(pokemon.evolvesInto?.evolutionTrigger == EvolutionTrigger.LEVEL_UP)
             assertTrue(pokemon.evolvesInto?.minimumLevel == 16)
@@ -41,7 +40,6 @@ class PokemonRepositoryTest {
         val pokemonRepository = PokemonRepository(appContext, maxGeneration = Generation.GENERATION_I)
 
         val pokemon = pokemonRepository.getAll()
-        println(pokemon)
         assertFalse(pokemon.isEmpty())
         assertEquals(Generation.GENERATION_I.maxId, pokemon.size)
     }
