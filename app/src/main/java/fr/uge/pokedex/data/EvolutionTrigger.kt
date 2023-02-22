@@ -14,11 +14,5 @@ enum class EvolutionTrigger {
     AGILE_STYLE_MOVE,
     STRONG_STYLE_MOVE,
     RECOIL_DAMAGE,
-    UNDEFINED;
-
-    companion object {
-        fun getEvolutionTrigger(id: Int): EvolutionTrigger {
-            return EvolutionTrigger.values()[id - 1]
-        }
-    }
+    UNDEFINED
 }
