@@ -3,6 +3,7 @@ package fr.uge.pokedex.data
 import android.annotation.SuppressLint
 import android.content.Context
 import java.util.*
+import kotlin.collections.HashSet
 
 data class Pokemon(
     val id: Long,
@@ -13,9 +14,15 @@ data class Pokemon(
     var name: String = "",
     val descriptions: MutableMap<Version, String> = EnumMap(Version::class.java),
     var genus: String = "",
-    val locations: MutableSet<Location> = HashSet(),
+    val locations: MutableMap<Version, MutableSet<Location>> = EnumMap(Version::class.java),
     var evolvesFrom: Evolution? = null,
-    var evolvesInto: Evolution? = null
+    var evolvesInto: MutableSet<Evolution> = HashSet(),
+    var eggGroups: MutableSet<EggGroup> = HashSet(),
+    var baseExperience: Int = 0,
+    var captureRate: Int = 0,
+    var baseHappiness: Int = 50,
+    var hatchCounter: Int = 20,
+    var growRate: GrowRate = GrowRate.MEDIUM
 ) {
     @SuppressLint("DiscouragedApi")
     @Suppress("unused")

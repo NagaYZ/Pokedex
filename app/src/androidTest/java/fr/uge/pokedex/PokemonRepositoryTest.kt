@@ -2,10 +2,7 @@ package fr.uge.pokedex
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import fr.uge.pokedex.data.EvolutionTrigger
-import fr.uge.pokedex.data.Generation
-import fr.uge.pokedex.data.PokemonRepository
-import fr.uge.pokedex.data.Type
+import fr.uge.pokedex.data.*
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,10 +24,17 @@ class PokemonRepositoryTest {
         if (pokemon != null) {
             assertFalse(pokemon.descriptions.values.isEmpty())
             assertFalse(pokemon.genus.isBlank())
-            assertTrue(pokemon.evolvesInto?.evolvedSpeciesId == 2)
+            assertTrue(pokemon.evolvesInto.first().evolvedSpeciesId == 2)
             assertNull(pokemon.evolvesFrom)
-            assertTrue(pokemon.evolvesInto?.evolutionTrigger == EvolutionTrigger.LEVEL_UP)
-            assertTrue(pokemon.evolvesInto?.minimumLevel == 16)
+            assertTrue(pokemon.evolvesInto.first().evolutionTrigger == EvolutionTrigger.LEVEL_UP)
+            assertTrue(pokemon.evolvesInto.first().minimumLevel == 16)
+            assertTrue(pokemon.baseHappiness == 50)
+            assertTrue(pokemon.baseExperience == 64)
+            assertTrue(pokemon.eggGroups.contains(EggGroup.MONSTER))
+            assertTrue(pokemon.eggGroups.contains(EggGroup.PLANT))
+            assertTrue(pokemon.captureRate == 45)
+            assertTrue(pokemon.growRate == GrowRate.MEDIUM_SLOW)
+            assertTrue(pokemon.hatchCounter == 20)
         }
     }
 

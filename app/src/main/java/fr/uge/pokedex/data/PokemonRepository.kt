@@ -25,8 +25,18 @@ class PokemonRepository(
     @Suppress("UNUSED_VARIABLE")
     inner class PokemonParser {
 
-        // Custom operator to allow destructuring of list containing 5 elements
-        operator fun List<Any>.component6() = this[5]
+        // Custom operator to allow destructuring of list containing n elements
+        operator fun List<String>.component6() = this[5]
+        operator fun List<String>.component7() = this[6]
+        operator fun List<String>.component8() = this[7]
+        operator fun List<String>.component9() = this[8]
+        operator fun List<String>.component10() = this[9]
+        operator fun List<String>.component11() = this[10]
+        operator fun List<String>.component12() = this[11]
+        operator fun List<String>.component13() = this[12]
+        operator fun List<String>.component14() = this[13]
+        operator fun List<String>.component15() = this[14]
+        operator fun List<String>.component16() = this[15]
 
         fun loadData(): Map<Long, Pokemon> {
             val pokemon = getPokemonFromAssets().associateBy { it.id }
@@ -35,6 +45,7 @@ class PokemonRepository(
             setPokemonNameAndGenus(pokemon)
             setPokemonLocation(pokemon)
             setPokemonEvolutions(pokemon)
+            setPokemonEggGroups(pokemon)
             return pokemon
         }
 
@@ -54,12 +65,13 @@ class PokemonRepository(
             return reader.lineSequence().toList().slice(0 until maxGeneration.maxId)
                 .filter { it.isNotBlank() }
                 .map {
-                    val (id, identifier, _, height, weight, _) = it.split(',')
+                    val (id, identifier, _, height, weight, baseExperience, _) = it.split(',')
                     Pokemon(
                         id = id.toLong(),
                         identifier = identifier,
                         height = height.toInt(),
-                        weight = weight.toInt()
+                        weight = weight.toInt(),
+                        baseExperience = baseExperience.toInt()
                     )
                 }.toList()
         }
@@ -147,7 +159,9 @@ class PokemonRepository(
                 val (id, versionId, locationAreaId, encounterSlotId, pokemonId, _) = line.split(',')
                 val location = locationsByAreaId[locationAreaId.toLong()]
                 if(location != null) {
-                    pokemon[pokemonId.toLong()]?.locations?.add(location)
+                    val version = Version.values()[versionId.toInt() - 1]
+                    pokemon[pokemonId.toLong()]?.locations
+                        ?.getOrPut(version) { mutableSetOf() }?.add(location)
                 }
             }
         }
@@ -155,11 +169,21 @@ class PokemonRepository(
         private fun setPokemonEvolutions(pokemon: Map<Long, Pokemon>) {
             // First set up the lineage
             parseLines("csv/pokemon_species.csv") { line ->
-                val (id, identifier, generationId, evolvesFromSpeciesId, _) = line.split(',')
-                if (id.toInt() <= maxGeneration.maxId && evolvesFromSpeciesId.isNotBlank()) {
-                    val evolution = Evolution(evolvesFromSpeciesId.toInt(), id.toInt())
-                    pokemon[id.toLong()]?.evolvesFrom = evolution
-                    pokemon[evolvesFromSpeciesId.toLong()]?.evolvesInto = evolution
+                val (id, identifier, generationId, evolvesFromSpeciesId, evolutionChainId,
+                    colorId, shapeId, habitatId, genderRate, captureRate, baseHappiness, isBaby,
+                    hatchCounter, hasGenderDifferences, growthRateId, _) = line.split(',')
+
+                if (id.toInt() <= maxGeneration.maxId) {
+                    if(evolvesFromSpeciesId.isNotBlank()) {
+                        val evolution = Evolution(evolvesFromSpeciesId.toInt(), id.toInt())
+                        pokemon[id.toLong()]?.evolvesFrom = evolution
+                        pokemon[evolvesFromSpeciesId.toLong()]?.evolvesInto?.add(evolution)
+                    }
+
+                    pokemon[id.toLong()]?.captureRate = captureRate.toInt()
+                    pokemon[id.toLong()]?.baseHappiness = baseHappiness.toInt()
+                    pokemon[id.toLong()]?.hatchCounter = hatchCounter.toInt()
+                    pokemon[id.toLong()]?.growRate = GrowRate.values()[growthRateId.toInt() - 1]
                 }
             }
 
@@ -177,6 +201,14 @@ class PokemonRepository(
                             minimumLevel.toInt()
                     }
                 }
+            }
+        }
+
+        private fun setPokemonEggGroups(pokemon: Map<Long, Pokemon>) {
+            parseLines("csv/pokemon_egg_groups.csv") { line ->
+                val (speciesId, eggGroupId) = line.split(',')
+                val eggGroup = EggGroup.values()[eggGroupId.toInt() - 1]
+                pokemon[speciesId.toLong()]?.eggGroups?.add(eggGroup)
             }
         }
     }
