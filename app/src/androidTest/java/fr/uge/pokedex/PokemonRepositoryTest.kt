@@ -45,6 +45,19 @@ class PokemonRepositoryTest {
             assertTrue(pokemon.baseStats == baseStats)
             assertTrue(pokemon.abilities.first?.identifier == "overgrow")
             assertTrue(pokemon.abilities.hidden?.identifier == "chlorophyll")
+
+            val movesLearned = pokemon.movesLearned[VersionGroup.FIRERED_LEAFGREEN]?.map { it.move.identifier }
+            assertTrue(movesLearned?.containsAll(listOf("tackle", "growl", "leech-seed", "vine-whip"))!!)
+
+            val tackle = pokemon.movesLearned[VersionGroup.FIRERED_LEAFGREEN]?.find { it.move.identifier == "tackle" }!!
+            assertTrue(tackle.level == 1)
+            assertTrue(tackle.method == MoveMethod.LEVEL_UP)
+            assertTrue(tackle.move.type == Type.NORMAL)
+            assertTrue(tackle.move.damageClass == DamageClass.PHYSICAL)
+            assertTrue(tackle.move.generation == Generation.GENERATION_I)
+            assertTrue(tackle.move.pp == 35)
+            assertTrue(tackle.move.power == 40)
+            assertTrue(tackle.move.accuracy == 100)
         }
     }
 

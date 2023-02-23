@@ -23,7 +23,8 @@ data class Pokemon(
     var hatchCounter: Int = 20, // number of cycles (steps) for an egg to hatch
     var growRate: GrowRate = GrowRate.MEDIUM,
     val baseStats: Stats = Stats(),
-    val abilities: Abilities = Abilities()
+    val abilities: Abilities = Abilities(),
+    val movesLearned: MutableMap<VersionGroup, MutableSet<MoveLearned>> = EnumMap(VersionGroup::class.java)
 ) {
 
     @SuppressLint("DiscouragedApi")

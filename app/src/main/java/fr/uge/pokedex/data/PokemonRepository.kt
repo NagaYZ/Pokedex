@@ -38,6 +38,7 @@ class PokemonRepository(
             setPokemonEggGroups(pokemon)
             setPokemonBaseStats(pokemon)
             setPokemonAbilities(pokemon)
+            setPokemonMoves(pokemon)
             return pokemon
         }
 
@@ -49,31 +50,20 @@ class PokemonRepository(
             }
         }
 
-        // Implementation using no external library
-        @Suppress("UNUSED")
-        private fun parseLines2(filename: String, action: (String) -> Unit) {
-            val reader = context.assets.open(filename).bufferedReader()
-            @Suppress("UNUSED_VARIABLE") val header = reader.readLine()
-
-            reader.lineSequence().toList().filter { it.isNotBlank() }.forEach(action)
-        }
-
-        @Suppress("UNUSED_VARIABLE")
         private fun getPokemonFromAssets(): List<Pokemon> {
-            val reader = context.assets.open("csv/pokemon.csv").bufferedReader()
-            val header = reader.readLine()
-
-            return reader.lineSequence().toList().slice(0 until maxGeneration.maxId)
-                .filter { it.isNotBlank() }.map {
-                    val (id, identifier, _, height, weight, baseExperience) = it.split(',')
-                    Pokemon(
-                        id = id.toLong(),
-                        identifier = identifier,
-                        height = height.toInt(),
-                        weight = weight.toInt(),
-                        baseExperience = baseExperience.toInt()
+            return csvReader().open(context.assets.open("csv/pokemon.csv")) {
+                return@open readAllWithHeaderAsSequence().map { row ->
+                    return@map Pokemon(
+                        id = row["id"]?.toLong()!!,
+                        identifier = row["identifier"]!!,
+                        height = row["height"]?.toInt()!!,
+                        weight = row["weight"]?.toInt()!!,
+                        baseExperience = if (row["base_experience"]?.isNotBlank()!!)
+                            row["base_experience"]?.toInt()!!
+                        else 0
                     )
                 }.toList()
+            }
         }
 
         private fun setPokemonType(pokemon: Map<Long, Pokemon>) {
@@ -266,6 +256,64 @@ class PokemonRepository(
                     2 -> pokemon[pokemonId]?.abilities?.second = ability
                     3 -> pokemon[pokemonId]?.abilities?.hidden = ability
                 }
+            }
+        }
+
+
+        // Takes too long to run because of the file size
+        private fun setPokemonMoves(pokemon: Map<Long, Pokemon>) {
+            val moves = HashMap<Long, Move>()
+
+            parseLines("csv/moves.csv") { row ->
+                val id = row["id"]?.toLong()!!
+
+                // Ignores spin-off moves
+                val identifier = row["identifier"]!!
+                val generation = Generation.values()[row["generation_id"]?.toInt()!! - 1]
+                val type = when(val typeId = row["type_id"]?.toInt()!!) {
+                    10001 -> Type.SHADOW
+                    10002 -> Type.UNKNOWN
+                    else -> Type.values()[typeId - 1]
+                }
+                val power = row["power"]?.toIntOrNull() ?: 0
+                val pp = row["pp"]?.toIntOrNull() ?: 0
+                val priority = row["priority"]?.toIntOrNull() ?: 0
+                val damageClass = DamageClass.values()[row["damage_class_id"]?.toInt()!! - 1]
+                val accuracy = row["accuracy"]?.toIntOrNull() ?: 0
+
+                moves[id] = Move(
+                    id = id,
+                    identifier = identifier,
+                    generation = generation,
+                    type = type,
+                    power = power,
+                    pp = pp,
+                    priority = priority,
+                    damageClass = damageClass,
+                    accuracy = accuracy
+                )
+            }
+
+            parseLines("csv/move_flavor_text.csv") { row ->
+                val moveId = row["move_id"]?.toLong()!!
+                val localLanguage = Language.values()[row["language_id"]?.toInt()!! - 1]
+                val versionGroup = VersionGroup.values()[row["version_group_id"]?.toInt()!! - 1]
+                val flavorText = row["flavor_text"]?.removeSurrounding("\"")!!
+                if(localLanguage == languageData) {
+                    moves[moveId]?.descriptions?.set(versionGroup, flavorText)
+                }
+            }
+
+            parseLines("csv/pokemon_moves.csv") { row ->
+                val pokemonId = row["pokemon_id"]?.toLong()!!
+                val moveId = row["move_id"]?.toLong()!!
+                val versionGroup = VersionGroup.values()[row["version_group_id"]?.toInt()!! - 1]
+                val moveMethod = MoveMethod.values()[row["pokemon_move_method_id"]?.toInt()!! - 1]
+                val level = row["level"]?.toInt()!!
+
+                val move = moves[moveId]!!
+                val moveLearned = MoveLearned(move = move, level = level, method = moveMethod)
+                pokemon[pokemonId]?.movesLearned?.getOrPut(versionGroup) { mutableSetOf() }?.add(moveLearned)
             }
         }
     }
