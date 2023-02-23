@@ -3,7 +3,6 @@ package fr.uge.pokedex.data
 import android.annotation.SuppressLint
 import android.content.Context
 import java.util.*
-import kotlin.collections.HashSet
 
 data class Pokemon(
     val id: Long,
@@ -23,8 +22,10 @@ data class Pokemon(
     var baseHappiness: Int = 50, // 0 to 255
     var hatchCounter: Int = 20, // number of cycles (steps) for an egg to hatch
     var growRate: GrowRate = GrowRate.MEDIUM,
-    val baseStats: Stats = Stats()
+    val baseStats: Stats = Stats(),
+    val abilities: Abilities = Abilities()
 ) {
+
     @SuppressLint("DiscouragedApi")
     @Suppress("unused")
     fun getSprite(context: Context): Int {

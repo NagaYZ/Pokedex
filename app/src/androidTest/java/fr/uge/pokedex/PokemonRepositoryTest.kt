@@ -43,6 +43,8 @@ class PokemonRepositoryTest {
                 speed = 45
             )
             assertTrue(pokemon.baseStats == baseStats)
+            assertTrue(pokemon.abilities.first?.identifier == "overgrow")
+            assertTrue(pokemon.abilities.hidden?.identifier == "chlorophyll")
         }
     }
 

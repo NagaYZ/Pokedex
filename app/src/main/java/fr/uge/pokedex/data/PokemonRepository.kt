@@ -27,16 +27,6 @@ class PokemonRepository(
 
         // Custom operator to allow destructuring of list containing n elements
         operator fun List<String>.component6() = this[5]
-        operator fun List<String>.component7() = this[6]
-        operator fun List<String>.component8() = this[7]
-        operator fun List<String>.component9() = this[8]
-        operator fun List<String>.component10() = this[9]
-        operator fun List<String>.component11() = this[10]
-        operator fun List<String>.component12() = this[11]
-        operator fun List<String>.component13() = this[12]
-        operator fun List<String>.component14() = this[13]
-        operator fun List<String>.component15() = this[14]
-        operator fun List<String>.component16() = this[15]
 
         fun loadData(): Map<Long, Pokemon> {
             val pokemon = getPokemonFromAssets().associateBy { it.id }
@@ -47,23 +37,25 @@ class PokemonRepository(
             setPokemonEvolutions(pokemon)
             setPokemonEggGroups(pokemon)
             setPokemonBaseStats(pokemon)
+            setPokemonAbilities(pokemon)
             return pokemon
-        }
-
-        @Suppress("UNUSED_VARIABLE")
-        private fun parseLines(filename: String, action: (String) -> Unit) {
-            val reader = context.assets.open(filename).bufferedReader()
-            val header = reader.readLine()
-
-            reader.lineSequence().toList().filter { it.isNotBlank() }.forEach(action)
         }
 
         // Implemented with csv-kotlin lib, used for multiline value or when parsing file with
         // too many columns
-        private fun parseLines2(filename: String, action: (Map<String, String>) -> Unit) {
+        private fun parseLines(filename: String, action: (Map<String, String>) -> Unit) {
             csvReader().open(context.assets.open(filename)) {
-                    readAllWithHeaderAsSequence().forEach(action)
-                }
+                readAllWithHeaderAsSequence().forEach(action)
+            }
+        }
+
+        // Implementation using no external library
+        @Suppress("UNUSED")
+        private fun parseLines2(filename: String, action: (String) -> Unit) {
+            val reader = context.assets.open(filename).bufferedReader()
+            @Suppress("UNUSED_VARIABLE") val header = reader.readLine()
+
+            reader.lineSequence().toList().filter { it.isNotBlank() }.forEach(action)
         }
 
         @Suppress("UNUSED_VARIABLE")
@@ -85,13 +77,14 @@ class PokemonRepository(
         }
 
         private fun setPokemonType(pokemon: Map<Long, Pokemon>) {
-            parseLines("csv/pokemon_types.csv") { line ->
-                val (pokemonId, typeId, slot) = line.split(',')
-                if (pokemonId.toInt() > maxGeneration.maxId) return@parseLines
+            parseLines("csv/pokemon_types.csv") { row ->
+                val pokemonId = row["pokemon_id"]?.toLong()!!
+                val type = Type.values()[row["type_id"]?.toInt()!! - 1]
+                val slot = row["slot"]?.toInt()!!
 
-                val type = Type.values()[typeId.toInt() - 1]
-                val currentPokemon = pokemon[pokemonId.toLong()]
-                when (slot.toInt()) {
+                if (pokemonId > maxGeneration.maxId) return@parseLines
+                val currentPokemon = pokemon[pokemonId]
+                when (slot) {
                     1 -> currentPokemon?.type = currentPokemon?.type?.copy(first = type)!!
                     2 -> currentPokemon?.type = currentPokemon?.type?.copy(second = type)!!
                 }
@@ -99,7 +92,7 @@ class PokemonRepository(
         }
 
         private fun setPokemonDescription(pokemon: Map<Long, Pokemon>) {
-            parseLines2("csv/pokemon_species_flavor_text.csv") { row ->
+            parseLines("csv/pokemon_species_flavor_text.csv") { row ->
                 val speciesId = row["species_id"]!!
                 val versionId = row["version_id"]!!
                 val languageId = row["language_id"]!!
@@ -114,11 +107,14 @@ class PokemonRepository(
 
 
         private fun setPokemonNameAndGenus(pokemon: Map<Long, Pokemon>) {
-            parseLines("csv/pokemon_species_names.csv") { line ->
-                val (speciesId, languageId, name, genus) = line.split(',')
-                if (speciesId.toInt() <= maxGeneration.maxId && Language.values()[languageId.toInt() - 1] == languageData) {
-                    pokemon[speciesId.toLong()]?.name = name
-                    pokemon[speciesId.toLong()]?.genus = genus
+            parseLines("csv/pokemon_species_names.csv") { row ->
+                val speciesId = row["pokemon_species_id"]?.toLong()!!
+                val localLanguage = Language.values()[row["local_language_id"]?.toInt()!! - 1]
+                val name = row["name"]!!
+                val genus = row["genus"]!!
+                if (speciesId <= maxGeneration.maxId && localLanguage == languageData) {
+                    pokemon[speciesId]?.name = name
+                    pokemon[speciesId]?.genus = genus
                 }
             }
         }
@@ -126,38 +122,44 @@ class PokemonRepository(
         private fun setPokemonLocation(pokemon: Map<Long, Pokemon>) {
             val locations = HashMap<Long, Location>()
 
-            parseLines("csv/locations.csv") { line ->
-                val (id, regionId) = line.split(',')
-                val region =
-                    if (regionId.isBlank()) Region.UNKNOWN else Region.values()[regionId.toInt() - 1]
-                locations[id.toLong()] = Location(id.toLong(), region = region)
+            parseLines("csv/locations.csv") { row ->
+                val id = row["id"]?.toLong()!!
+                val region = if (row["region_id"]?.isBlank()!!) Region.UNKNOWN
+                else Region.values()[row["region_id"]?.toInt()!! - 1]
+                locations[id] = Location(id, region = region)
             }
 
-            parseLines("csv/location_names.csv") { line ->
-                val (locationId, localLanguageId, name) = line.split(',')
-                if (languageData == Language.values()[localLanguageId.toInt() - 1]) {
-                    locations[locationId.toLong()]?.name = name
+            parseLines("csv/location_names.csv") { row ->
+                val locationId = row["location_id"]?.toLong()!!
+                val localLanguage = Language.values()[row["local_language_id"]?.toInt()!! - 1]
+                val name = row["name"]!!
+
+                if (languageData == localLanguage) {
+                    locations[locationId]?.name = name
                 }
             }
 
-            parseLines("csv/location_areas.csv") { line ->
-                val (id, locationId) = line.split(',')
-                locations[locationId.toLong()]?.area = Area(id.toLong())
+            parseLines("csv/location_areas.csv") { row ->
+                val id = row["id"]?.toLong()!!
+                val locationId = row["location_id"]?.toLong()!!
+                locations[locationId]?.area = Area(id)
             }
 
             val locationsByAreaId = locations.values.associateBy { it.area?.id }
 
-            parseLines("csv/location_area_prose.csv") { line ->
-                val (locationAreaId, _, name) = line.split(',')
-                locationsByAreaId[locationAreaId.toLong()]?.area?.name = name
+            parseLines("csv/location_area_prose.csv") { row ->
+                val locationAreaId = row["location_area_id"]?.toLong()!!
+                val name = row["name"]!!
+                locationsByAreaId[locationAreaId]?.area?.name = name
             }
 
-            parseLines("csv/encounters.csv") { line ->
-                val (_, versionId, locationAreaId, _, pokemonId, _) = line.split(',')
-                val location = locationsByAreaId[locationAreaId.toLong()]
+            parseLines("csv/encounters.csv") { row ->
+                val version = Version.values()[row["version_id"]?.toInt()!! - 1]
+                val locationAreaId = row["location_area_id"]?.toLong()!!
+                val pokemonId = row["pokemon_id"]?.toLong()!!
+                val location = locationsByAreaId[locationAreaId]
                 if (location != null) {
-                    val version = Version.values()[versionId.toInt() - 1]
-                    pokemon[pokemonId.toLong()]?.locations?.getOrPut(version) { mutableSetOf() }
+                    pokemon[pokemonId]?.locations?.getOrPut(version) { mutableSetOf() }
                         ?.add(location)
                 }
             }
@@ -165,7 +167,7 @@ class PokemonRepository(
 
         private fun setPokemonEvolutions(pokemon: Map<Long, Pokemon>) {
             // First set up the lineage
-            parseLines2("csv/pokemon_species.csv") { row ->
+            parseLines("csv/pokemon_species.csv") { row ->
                 val id = row["id"]!!
                 val evolvesFromSpeciesId = row["evolves_from_species_id"]!!
                 val captureRate = row["capture_rate"]!!
@@ -188,39 +190,81 @@ class PokemonRepository(
             }
 
             // Then add the evolution triggers
-            parseLines("csv/pokemon_evolution.csv") { line ->
-                val (_, evolvedSpeciesId, evolutionTriggerId, _, minimumLevel) = line.split(',')
-
+            parseLines("csv/pokemon_evolution.csv") { row ->
+                val evolvedSpeciesId = row["evolved_species_id"]?.toLong()!!
+                val evolutionTrigger =
+                    EvolutionTrigger.values()[row["evolution_trigger_id"]?.toInt()!! - 1]
+                val minimumLevel = row["minimum_level"]!!
                 if (evolvedSpeciesId.toInt() <= maxGeneration.maxId) {
-                    val evolutionTrigger = EvolutionTrigger.values()[evolutionTriggerId.toInt() - 1]
-                    pokemon[evolvedSpeciesId.toLong()]?.evolvesFrom?.evolutionTrigger =
-                        evolutionTrigger
+                    pokemon[evolvedSpeciesId]?.evolvesFrom?.evolutionTrigger = evolutionTrigger
                     if (evolutionTrigger == EvolutionTrigger.LEVEL_UP && minimumLevel.isNotBlank()) {
-                        pokemon[evolvedSpeciesId.toLong()]?.evolvesFrom?.minimumLevel =
-                            minimumLevel.toInt()
+                        pokemon[evolvedSpeciesId]?.evolvesFrom?.minimumLevel = minimumLevel.toInt()
                     }
                 }
             }
         }
 
         private fun setPokemonEggGroups(pokemon: Map<Long, Pokemon>) {
-            parseLines("csv/pokemon_egg_groups.csv") { line ->
-                val (speciesId, eggGroupId) = line.split(',')
-                val eggGroup = EggGroup.values()[eggGroupId.toInt() - 1]
-                pokemon[speciesId.toLong()]?.eggGroups?.add(eggGroup)
+            parseLines("csv/pokemon_egg_groups.csv") { row ->
+                val speciesId = row["species_id"]?.toLong()!!
+                val eggGroup = EggGroup.values()[row["egg_group_id"]?.toInt()!! - 1]
+                pokemon[speciesId]?.eggGroups?.add(eggGroup)
             }
         }
 
         private fun setPokemonBaseStats(pokemon: Map<Long, Pokemon>) {
-            parseLines("csv/pokemon_stats.csv") { line ->
-                val (pokemonId, statId, baseStat) = line.split(',')
-                when (statId.toInt()) {
-                    1 -> pokemon[pokemonId.toLong()]?.baseStats?.hp = baseStat.toInt()
-                    2 -> pokemon[pokemonId.toLong()]?.baseStats?.attack = baseStat.toInt()
-                    3 -> pokemon[pokemonId.toLong()]?.baseStats?.defense = baseStat.toInt()
-                    4 -> pokemon[pokemonId.toLong()]?.baseStats?.specialAttack = baseStat.toInt()
-                    5 -> pokemon[pokemonId.toLong()]?.baseStats?.specialDefense = baseStat.toInt()
-                    6 -> pokemon[pokemonId.toLong()]?.baseStats?.speed = baseStat.toInt()
+            parseLines("csv/pokemon_stats.csv") { row ->
+                val pokemonId = row["pokemon_id"]?.toLong()!!
+                val stat = Stat.values()[row["stat_id"]?.toInt()!! - 1]
+                val baseStat = row["base_stat"]?.toInt()!!
+                when (stat) {
+                    Stat.HP -> pokemon[pokemonId]?.baseStats?.hp = baseStat
+                    Stat.ATTACK -> pokemon[pokemonId]?.baseStats?.attack = baseStat
+                    Stat.DEFENSE -> pokemon[pokemonId]?.baseStats?.defense = baseStat
+                    Stat.SPECIAL_ATTACK -> pokemon[pokemonId]?.baseStats?.specialAttack = baseStat
+                    Stat.SPECIAL_DEFENSE -> pokemon[pokemonId]?.baseStats?.specialDefense = baseStat
+                    Stat.SPEED -> pokemon[pokemonId]?.baseStats?.speed = baseStat
+                }
+            }
+        }
+
+        private fun setPokemonAbilities(pokemon: Map<Long, Pokemon>) {
+            val abilities = HashMap<Long, Ability>()
+            parseLines("csv/abilities.csv") { row ->
+                val id = row["id"]?.toLong()!!
+                val identifier = row["identifier"]!!
+                val generation = Generation.values()[row["generation_id"]?.toInt()!! - 1]
+                abilities[id] = Ability(id = id, identifier = identifier, generation = generation)
+            }
+
+            parseLines("csv/ability_names.csv") { row ->
+                val id = row["ability_id"]?.toLong()!!
+                val localLanguage = Language.values()[row["local_language_id"]?.toInt()!! - 1]
+                val name = row["name"]!!
+                if(localLanguage == languageData) {
+                    abilities[id]?.name = name
+                }
+            }
+
+            parseLines("csv/ability_flavor_text.csv") { row ->
+                val id = row["ability_id"]?.toLong()!!
+                val localLanguage = Language.values()[row["language_id"]?.toInt()!! - 1]
+                val versionGroup = VersionGroup.values()[row["version_group_id"]?.toInt()!! - 1]
+                val flavorText = row["flavor_text"]!!
+                if(localLanguage == languageData) {
+                    abilities[id]?.descriptions?.set(versionGroup, flavorText)
+                }
+            }
+
+            parseLines("csv/pokemon_abilities.csv") { row ->
+                val pokemonId = row["pokemon_id"]?.toLong()!!
+                val abilityId = row["ability_id"]?.toLong()!!
+                val slot = row["slot"]?.toInt()!!
+                val ability = abilities[abilityId]
+                when(slot) {
+                    1 -> pokemon[pokemonId]?.abilities?.first = ability
+                    2 -> pokemon[pokemonId]?.abilities?.second = ability
+                    3 -> pokemon[pokemonId]?.abilities?.hidden = ability
                 }
             }
         }
