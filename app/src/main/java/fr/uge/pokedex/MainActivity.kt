@@ -10,6 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -19,6 +22,8 @@ import fr.uge.pokedex.components.NavigationGraph
 import fr.uge.pokedex.components.Route
 import fr.uge.pokedex.components.TopBar
 import fr.uge.pokedex.data.PokemonRepository
+import fr.uge.pokedex.database.PokedexAppDatabaseConnection
+import fr.uge.pokedex.database.Profile
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,6 +31,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        PokedexAppDatabaseConnection.initialise(applicationContext)
         pokemonRepository = PokemonRepository(applicationContext)
 
         setContent {
@@ -40,12 +47,12 @@ class MainActivity : ComponentActivity() {
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = currentBackStackEntry?.destination?.route
 
-//                    var currentProfile by remember { mutableStateOf(ProfilesService.getCurrentProfile()) }
+                    var currentProfile by remember { mutableStateOf(Profile("")) }
 
                     Scaffold(bottomBar = { if(currentRoute != Route.Profiles.path) BottomNavigationMenu(navController)},
-                        topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController)  }) {
+                        topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController, currentProfile)  }) {
                         Log.d("Padding",it.toString())
-                        NavigationGraph(navController = navController)
+                        NavigationGraph(navController = navController, setCurrentProfile = {profile: Profile -> currentProfile = profile })
                     }
                 }
 
