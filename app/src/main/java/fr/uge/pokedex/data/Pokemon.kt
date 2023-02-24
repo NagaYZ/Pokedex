@@ -12,9 +12,9 @@ data class Pokemon(
     val weight: Int, // unit is 1/10th of a kilogram, ex: 69 = 6.9kg
     var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE),
     var name: String = "",
-    val descriptions: MutableMap<Version, String> = EnumMap(Version::class.java),
+    val pokedexEntries: MutableSet<FlavorText> = HashSet(),
     var genus: String = "",
-    val locations: MutableMap<Version, MutableSet<Location>> = EnumMap(Version::class.java),
+    val encounters: MutableSet<Encounter> = HashSet(),
     var evolvesFrom: Evolution? = null,
     var evolvesInto: MutableSet<Evolution> = HashSet(),
     var eggGroups: MutableSet<EggGroup> = HashSet(),
@@ -23,9 +23,9 @@ data class Pokemon(
     var baseHappiness: Int = 50, // 0 to 255
     var hatchCounter: Int = 20, // number of cycles (steps) for an egg to hatch
     var growRate: GrowRate = GrowRate.MEDIUM,
-    val baseStats: Stats = Stats(),
+    val baseStats: BaseStats = BaseStats(),
     val abilities: Abilities = Abilities(),
-    val movesLearned: MutableSet<MoveLearned> = HashSet()
+    val learnSet: MutableSet<LearnableMove> = HashSet()
 ) {
 
     @SuppressLint("DiscouragedApi")

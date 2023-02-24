@@ -1,6 +1,6 @@
 package fr.uge.pokedex.data
 
-data class Stats(
+data class BaseStats(
     var hp: Int = 0,
     var attack: Int = 0,
     var defense: Int = 0,

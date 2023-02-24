@@ -1,6 +1,6 @@
 package fr.uge.pokedex.data
 
-enum class MoveMethod {
+enum class MoveLearnMethod {
     LEVEL_UP,
     EGG,
     TUTOR,

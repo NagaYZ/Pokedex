@@ -1,7 +1,7 @@
 package fr.uge.pokedex.data
 
-data class MoveLearned(
+data class LearnableMove(
     val move: Move,
-    val method: MoveMethod,
+    val method: MoveLearnMethod,
     val level: Int
 )

@@ -33,7 +33,7 @@ class PokemonRepositoryTest {
             assertTrue(pokemon.growRate == GrowRate.MEDIUM_SLOW)
             assertTrue(pokemon.hatchCounter == 20)
 
-            val baseStats = Stats(
+            val baseStats = BaseStats(
                 hp = 45,
                 attack = 49,
                 defense = 49,
@@ -43,17 +43,17 @@ class PokemonRepositoryTest {
             )
             assertTrue(pokemon.baseStats == baseStats)
 
-            assertFalse(pokemon.descriptions.values.isEmpty())
+            assertFalse(pokemon.pokedexEntries.isEmpty())
 
             assertTrue(pokemon.abilities.first?.identifier == "overgrow")
             assertTrue(pokemon.abilities.hidden?.identifier == "chlorophyll")
 
-            val movesLearned = pokemon.movesLearned.map { it.move.identifier }
+            val movesLearned = pokemon.learnSet.map { it.move.identifier }
             assertTrue(movesLearned.containsAll(listOf("tackle", "growl", "leech-seed", "vine-whip")))
 
-            val tackle = pokemon.movesLearned.find { it.move.identifier == "tackle" }!!
+            val tackle = pokemon.learnSet.find { it.move.identifier == "tackle" }!!
             assertTrue(tackle.level == 1)
-            assertTrue(tackle.method == MoveMethod.LEVEL_UP)
+            assertTrue(tackle.method == MoveLearnMethod.LEVEL_UP)
             assertTrue(tackle.move.type == Type.NORMAL)
             assertTrue(tackle.move.damageClass == DamageClass.PHYSICAL)
             assertTrue(tackle.move.generation == Generation.GENERATION_I)
