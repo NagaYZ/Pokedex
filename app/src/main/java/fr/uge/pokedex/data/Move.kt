@@ -4,6 +4,7 @@ import java.util.EnumMap
 
 data class Move(
     val id: Long,
+    var name: String = "",
     val identifier: String,
     val generation: Generation,
     val type: Type,

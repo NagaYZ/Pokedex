@@ -20,7 +20,6 @@ class PokemonRepositoryTest {
         assertEquals("bulbasaur", pokemon?.identifier)
         assertEquals(Pair(Type.GRASS, Type.POISON), pokemon?.type)
         if (pokemon != null) {
-            assertFalse(pokemon.descriptions.values.isEmpty())
             assertFalse(pokemon.genus.isBlank())
             assertTrue(pokemon.evolvesInto.first().evolvedSpeciesId == 2)
             assertNull(pokemon.evolvesFrom)
@@ -43,8 +42,11 @@ class PokemonRepositoryTest {
                 speed = 45
             )
             assertTrue(pokemon.baseStats == baseStats)
+
             assertTrue(pokemon.abilities.first?.identifier == "overgrow")
             assertTrue(pokemon.abilities.hidden?.identifier == "chlorophyll")
+
+            assertFalse(pokemon.descriptions.values.isEmpty())
 
             val movesLearned = pokemon.movesLearned[VersionGroup.FIRERED_LEAFGREEN]?.map { it.move.identifier }
             assertTrue(movesLearned?.containsAll(listOf("tackle", "growl", "leech-seed", "vine-whip"))!!)
@@ -65,10 +67,9 @@ class PokemonRepositoryTest {
     fun testGetAll() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         val pokemonRepository =
-            PokemonRepository(appContext, maxGeneration = Generation.GENERATION_I)
+            PokemonRepository(appContext)
 
         val pokemon = pokemonRepository.getAll()
         assertFalse(pokemon.isEmpty())
-        assertEquals(Generation.GENERATION_I.maxId, pokemon.size)
     }
 }
