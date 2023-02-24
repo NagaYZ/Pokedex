@@ -284,13 +284,12 @@ class PokemonRepository(
             parseLines("csv/core/pokemon_moves.csv") { row ->
                 val pokemonId = row["pokemon_id"]?.toLong()!!
                 val moveId = row["move_id"]?.toLong()!!
-                val versionGroup = VersionGroup.values()[row["version_group_id"]?.toInt()!! - 1]
                 val moveMethod = MoveMethod.values()[row["pokemon_move_method_id"]?.toInt()!! - 1]
                 val level = row["level"]?.toInt()!!
 
                 val move = moves[moveId]!!
                 val moveLearned = MoveLearned(move = move, level = level, method = moveMethod)
-                pokemon[pokemonId]?.movesLearned?.getOrPut(versionGroup) { mutableSetOf() }?.add(moveLearned)
+                pokemon[pokemonId]?.movesLearned?.add(moveLearned)
             }
         }
     }

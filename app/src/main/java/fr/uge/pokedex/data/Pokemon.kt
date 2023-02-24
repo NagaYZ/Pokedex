@@ -3,6 +3,7 @@ package fr.uge.pokedex.data
 import android.annotation.SuppressLint
 import android.content.Context
 import java.util.*
+import kotlin.collections.HashSet
 
 data class Pokemon(
     val id: Long,
@@ -24,7 +25,7 @@ data class Pokemon(
     var growRate: GrowRate = GrowRate.MEDIUM,
     val baseStats: Stats = Stats(),
     val abilities: Abilities = Abilities(),
-    val movesLearned: MutableMap<VersionGroup, MutableSet<MoveLearned>> = EnumMap(VersionGroup::class.java)
+    val movesLearned: MutableSet<MoveLearned> = HashSet()
 ) {
 
     @SuppressLint("DiscouragedApi")

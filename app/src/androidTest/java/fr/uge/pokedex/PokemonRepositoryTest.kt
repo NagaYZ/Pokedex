@@ -43,15 +43,15 @@ class PokemonRepositoryTest {
             )
             assertTrue(pokemon.baseStats == baseStats)
 
+            assertFalse(pokemon.descriptions.values.isEmpty())
+
             assertTrue(pokemon.abilities.first?.identifier == "overgrow")
             assertTrue(pokemon.abilities.hidden?.identifier == "chlorophyll")
 
-            assertFalse(pokemon.descriptions.values.isEmpty())
+            val movesLearned = pokemon.movesLearned.map { it.move.identifier }
+            assertTrue(movesLearned.containsAll(listOf("tackle", "growl", "leech-seed", "vine-whip")))
 
-            val movesLearned = pokemon.movesLearned[VersionGroup.FIRERED_LEAFGREEN]?.map { it.move.identifier }
-            assertTrue(movesLearned?.containsAll(listOf("tackle", "growl", "leech-seed", "vine-whip"))!!)
-
-            val tackle = pokemon.movesLearned[VersionGroup.FIRERED_LEAFGREEN]?.find { it.move.identifier == "tackle" }!!
+            val tackle = pokemon.movesLearned.find { it.move.identifier == "tackle" }!!
             assertTrue(tackle.level == 1)
             assertTrue(tackle.method == MoveMethod.LEVEL_UP)
             assertTrue(tackle.move.type == Type.NORMAL)
