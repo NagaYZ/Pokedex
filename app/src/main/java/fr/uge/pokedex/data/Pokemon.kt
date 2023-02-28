@@ -1,46 +1,42 @@
 package fr.uge.pokedex.data
 
+import android.annotation.SuppressLint
 import android.content.Context
+import java.util.*
+import kotlin.collections.HashSet
 
 data class Pokemon(
     val id: Long,
     val identifier: String,
-    val type: Pair<Type, Type>,
-    val height: Int,
-    val weight: Int,
-    var name: String,
-    val description: String,
-    val genus: String
+    val height: Int, // unit is 1/10th of a meter, ex: 7 = 0.7m
+    val weight: Int, // unit is 1/10th of a kilogram, ex: 69 = 6.9kg
+    var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE),
+    var name: String = "",
+    val pokedexEntries: MutableSet<FlavorText> = HashSet(),
+    var genus: String = "",
+    val encounters: MutableSet<Encounter> = HashSet(),
+    var evolvesFrom: Evolution? = null,
+    var evolvesInto: MutableSet<Evolution> = HashSet(),
+    var eggGroups: MutableSet<EggGroup> = HashSet(),
+    var baseExperience: Int = 0,
+    var captureRate: Int = 0, // 0 to 255
+    var baseHappiness: Int = 50, // 0 to 255
+    var hatchCounter: Int = 20, // number of cycles (steps) for an egg to hatch
+    var growRate: GrowRate = GrowRate.MEDIUM,
+    val baseStats: BaseStats = BaseStats(),
+    val abilities: Abilities = Abilities(),
+    val learnSet: MutableSet<LearnableMove> = HashSet()
 ) {
+
+    @SuppressLint("DiscouragedApi")
+    @Suppress("unused")
     fun getSprite(context: Context): Int {
         return context.resources.getIdentifier("pokemon_$id", "drawable", context.packageName)
     }
 
+    @SuppressLint("DiscouragedApi")
+    @Suppress("unused")
     fun getIcon(context: Context): Int {
         return context.resources.getIdentifier("icon_pkm_$id", "drawable", context.packageName)
-    }
-
-    class Builder {
-        var id: Long? = null
-        var identifier: String? = null
-        var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE)
-        var height: Int? = null
-        var weight: Int? = null
-        var name: String? = null
-        var description: String? = null
-        var genus: String? = null
-
-        fun id(id: Long) = apply { this.id = id }
-        fun identifier(identifier: String) = apply { this.identifier = identifier }
-        fun firstType(type: Type) = apply { this.type = this.type.copy(first = type) }
-        fun secondType(type: Type) = apply { this.type = this.type.copy(second = type) }
-        fun height(height: Int) = apply { this.height = height }
-        fun weight(weight: Int) = apply { this.weight = weight }
-        fun name(name: String) = apply { this.name = name }
-        fun description(description: String) = apply { this.description = description }
-        fun genus(genus: String) = apply { this.genus = genus }
-
-        fun build() = Pokemon(id!!, identifier!!, type, height!!, weight!!, name!!,
-                description!!, genus!!)
     }
 }

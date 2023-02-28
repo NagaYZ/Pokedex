@@ -21,11 +21,5 @@ enum class Type {
     FAIRY,
     UNKNOWN,
     SHADOW,
-    NONE;
-
-    companion object {
-        fun getType(id : Int): Type {
-            return Type.values()[id - 1]
-        }
-    }
+    NONE
 }
