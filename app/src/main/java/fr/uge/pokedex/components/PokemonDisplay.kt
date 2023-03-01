@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -35,21 +36,27 @@ fun PokemonBoxDisplay(
     onClick: () ->  Unit = {},
     onClickFavorite: () -> Unit = {}
 ) {
+
     Column(
         modifier = Modifier
+            .fillMaxWidth()
             .clickable(onClick = onClick)
             .width(180.dp)
             .background(MaterialTheme.colors.background)
-            .padding(8.dp),
+            .padding(25.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
+
         PokemonSprite(spriteResource = pokemon.getSprite(context))
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.padding(vertical = 4.dp)
+            modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth()
         ) {
+
             PokemonBoxTitle(name = pokemon.name)
+
             Spacer(modifier = Modifier.width(3.dp))
             Text(
                 text = "#${pokemon.id.toString().padStart(3, '0')}",
@@ -57,10 +64,14 @@ fun PokemonBoxDisplay(
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center
             )
+
+            FavoriteButton(onClick = onClickFavorite)
         }
         PokemonTypeDisplay(type = pokemon.type)
+
+        PokemonBoxDescription(description = pokemon.description)
     }
-    FavoriteButton(onClick = onClickFavorite)
+
 }
 
 @Composable
@@ -80,13 +91,12 @@ private fun PokemonSprite(spriteResource: Int) {
 fun PokemonListDisplay(
     pokemon: Pokemon,
     context: Context,
-    onClick: () ->  Unit = {},
+    onClick: () ->  Unit  ,
     onClickFavorite: () -> Unit = {}
 ) {
     Row(
         Modifier
             .clickable(onClick = onClick)
-            .fillMaxWidth()
             .background(MaterialTheme.colors.background)
             .height(70.dp)
             .padding(8.dp),
@@ -113,6 +123,7 @@ fun PokemonListDisplay(
                 )
             }
             PokemonTypeDisplay(type = pokemon.type)
+
         }
         Spacer(modifier = Modifier.weight(1.0f))
         FavoriteButton(onClick = onClickFavorite)
@@ -162,6 +173,13 @@ private fun PokemonBoxTitle(name: String) {
                 blurRadius = 0.1f
             )
         )
+    )
+}
+
+@Composable
+private fun PokemonBoxDescription(description: String) {
+    Text(
+        text = description
     )
 }
 

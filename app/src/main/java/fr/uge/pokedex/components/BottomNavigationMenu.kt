@@ -1,5 +1,6 @@
 package fr.uge.pokedex.components
 
+import android.text.TextUtils.indexOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.PokemonRepository
 
 sealed class Route(val title: String, val path: String){
@@ -21,16 +23,24 @@ sealed class Route(val title: String, val path: String){
     object Favorite : Route("Favorite","favorite")
     object Teams : Route("Teams","teams")
     object Profiles : Route("Profiles","profiles")
+
+    object Card : Route("Card", "card")
 }
 
 @Composable
 fun NavigationGraph(navController: NavHostController){
+
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
         composable(route = Route.Pokedex.path){
             //Call pokedex composable
             Column() {
-                DisplayPokedex(context = LocalContext.current, pokemons = SearchBar(PokemonRepository(LocalContext.current).getAll().toList()))
+                DisplayPokedex(context = LocalContext.current, pokemons = SearchBar(PokemonRepository(LocalContext.current).getAll().toList()), navController)
             }
+        }
+        composable(route = Route.Card.path){
+            //Call pokedex composable
+                PokemonCard(context = LocalContext.current, pokemon = PokemonRepository(LocalContext.current).getAll().toList().get(0))
+
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
