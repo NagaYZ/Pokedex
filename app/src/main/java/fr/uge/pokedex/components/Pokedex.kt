@@ -17,12 +17,13 @@ import fr.uge.pokedex.data.Pokemon
 
 
 @Composable
-fun DisplayPokedex(context: Context, pokemons: List<Pokemon>, navController: NavHostController) {
+fun DisplayPokedex(context: Context, pokemons: List<Pokemon>, navController: NavHostController, getPokemon: (Pokemon) -> Unit) {
 
     LazyVerticalGrid(columns = GridCells.Fixed(1), horizontalArrangement = Arrangement.spacedBy(40.dp), verticalArrangement = Arrangement.spacedBy(50.dp), contentPadding = PaddingValues(30.dp, 30.dp)) {
         items(pokemons) {
             PokemonListDisplay(pokemon = it, context = context, {
                 navController.navigate("card")
+                getPokemon(it)
             })
         }
     }

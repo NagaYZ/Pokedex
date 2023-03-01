@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.PokemonRepository
+import fr.uge.pokedex.data.Type
 
 sealed class Route(val title: String, val path: String){
     object Pokedex : Route("Pokedex","pokedex")
@@ -29,18 +31,22 @@ sealed class Route(val title: String, val path: String){
 
 @Composable
 fun NavigationGraph(navController: NavHostController){
-
+    var currentPokemon by remember {
+        mutableStateOf(Pokemon(-1L, "", Pair(Type.NONE, Type.NONE), 0,0,"","", "", true))
+    }
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
         composable(route = Route.Pokedex.path){
             //Call pokedex composable
             Column() {
-                DisplayPokedex(context = LocalContext.current, pokemons = SearchBar(PokemonRepository(LocalContext.current).getAll().toList()), navController)
+                DisplayPokedex(context = LocalContext.current, pokemons = SearchBar(PokemonRepository(LocalContext.current).getAll().toList()), navController){
+                    currentPokemon = it
+                }
             }
         }
         composable(route = Route.Card.path){
-            //Call pokedex composable
-                PokemonCard(context = LocalContext.current, pokemon = PokemonRepository(LocalContext.current).getAll().toList().get(0))
-
+            //Call a card pokemon composable
+            PokemonCard(context = LocalContext.current, pokemon = PokemonRepository(LocalContext.current).getAll().toList().get((
+                    currentPokemon!!.id.toInt())-1))
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
