@@ -39,4 +39,16 @@ data class Pokemon(
     fun getIcon(context: Context): Int {
         return context.resources.getIdentifier("icon_pkm_$id", "drawable", context.packageName)
     }
+
+    fun getWeaknesses(): Set<Type> {
+        val weaknessFirst = type.first.isVulnerableTo.subtract(type.second.isResistantTo)
+        val weaknessSecond = type.second.isVulnerableTo.subtract(type.first.isResistantTo)
+        return weaknessFirst.union(weaknessSecond)
+    }
+
+    fun getResistances(): Set<Type> {
+        val resistanceFirst = type.first.isResistantTo.subtract(type.second.isVulnerableTo)
+        val resistanceSecond = type.second.isResistantTo.subtract(type.first.isVulnerableTo)
+        return resistanceFirst.union(resistanceSecond)
+    }
 }

@@ -217,15 +217,12 @@ class DataParser(private val context: Context) {
         }
     }
 
-
-    // Takes too long to run because of the file size
     private fun setPokemonMoves(pokemon: Map<Long, Pokemon>) {
         val moves = HashMap<Long, Move>()
 
         parseLines("csv/core/moves.csv") { row ->
             val id = row["id"]?.toLong()!!
 
-            // Ignores spin-off moves
             val identifier = row["identifier"]!!
             val generation = Generation.values()[row["generation_id"]?.toInt()!! - 1]
             val type = when(val typeId = row["type_id"]?.toInt()!!) {
