@@ -1,80 +1,69 @@
 package fr.uge.pokedex.team
 
-import fr.uge.pokedex.data.BaseStats
-import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.data.PokemonRepository
-import fr.uge.pokedex.data.Stat
-import fr.uge.pokedex.database.TeamWithMembers
+import fr.uge.pokedex.data.*
+import fr.uge.pokedex.util.BaseStatHelper
 import fr.uge.pokedex.util.BaseStatHelper.Companion.getStandardDeviation
 import fr.uge.pokedex.util.BaseStatHelper.Companion.getTotal
 
-class TeamFactGenerator(private val pokemonRepository: PokemonRepository) {
-    fun getTeamFact(teams: TeamWithMembers) : List<TeamFact> {
+class TeamFactGenerator {
+    fun getTeamFacts(team: List<Pokemon>) : List<TeamFact> {
         val facts = ArrayList<TeamFact>()
-        val members = teams.teamMembers.map { pokemonRepository.get(it.getPokemonId())!! }
 
-        if(teams.teamMembers.size != 6) {
-            facts.add(TeamFact("Your team has empty slot", FactCategory.NEITHER))
+        if(team.size != 6) {
+            facts.add(TeamFact.EMPTY_SLOTS)
         }
-        facts.addAll(getBaseStatsTeamFact(members))
-        facts.addAll(getTypeTeamFact(members))
+        facts.addAll(getBaseStatsTeamFacts(team))
+        facts.addAll(getTypeTeamFacts(team))
 
         return facts
     }
 
-    private fun getBaseStatsTeamFact(members: List<Pokemon>): Collection<TeamFact> {
+    private fun getBaseStatsTeamFacts(members: List<Pokemon>): Collection<TeamFact> {
         val facts = ArrayList<TeamFact>()
-        val baseStatsAverage = getTeamAverageBaseStats(members)
+        val baseStatsAverage = BaseStatHelper.getAverageBaseStats(members.map { it.baseStats })
         val total = baseStatsAverage.getTotal()
         val standardDeviation = baseStatsAverage.getStandardDeviation()
 
-        if(total <= 300) {
-            facts.add(TeamFact("Low base stats", FactCategory.WEAKNESS))
+        if(total <= 350) {
+            facts.add(TeamFact.LOW_BASE_STATS)
         }
 
         if(total >= 530) {
-            facts.add(TeamFact("High base stats", FactCategory.STRENGTH))
+            facts.add(TeamFact.HIGH_BASE_STATS)
         }
 
-        if(standardDeviation >= 25) {
-            facts.add(TeamFact("Imbalanced base stats", FactCategory.WEAKNESS))
+        if(standardDeviation >= 20) {
+            facts.add(TeamFact.IMBALANCED_BASE_STATS)
         }
 
         if(standardDeviation <= 10) {
-            facts.add(TeamFact("Balanced base stats", FactCategory.STRENGTH))
+            facts.add(TeamFact.BALANCED_BASE_STATS)
         }
 
-        return emptyList()
+        return facts
     }
 
-    private fun getTypeTeamFact(members: List<Pokemon>): Collection<TeamFact> {
+    private fun getTypeTeamFacts(members: List<Pokemon>): Collection<TeamFact> {
+        val facts = ArrayList<TeamFact>()
 
+        // Weakness of 3 or more members
+        val teamWeaknesses = members.map { it.getWeaknesses() }
+            .flatten().groupingBy { it }.eachCount().filter { it.value >= 3 }
 
-        return emptyList()
-    }
+        // Same but for resistance
+        val teamResistance = members.map { it.getResistances() }
+            .flatten().groupingBy { it }.eachCount().filter { it.value >= 3 }
 
-    private fun getTeamAverageBaseStats(members: List<Pokemon>): BaseStats {
-        val baseStats = HashMap<Stat, MutableList<Float>>()
-        for(stat in Stat.values()) {
-            baseStats[stat] = ArrayList()
+        if(teamWeaknesses.isNotEmpty()) {
+            facts.add(TeamFact.WEAKNESS_TO_TYPES.setMessage(teamWeaknesses.keys.toString()))
+        } else {
+            facts.add(TeamFact.GOOD_TYPE_COVERAGE)
         }
 
-        for(pokemon in members) {
-            baseStats[Stat.HP]?.add(pokemon.baseStats.hp.toFloat())
-            baseStats[Stat.ATTACK]?.add(pokemon.baseStats.attack.toFloat())
-            baseStats[Stat.DEFENSE]?.add(pokemon.baseStats.defense.toFloat())
-            baseStats[Stat.SPECIAL_ATTACK]?.add(pokemon.baseStats.specialAttack.toFloat())
-            baseStats[Stat.SPECIAL_DEFENSE]?.add(pokemon.baseStats.specialDefense.toFloat())
-            baseStats[Stat.SPEED]?.add(pokemon.baseStats.speed.toFloat())
+        if(teamResistance.isNotEmpty()) {
+            facts.add(TeamFact.RESISTANCE_TO_TYPES.setMessage(teamResistance.keys.toString()))
         }
 
-        return BaseStats(
-            hp = (baseStats[Stat.HP]?.average() ?: 0) as Int,
-            attack = (baseStats[Stat.ATTACK]?.average() ?: 0) as Int,
-            defense = (baseStats[Stat.DEFENSE]?.average() ?: 0) as Int,
-            specialAttack = (baseStats[Stat.SPECIAL_ATTACK]?.average() ?: 0) as Int,
-            specialDefense = (baseStats[Stat.SPECIAL_DEFENSE]?.average() ?: 0) as Int,
-            speed = (baseStats[Stat.SPEED]?.average() ?: 0) as Int,
-        )
+        return facts
     }
 }
