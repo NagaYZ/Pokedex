@@ -1,22 +1,28 @@
 package fr.uge.pokedex.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.data.Type
+import kotlinx.coroutines.flow.merge
 
 @Composable
-fun SortByType(pokemons: List<Pokemon>) : List<Pokemon> {
-    val types = Type.values()
+fun SortByType(pokemons: List<Pokemon>, name: String, typePos: String) : List<Pokemon> {
+
+    var types by remember {
+        mutableStateOf(Type.values().toMutableList())
+    }
+
     var resultList by remember {
         mutableStateOf(pokemons.toMutableList())
     }
@@ -27,17 +33,17 @@ fun SortByType(pokemons: List<Pokemon>) : List<Pokemon> {
         mutableStateOf("")
     }
     Row(
-        modifier = Modifier.fillMaxWidth(),
 
     ) {
         IconButton(onClick = {
             state = true
-        },
-            modifier = Modifier.weight(1/3f)) {
+        }){
             Row() {
-                Text(text = "Type")
-                Icon(
 
+                Text(text = if (currentType != "") currentType else name)
+
+
+                Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Open Filter"
                 )
@@ -63,30 +69,35 @@ fun SortByType(pokemons: List<Pokemon>) : List<Pokemon> {
         }
     }
     if(currentType != ""){
-        pokemons.forEach { pokemon ->
-            if (pokemon.type.first.toString().equals(currentType) || pokemon.type.second.toString().equals(currentType)) {
-                resultList.add(pokemon)
+        if(typePos == "first") {
+            pokemons.forEach { pokemon ->
+                if (pokemon.type.first.toString().equals(currentType)) {
+                    resultList.add(pokemon)
+                }
             }
         }
-    }
-    for(i in resultList){
-        println(i.toString())
+        if(typePos == "second"){
+            pokemons.forEach { pokemon ->
+                if (pokemon.type.second.toString().equals(currentType)) {
+                    resultList.add(pokemon)
+                }
+            }
+        }
     }
     return resultList
 }
 
-@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    var currentPokemon by remember {
-        mutableStateOf(Pokemon(-1L, "", Pair(Type.NONE, Type.NONE), 0,0,"","", "", true))
+fun TwoFilters(pokemons: List<Pokemon>) : List<Pokemon>{
+    var resultList1 by remember {
+        mutableStateOf(pokemons.toList())
     }
-    val navController: NavHostController = rememberNavController()
-
-    DisplayPokedex(context = LocalContext.current, pokemons = SortByType(
-
-        pokemons = PokemonRepository(LocalContext.current).getAll().toList())
-        , navController) {
-        currentPokemon = it
+    var resultList2 by remember {
+        mutableStateOf(pokemons.toList())
     }
+    Row(Modifier.fillMaxWidth()) {
+        resultList1 = SortByType(pokemons = pokemons, name = "Type 1", "first")
+        resultList2 = SortByType(pokemons = pokemons, name = "Type 2", "second")
+    }
+    return resultList1.intersect(resultList2).toList()
 }
