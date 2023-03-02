@@ -45,7 +45,7 @@ fun NavigationGraph(navController: NavHostController){
         }
         composable(route = Route.Card.path){
             //Call a card pokemon composable
-            PokemonCard(context = LocalContext.current, pokemon = PokemonRepository(LocalContext.current).getAll().toList().get((
+            PokemonBoxDisplay(context = LocalContext.current, pokemon = PokemonRepository(LocalContext.current).getAll().toList().get((
                     currentPokemon!!.id.toInt())-1))
         }
         composable(route = Route.Favorite.path){
