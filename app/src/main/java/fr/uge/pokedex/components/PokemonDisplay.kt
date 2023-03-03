@@ -69,7 +69,7 @@ fun PokemonBoxDisplay(
         }
         PokemonTypeDisplay(type = pokemon.type)
 
-        PokemonBoxDescription(description = pokemon.description)
+//        PokemonBoxDescription(description = pokemon.description)
     }
 
 }

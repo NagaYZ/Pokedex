@@ -1,13 +1,12 @@
 package fr.uge.pokedex.components
 
-import android.text.TextUtils.indexOf
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,9 +15,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.PokemonRepository
-import fr.uge.pokedex.data.Type
+import fr.uge.pokedex.database.Profile
+
+
 
 sealed class Route(val title: String, val path: String){
     object Pokedex : Route("Pokedex","pokedex")
@@ -30,9 +32,9 @@ sealed class Route(val title: String, val path: String){
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController){
+fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit){
     var currentPokemon by remember {
-        mutableStateOf(Pokemon(-1L, "", Pair(Type.NONE, Type.NONE), 0,0,"","", "", true))
+        mutableStateOf(Pokemon(-1L, "",0, 0))
     }
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
         composable(route = Route.Pokedex.path){
@@ -63,7 +65,7 @@ fun NavigationGraph(navController: NavHostController){
         composable(route = Route.Profiles.path){
             //Call teams composable
 //            Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
-            ProfilesScreen(navController)
+            ProfilesScreen(navController, setCurrentProfile)
         }
     }
 }

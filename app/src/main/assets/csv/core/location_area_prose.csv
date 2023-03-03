@@ -1,0 +1,733 @@
+location_area_id,name
+1,Canalave City
+2,Eterna City
+3,Pastoria City
+4,Sunyshore City
+5,Sinnoh League
+6,Oreburgh mine (1F)
+7,Oreburgh mine (B1F)
+8,Valley Windworks
+9,Eterna Forest
+10,Fuego Ironworks
+11,Mount Coronet (1F Road 207)
+12,Mount Coronet (2F)
+13,Mount Coronet (3F)
+14,Mount Coronet (exterior snowfall)
+15,Mount Coronet (exterior blizzard)
+16,Mount Coronet (4F)
+17,Mount Coronet (4F small room)
+18,Mount Coronet (5F)
+19,Mount Coronet (6F)
+20,Mount Coronet (1F from exterior)
+21,Mount Coronet (1F Road 216)
+22,Mount Coronet (1F Road 211)
+23,Mount Coronet (B1F)
+24,Great Marsh Area 1
+25,Great Marsh Area 2
+26,Great Marsh Area 3
+27,Great Marsh Area 4
+28,Great Marsh Area 5
+29,Great Marsh Area 6
+30,Solaceon Ruins (2F)
+31,Solaceon Ruins (1F)
+32,Solaceon Ruins (B1F A)
+33,Solaceon Ruins (B1F B)
+34,Solaceon Ruins (B1F C)
+35,Solaceon Ruins (B2F A)
+36,Solaceon Ruins (B2F B)
+37,Solaceon Ruins (B2F C)
+38,Solaceon Ruins (B3F A)
+39,Solaceon Ruins (B3F B)
+40,Solaceon Ruins (B3F C)
+41,Solaceon Ruins (B3F D)
+42,Solaceon Ruins (B3F E)
+43,Solaceon Ruins (B4F A)
+44,Solaceon Ruins (B4F B)
+45,Solaceon Ruins (B4F C)
+46,Solaceon Ruins (B4F D)
+47,Solaceon Ruins (B5F)
+48,Victory Road (1F)
+49,Victory Road (2F)
+50,Victory Road (B1F)
+51,Victory Road (inside B1F)
+52,Victory Road (inside)
+53,Victory Road (inside exit)
+54,Ravaged Path
+55,Oreburgh Gate (1F)
+56,Oreburgh Gate (B1F)
+57,Stark Mountain exterior
+58,Stark Mountain entrance
+59,Stark Mountain main cavern
+60,Sendoff Spring
+61,Turnback Cave (pillar 1)
+62,Turnback Cave (pillar 2)
+63,Turnback Cave (pillar 3)
+64,Turnback Cave (before pillar 1)
+70,Turnback Cave (between pillars 1 and 2)
+76,Turnback Cave (between pillars 2 and 3)
+82,Turnback Cave (after pillar 3)
+107,Snowpoint Temple (1F)
+108,Snowpoint Temple (B1F)
+109,Snowpoint Temple (B2F)
+110,Snowpoint Temple (B3F)
+111,Snowpoint Temple (B4F)
+112,Snowpoint Temple (B5F)
+113,Wayward Cave (1F)
+114,Wayward Cave (B1F)
+115,Ruin Maniac Cave (0–9 different Unown caught)
+116,Ruin Maniac Cave (10–25 different Unown caught)
+117,Maniac Tunnel (26+ different Unown caught)
+118,Trophy Garden
+119,Iron Island area
+120,Iron Island (1F)
+121,Iron Island (B1F left)
+122,Iron Island (B1F right)
+123,Iron Island (B2F right)
+124,Iron Island (B2F left)
+125,Iron Island (B3F)
+126,Old Chateau (entrance)
+127,Old Chateau (dining room)
+128,Old Chateau (2F private room)
+129,Old Chateau (2F)
+130,Old Chateau (2F leftmost room)
+131,Old Chateau (2F left room)
+132,Old Chateau (2F middle room)
+133,Old Chateau (2F right room)
+134,Old Chateau (2F rightmost room)
+135,Lake Verity (before Galactic intervention)
+136,Lake Verity (after Galactic intervention)
+137,Lake Valor
+138,Lake Acuity
+139,Valor Lakefront
+140,Acuity Lakefront
+141,Road 201
+142,Road 202
+143,Road 203
+144,"Road 204 (south, towards Jubilife City)"
+145,"Road 204 (north, towards Floaroma Town)"
+146,"Road 205 (south, towards Floaroma Town)"
+147,"Road 205 (east, towards Eterna City)"
+148,Road 206
+149,Road 207
+150,Road 208
+151,Road 209
+152,Lost Tower (1F)
+153,Lost Tower (2F)
+154,Lost Tower (3F)
+155,Lost Tower (4F)
+156,Lost Tower (5F)
+157,"Road 210 (south, towards Solaceon Town)"
+158,"Road 210 (west, towards Celestic Town)"
+159,"Road 211 (west, towards Eterna City)"
+160,"Road 211 (east, towards Celestic Town)"
+161,"Road 212 (north, towards Hearthome City)"
+162,"Road 212 (east, towards Pastoria City)"
+163,Road 213
+164,Road 214
+165,Road 215
+166,Road 216
+167,Road 217
+168,Road 218
+169,Road 219
+170,Road 221
+171,Road 222
+172,Road 224
+173,Road 225
+174,Road 227
+175,Road 228
+176,Road 229
+177,Twinleaf Town
+178,Celestic Town
+179,Resort Area
+180,Road 220
+181,Road 223
+182,Road 226
+183,Road 230
+184,New Bark Town
+185,Road 29
+186,Cherrygrove City
+187,Road 30
+188,Road 31
+189,Violet City
+190,Sprout Tower (2F)
+191,Sprout Tower (3F)
+192,Road 32
+193,Ruins of Alph (outside)
+194,Ruins of Alph (interior A)
+195,Ruins of Alph (interior B)
+196,Ruins of Alph (interior C)
+197,Ruins of Alph (interior D)
+198,Union Cave (1F)
+199,Union Cave (B1F)
+200,Union Cave (B2F)
+201,Road 33
+202,Slowpoke Well (1F)
+203,Slowpoke Well (B1F)
+204,Ilex Forest
+205,Road 34
+206,Road 35
+207,National Park
+208,Unknown Area; all bugs
+209,Road 36
+210,Road 37
+211,Ecruteak City
+212,Burned Tower (1F)
+213,Burned Tower (B1F)
+214,Bell Tower (2F)
+215,Bell Tower (3F)
+216,Bell Tower (4F)
+217,Bell Tower (5F)
+218,Bell Tower (6F)
+219,Bell Tower (7F)
+220,Bell Tower (8F)
+221,Bell Tower (9F)
+222,Road 38
+223,Road 39
+224,Olivine City
+225,Road 40
+226,Road 41
+227,Whirl Islands (1F)
+228,Whirl Islands (B1F)
+229,Whirl Islands (empty floor X)
+230,Whirl Islands (B2F)
+231,Whirl Islands (empty floor Y)
+232,Whirl Islands (B3F)
+235,Cianwood City
+236,Road 42
+237,Mount Mortar (1F)
+238,Mount Mortar (Lower Cave)
+239,Mount Mortar (Upper Cave)
+240,Mount Mortar (B1F)
+241,Road 43
+242,Lake of Rage
+243,Road 44
+244,Ice Path (1F)
+245,Ice Path (B1F)
+246,Ice Path (B2F)
+247,Ice Path (B3F)
+249,Blackthorn City
+250,Dragon's Den
+251,Road 45
+252,Road 46
+253,Dark Cave (Violet City entrance)
+254,Dark Cave (Blackthorn City entrance)
+255,Road 47
+256,Mount Moon Square
+257,Unknown Area; all Poliwag
+258,Seafoam Islands (1F)
+259,Seafoam Islands (B1F)
+260,Seafoam Islands (B2F)
+261,Seafoam Islands (B3F)
+262,Seafoam Islands (B4F)
+263,Mount Silver (2F)
+264,Mount Silver (1F top)
+265,Mount Silver (4F)
+266,Road 47 (cave gate)
+267,Road 47 (inside cave)
+268,Bell Tower (10F)
+269,Mount Silver (outside)
+270,Mount Silver (1F)
+271,Mount Silver (mountainside)
+272,Mount Silver (3F)
+273,Mount Silver (top)
+275,Unknown Area; all Rattata
+276,Road 12
+277,Road 19
+278,Road 20
+279,Cinnabar Island
+280,Viridian City
+281,Cerulean City
+282,Vermilion City
+283,Celadon City
+284,Fuchsia City
+285,Pallet Town
+286,Road 48
+287,Road 26
+288,Road 27
+289,Road 28
+290,Mount Moon (1F)
+291,Mount Moon (2F)
+292,Rock Tunnel (1F)
+293,Rock Tunnel (B1F)
+294,Victory Road 1 (1F)
+295,Road 1
+296,"Road 2 (south, towards Viridian City)"
+297,Road 3
+298,Road 4
+299,Road 5
+300,Road 6
+301,Road 7
+302,Road 8
+303,Road 9
+304,Road 10
+305,Road 11
+306,Road 13
+307,Road 14
+308,Road 15
+309,Road 16
+310,Road 17
+311,Road 18
+312,Road 21
+313,Road 22
+314,Road 24
+315,Road 25
+316,Tohjo Falls
+317,Digletts Cave
+318,Victory Road 1 (2F)
+319,Victory Road 1 (3F)
+320,"Road 2 (north, towards Pewter City)"
+321,Viridian Forest
+323,Cerulean Cave (1F)
+324,Cerulean Cave (2F)
+325,Cerulean Cave (B1F)
+326,Mount Moon (B1F)
+327,Mount Moon (B2F)
+328,Rock Tunnel (B2F)
+329,Road 23
+330,Power Plant
+331,Victory Road 2 (1F)
+332,Victory Road 2 (2F)
+333,Victory Road 2 (3F)
+334,Pokemon Tower (1F)
+335,Pokemon Tower (2F)
+336,Pokemon Tower (3F)
+337,Pokemon Tower (4F)
+338,Pokemon Tower (5F)
+339,Pokemon Tower (6F)
+340,Pokemon Tower (7F)
+341,Pokemon Mansion (1F)
+342,Pokemon Mansion (2F)
+343,Pokemon Mansion (3F)
+344,Pokemon Mansion (B1F)
+345,Safari Zone (middle)
+346,"Safari Zone (Area 1, east)"
+347,"Safari Zone (Area 2, north)"
+348,"Safari Zone (Area 3, west)"
+349,S.S. Anne dock
+350,Petalburg City
+351,Slateport City
+352,Lilycove City
+353,Mossdeep City
+354,Sootopolis City
+355,Ever Grande City
+356,Meteor Falls
+357,Meteor Falls (back)
+358,Meteor Falls (B1F)
+359,Meteor Falls (back/small room)
+360,Rusturf Tunnel
+361,Granite Cave (1F)
+362,Granite Cave (B1F)
+363,Granite Cave (B2F)
+364,Granite Cave (1F/small room)
+365,Petalburg Woods
+366,Jagged Pass
+367,Fiery Path
+368,Mount Pyre (1F)
+369,Mount Pyre (2F)
+370,Mount Pyre (3F)
+371,Mount Pyre (4F)
+372,Mount Pyre (5F)
+373,Mount Pyre (6F)
+374,Mount Pyre (outside)
+375,Mount Pyre (summit)
+376,Seafloor Cavern
+377,Cave of Origin (entrance)
+378,Cave of Origin (1F)
+379,Cave of Origin (B1F)
+380,Cave of Origin (B2F)
+381,Cave of Origin (B3F)
+382,Victory Road (1F)
+383,Victory Road (B1F)
+384,Victory Road (B2F)
+385,Shoal Cave
+386,Shoal Cave (B1F)
+387,New Mauville (entrance)
+388,New Mauville
+389,Abandoned Ship
+390,Sky Pillar (1F)
+391,Sky Pillar (3F)
+392,Sky Pillar (5F)
+393,Road 101
+394,Road 102
+395,Road 103
+396,Road 104
+397,Road 105
+398,Road 106
+399,Road 107
+400,Road 108
+401,Road 109
+402,Road 110
+403,Road 111
+404,Road 112
+405,Road 113
+406,Road 114
+407,Road 115
+408,Road 116
+409,Road 117
+410,Road 118
+411,Road 119
+412,Road 120
+413,Road 121
+414,Road 122
+415,Road 123
+416,Road 124
+417,Road 124 (underwater)
+418,Road 125
+419,Road 126
+420,Road 126 (underwater)
+421,Road 127
+422,Road 128
+423,Road 129
+424,Road 130
+425,Road 131
+426,Road 132
+427,Road 133
+428,Road 134
+429,Safari Zone (NW/mach bike area)
+430,Safari Zone (NE/acro bike area)
+431,Safari Zone (SW)
+432,Safari Zone (SE)
+433,Dewford Town
+434,Pacifidlog Town
+435,Safari Zone (expansion south)
+436,Safari Zone (expansion north)
+437,Magma Hideout
+438,Mirage Tower
+439,Desert Underpass
+440,Artisan Cave
+441,Altering Cave (A)
+442,Altering Cave (B)
+443,Altering Cave (C)
+444,Altering Cave (D)
+445,Altering Cave (E)
+446,Altering Cave (F)
+447,Altering Cave (G)
+448,Altering Cave (H)
+449,Altering Cave (I)
+450,Monean Chamber
+451,Liptoo Chamber
+452,Weepth Chamber
+453,Dilford Chamber
+454,Scufib Chamber
+455,Rixy Chamber
+456,Viapos Chamber
+461,S.S. Anne
+488,Mount Ember
+489,Mount Ember (cave)
+490,Mount Ember (inside)
+491,"Mount Ember (1F, cave behind team rocket)"
+492,Mount Ember (B1F)
+493,Mount Ember (B2F)
+494,Mount Ember (B3F)
+495,Berry Forest
+496,Icefall Cave (entrance)
+497,Icefall Cave (1F)
+498,Icefall Cave (B1F)
+499,Icefall Cave (waterfall)
+500,Pattern Bush
+501,Lost Cave (room 1)
+502,Lost Cave (room 2)
+503,Lost Cave (room 3)
+504,Lost Cave (room 4)
+505,Lost Cave (room 5)
+506,Lost Cave (room 6)
+507,Lost Cave (room 7)
+508,Lost Cave (room 8)
+509,Lost Cave (room 9)
+510,Lost Cave (room 10)
+511,Lost Cave (item rooms)
+512,Kindle Road
+513,Treasure Beach
+514,Cape Brink
+515,Bond Bridge
+516,Three Isle Port
+517,Resort Gorgeous
+518,Water Labyrinth
+519,Five Isle Meadow
+520,Memorial Pillar
+521,Outcast Island
+522,Green Path
+523,Water Path
+524,Ruin Valley
+525,Trainer Tower
+526,Canyon Entrance
+527,Sevault Canyon
+528,Tanoby Ruins
+561,One Island
+562,Four Island
+563,Five Island
+564,Altering Cave (A)
+565,Altering Cave (B)
+566,Altering Cave (C)
+567,Altering Cave (D)
+568,Altering Cave (E)
+569,Altering Cave (F)
+570,Altering Cave (G)
+571,Altering Cave (H)
+572,Altering Cave (I)
+576,Striaton City
+577,Driftveil City
+578,Icirrus City
+579,Dreamyard
+580,Dreamyard (B1F)
+581,Pinwheel Forest (outside)
+582,Pinwheel Forest (inside)
+583,Desert Resort (entrance)
+584,Desert Resort
+585,Relic Castle (A)
+586,Relic Castle (B)
+587,Relic Castle (C)
+588,Relic Castle (D)
+589,Cold Storage
+590,Chargestone Cave (1F)
+591,Chargestone Cave (B1F)
+592,Chargestone Cave (B2F)
+593,Twist Mountain
+594,Dragonspiral Tower (entrance)
+595,Dragonspiral Tower (outside)
+596,Dragonspiral Tower (1F)
+597,Dragonspiral Tower (2F)
+598,Victory Road (outside)
+599,Victory Road (unknown area 53)
+600,Victory Road (unknown area 54)
+601,Victory Road (unknown area 55)
+602,Victory Road (unknown area 56)
+603,Victory Road (unknown area 57)
+604,Victory Road (unknown area 58)
+605,Victory Road (unknown area 59)
+606,Victory Road (unknown area 60)
+607,Victory Road (unknown area 61)
+608,Victory Road (unknown area 62)
+609,Victory Road (unknown area 63)
+610,Victory Road (unknown area 64)
+611,Victory Road (unknown area 65)
+612,Victory Road (unknown area 66)
+613,Trial Chamber
+614,Giant Chasm (outside)
+615,Giant Chasm
+616,Giant Chasm (forest)
+617,Giant Chasm (forest cave)
+618,P2 Laboratory
+619,Undella Bay
+620,Driftveil Drawbridge
+621,Village Bridge
+622,Marvelous Bridge
+623,Road 1
+624,Road 2
+625,Road 3
+626,Wellspring Cave
+627,Road 4
+628,Road 5
+629,Road 6
+630,Mistralton Cave
+631,Guidance Chamber
+632,Road 7
+633,Celestial Tower (2F)
+634,Celestial Tower (3F)
+635,Celestial Tower (4F)
+636,Celestial Tower (5F)
+637,Road 8
+638,Moor of Icirrus
+639,Road 9
+640,Challengers Cave (1F)
+641,Challengers Cave (B1F)
+642,Challengers Cave (B2F)
+643,Road 10
+644,Road 10 (Victory Road gate)
+645,Road 11
+646,Road 12
+647,Road 13
+648,Road 14
+649,Abundant Shrine
+650,Road 15
+651,Road 16
+652,Lostlorn Forest
+653,Road 18
+654,Undella Town
+655,Road 17
+656,Castelia City
+657,Aspertia City
+658,Virbank City
+659,Humilau City
+660,Victory Road (7F)
+661,Victory Road 2 (unknown area 71)
+662,Victory Road 2 (unknown area 72)
+663,Victory Road 2 (unknown area 73)
+664,Victory Road 2 (unknown area 74)
+665,Victory Road 2 (unknown area 75)
+666,Victory Road 2 (unknown area 76)
+667,Victory Road 2 (unknown area 77)
+668,Victory Road 2 (unknown area 78)
+669,Victory Road 2 (unknown area 79)
+670,Victory Road 2 (unknown area 80)
+671,Castelia Sewers
+672,Castelia Sewers (unknown area 38)
+673,Floccesy Ranch (outer)
+674,Floccesy Ranch (inner)
+675,Virbank Complex (outer)
+676,Virbank Complex (inner)
+677,Reversal Mountain (unknown area 48)
+678,Reversal Mountain (unknown area 49)
+679,Reversal Mountain (unknown area 50)
+680,Reversal Mountain (unknown area 51)
+681,Reversal Mountain (unknown area 52)
+682,Reversal Mountain (unknown area 53)
+683,Reversal Mountain (unknown area 54)
+684,Reversal Mountain (unknown area 55)
+685,Reversal Mountain (unknown area 56)
+686,Reversal Mountain (unknown area 57)
+687,Reversal Mountain (unknown area 58)
+688,Reversal Mountain (unknown area 59)
+689,Reversal Mountain (unknown area 60)
+690,Strange House (1F)
+691,Strange House (B1F)
+692,Relic Tunnel (Castelia Sewers entrance)
+693,Relic Tunnel (Relic Castle entrance)
+694,Relic Tunnel (PWT entrance)
+695,Clay Tunnel
+696,Underground Ruins
+697,Rocky Mountain Room
+698,Glacier Room
+699,Iron Room
+700,Seaside Cave (1F)
+701,Seaside Cave (B1F)
+702,Nature Sanctuary
+703,Road 19
+704,Road 20
+705,Road 22
+706,Road 23
+707,Road 21
+708,Couriway Town
+709,Ambrette Town
+710,Cyllage City
+711,Shalour City
+712,Laverre City
+713,Road 2
+714,Road 3
+715,Road 4
+716,Road 5
+717,Road 6
+718,Road 7
+719,Road 8
+720,Road 9
+721,Road 10
+722,Road 11
+723,Road 12
+724,Road 13
+725,Road 14
+726,Road 15
+727,Road 16
+728,Road 17
+729,Road 18
+730,Road 19
+731,Road 20
+732,Road 21
+733,Road 22
+734,Santalune Forest
+735,Parfum Palace
+736,Glittering Cave (unknown area 303)
+737,Glittering Cave (unknown area 304)
+738,Reflection Cave (unknown area 305)
+739,Reflection Cave (unknown area 306)
+740,Reflection Cave (unknown area 307)
+741,Reflection Cave (unknown area 308)
+742,Frost Cavern (unknown area 313)
+743,Frost Cavern (unknown area 314)
+744,Frost Cavern (unknown area 315)
+745,Frost Cavern (unknown area 316)
+746,Frost Cavern (unknown area 317)
+747,Pokemon Village
+748,Victory Road (unknown area 322)
+749,Victory Road (unknown area 324)
+750,Victory Road (unknown area 326)
+751,Victory Road (unknown area 327)
+752,Victory Road (unknown area 328)
+753,Connecting Cave
+754,Terminus Cave (unknown area 343)
+755,Terminus Cave (unknown area 344)
+756,Terminus Cave (unknown area 345)
+757,Terminus Cave (unknown area 347)
+758,Terminus Cave (unknown area 348)
+759,Lost Hotel
+760,Azure Bay
+761,Pokemon Center (Road 4)
+762,Fighting Dojo
+763,Celadon Mansion rooftop
+764,Silph Co. 7F
+765,Goldenrod City (north gate)
+766,Goldenrod City (Bill's house)
+767,Cianwood City (Mania's house)
+768,Weather Institute (Road 119)
+769,Mossdeep City (Steven's house)
+770,Littleroot Town
+771,Hearthome City
+772,Veilstone City
+773,Cianwood City (Kirk's house)
+774,Nuvema Town
+775,Game Freak HQ 1F (Castelia City)
+776,Weather Institute (Road 6)
+777,Floccesy Town
+778,Aquacorde Town
+779,Lumiose City
+780,Tower of Mastery
+781,Contest Hall (Slateport City)
+782,Contest Hall (Verdanturf Town)
+783,Contest Hall (Fallarbor Town)
+784,Contest Hall (Lilycove City)
+785,Southern Island
+786,Battle Resort
+787,Lavaridge Town
+788,Eterna City (west gate)
+789,Hearthome City (west gate)
+790,Violet City (Poke Mart)
+791,Violet City (Pokemon Center)
+792,Nacrene City (west gate)
+793,Bell Tower (roof)
+794,Roaming Kanto
+795,Roaming Johto
+796,Roaming Hoenn
+797,Roaming Sinnoh
+798,Azalea Town
+800,Mahogany City
+801,Cave of Origin (B4F)
+802,Terra Cave
+803,Marine Cave
+804,Sky Pillar Apex
+805,Bell Tower (1F)
+806,Birth Island
+807,Navel Rock
+808,Faraway Island
+809,Hoenn Battle Frontier
+810,Desert Ruins
+811,Island Cave
+812,Ancient Tomb
+813,Safari Zone Peak
+814,Safari Zone Desert
+815,Safari Zone Plains
+816,Safari Zone Meadow
+817,Safari Zone Forest
+818,Safari Zone Swamp
+819,Safari Zone Marshland
+820,Safari Zone Mountain
+821,Safari Zone Rocky Beach
+822,Safari Zone Wasteland
+823,Safari Zone Savannah
+824,Safari Zone Wetland
+825,Mount Ember Summit
+826,Embedded Tower (Kyogre’s room)
+827,Embedded Tower (Groudon’s room)
+828,Embedded Tower (Rayquaza’s room)
+829,Lake Acuity Cavern
+830,Lake Valor Cavern
+831,Spear Pillar
+832,Pokemon Center (Road 3)
+833,Cinnabar Lab (Cinnabar Island)
+834,Rustboro City
+835,Silph Co.
+836,Pokemon Center (Cianwood City)
+837,Stark Mountain (Heatran Chamber)
+838,Newmoon Island
+839,Flower Paradise
+840,Hall of Origin
+841,Team Rocket HQ
+842,Sinjoy Ruins
