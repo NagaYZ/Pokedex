@@ -1,20 +1,14 @@
 package fr.uge.pokedex.components
 
 import androidx.compose.foundation.layout.Row
-
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
-import kotlinx.coroutines.flow.merge
 
 @Composable
 fun SortByType(pokemons: List<Pokemon>, name: String, typePos: String) : List<Pokemon> {

@@ -17,7 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.database.Profile
 
 
@@ -32,7 +31,7 @@ sealed class Route(val title: String, val path: String){
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit){
+fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, pokemons: List<Pokemon>){
     var currentPokemon by remember {
         mutableStateOf(Pokemon(-1L, "",0, 0))
     }
@@ -40,9 +39,8 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
         composable(route = Route.Pokedex.path){
             //Call pokedex composable
             Column() {
-
-                DisplayPokedex(context = LocalContext.current, pokemons = SearchBar(
-                    pokemons = TwoFilters(PokemonRepository(LocalContext.current).getAll().toList()))
+                DisplayPokedex(context = LocalContext.current, pokemons =
+                    SearchBar(TwoFilters(pokemons))
                 , navController){
                     currentPokemon = it
                 }
@@ -51,7 +49,7 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
         }
         composable(route = Route.Card.path){
             //Call a card pokemon composable
-            PokemonBoxDisplay(context = LocalContext.current, pokemon = PokemonRepository(LocalContext.current).getAll().toList().get((
+            PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemons.get((
                     currentPokemon!!.id.toInt())-1))
         }
         composable(route = Route.Favorite.path){

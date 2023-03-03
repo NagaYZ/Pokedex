@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +23,7 @@ import fr.uge.pokedex.components.NavigationGraph
 
 import fr.uge.pokedex.components.Route
 import fr.uge.pokedex.components.TopBar
+import fr.uge.pokedex.data.Pokemon
 
 import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.database.PokedexAppDatabaseConnection
@@ -40,7 +42,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PokedexTheme {
                 val navController: NavHostController = rememberNavController()
-
+                val pokemons : List<Pokemon> = PokemonRepository(LocalContext.current).getAll().toList()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -52,9 +54,9 @@ class MainActivity : ComponentActivity() {
                     var currentProfile by remember { mutableStateOf(Profile("")) }
 
                     Scaffold(bottomBar = { if(currentRoute != Route.Profiles.path) BottomNavigationMenu(navController)},
-                        topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController, currentProfile)  }) {
+                        topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController, currentProfile) }) {
                         Log.d("Padding",it.toString())
-                        NavigationGraph(navController = navController, setCurrentProfile = {profile: Profile -> currentProfile = profile })
+                        NavigationGraph(navController = navController, setCurrentProfile = {profile: Profile -> currentProfile = profile }, pokemons = pokemons)
                     }
                 }
 
