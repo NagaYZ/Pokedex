@@ -17,8 +17,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 import fr.uge.pokedex.data.Pokemon
+import fr.uge.pokedex.database.Favorite
+import fr.uge.pokedex.database.FavoriteDao
 import fr.uge.pokedex.database.Profile
-
+import fr.uge.pokedex.database.ProfileWithFavorites
 
 
 sealed class Route(val title: String, val path: String){
@@ -31,30 +33,42 @@ sealed class Route(val title: String, val path: String){
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, pokemons: List<Pokemon>){
+fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemons: Map<Long, Pokemon>, favoriteData : FavoriteDao){
     var currentPokemon by remember {
-        mutableStateOf(Pokemon(-1L, "",0, 0))
+        mutableStateOf(-1L)
+    }
+    var fav by remember {
+        mutableStateOf(Favorite(-1L, -1L))
     }
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
         composable(route = Route.Pokedex.path){
             //Call pokedex composable
             Column() {
                 DisplayPokedex(context = LocalContext.current, pokemons =
-                    SearchBar(TwoFilters(pokemons))
-                , navController){
-                    currentPokemon = it
-                }
+                    SearchBar(TwoFilters(pokemons.values.toList()))
+                , navController, favoriteData, profile, {
+                        currentPokemon = it
+                    }, {
+                        fav = it
+                    })
 
             }
         }
         composable(route = Route.Card.path){
             //Call a card pokemon composable
-            PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemons.get((
-                    currentPokemon!!.id.toInt())-1))
+            var pokemon by remember {
+                mutableStateOf(pokemons.get(currentPokemon)!!)
+            }
+            PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
+                navController.navigate("favorite")
+                fav = Favorite(pokemon.id, profile.getId())
+                favoriteData.addFavorite(fav)
+            })
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
-            Text(text = "Favorite screen", style = MaterialTheme.typography.h1)
+
+            //Text(text = fav.toString())
         }
         composable(route = Route.Teams.path){
             //Call teams composable
