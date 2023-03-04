@@ -27,7 +27,8 @@ data class Pokemon(
     var growRate: GrowRate = GrowRate.MEDIUM,
     val baseStats: BaseStats = BaseStats(),
     val abilities: Abilities = Abilities(),
-    val learnSet: MutableSet<LearnableMove> = HashSet()
+    val learnSet: MutableSet<LearnableMove> = HashSet(),
+    var isFavorite: Boolean = false
 ) {
 
     @SuppressLint("DiscouragedApi")

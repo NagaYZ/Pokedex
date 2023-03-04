@@ -15,12 +15,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.database.Favorite
 import fr.uge.pokedex.database.FavoriteDao
 import fr.uge.pokedex.database.Profile
-import fr.uge.pokedex.database.ProfileWithFavorites
+import fr.uge.pokedex.database.ProfileDao
 
 
 sealed class Route(val title: String, val path: String){
@@ -33,34 +32,64 @@ sealed class Route(val title: String, val path: String){
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemons: Map<Long, Pokemon>, favoriteData : FavoriteDao){
+fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemons: Map<Long, Pokemon>, favoriteData : FavoriteDao){
+    var copyPokemons by remember {
+        mutableStateOf(pokemons)
+    }
+
     var currentPokemon by remember {
+        mutableStateOf(-1L)
+    }
+    var currentIconeFavori by remember {
         mutableStateOf(-1L)
     }
     var fav by remember {
         mutableStateOf(Favorite(-1L, -1L))
     }
-    NavHost(navController = navController, startDestination =  Route.Profiles.path){
-        composable(route = Route.Pokedex.path){
-            //Call pokedex composable
-            Column() {
-                DisplayPokedex(context = LocalContext.current, pokemons =
-                    SearchBar(TwoFilters(pokemons.values.toList()))
-                , navController, favoriteData, profile, {
-                        currentPokemon = it
-                    }, {
-                        fav = it
-                    })
+    var resultList by remember {
+        mutableStateOf(mutableListOf<Pokemon>())
+    }
 
+    NavHost(navController = navController, startDestination =  Route.Profiles.path){
+
+        composable(route = Route.Pokedex.path) {
+            //Call pokedex composable
+            var favorites = profileDao.getProfileWithFavorites(profile.getId()).favorites
+
+            Column() {
+                FiltersBar(pokemons = copyPokemons.values.toList())
+                {
+                    resultList = it.toMutableList()
+                }
+
+                DisplayPokedex(context = LocalContext.current,
+                    pokemons = resultList,
+                    navController = navController,
+                    favorites = favorites,
+                    profile = profile,
+                    getPokemonId = {
+                        currentPokemon = it
+                    },
+                    getPokemonFavoriteId = {
+                        currentIconeFavori = it
+                    },
+                    clickFavorite = {
+                        fav = Favorite(currentIconeFavori, profile.getId())
+                        if (!favorites.contains(fav)) {
+                            favoriteData.addFavorite(fav)
+                            copyPokemons.get(currentIconeFavori)!!.isFavorite = true
+                        }
+                    })
             }
         }
+
+
         composable(route = Route.Card.path){
             //Call a card pokemon composable
             var pokemon by remember {
-                mutableStateOf(pokemons.get(currentPokemon)!!)
+                mutableStateOf(copyPokemons.get(currentPokemon)!!)
             }
             PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
-                navController.navigate("favorite")
                 fav = Favorite(pokemon.id, profile.getId())
                 favoriteData.addFavorite(fav)
             })
@@ -68,7 +97,6 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
         composable(route = Route.Favorite.path){
             //Call favorite composable
 
-            //Text(text = fav.toString())
         }
         composable(route = Route.Teams.path){
             //Call teams composable

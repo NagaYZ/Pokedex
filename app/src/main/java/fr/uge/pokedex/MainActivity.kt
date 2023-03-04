@@ -28,6 +28,7 @@ import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.database.FavoriteDao
 import fr.uge.pokedex.database.PokedexAppDatabaseConnection
 import fr.uge.pokedex.database.Profile
+import fr.uge.pokedex.database.ProfileDao
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             PokedexTheme {
+                val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
                 val favoriteDao : FavoriteDao = PokedexAppDatabaseConnection.connection.favoriteDao()
                 val navController: NavHostController = rememberNavController()
                 val pokemons = PokemonRepository(LocalContext.current).data
@@ -58,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(bottomBar = { if(currentRoute != Route.Profiles.path) BottomNavigationMenu(navController)},
                         topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController, currentProfile) }) {
                         Log.d("Padding",it.toString())
-                        NavigationGraph(navController = navController, setCurrentProfile = {profile: Profile -> currentProfile = profile }, currentProfile, pokemons = pokemons, favoriteData = favoriteDao)
+                        NavigationGraph(navController = navController, profileDao, setCurrentProfile = {profile: Profile -> currentProfile = profile }, currentProfile, pokemons = pokemons, favoriteData = favoriteDao)
                     }
                 }
 

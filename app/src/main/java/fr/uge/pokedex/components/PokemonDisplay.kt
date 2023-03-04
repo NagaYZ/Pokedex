@@ -12,7 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -52,7 +52,9 @@ fun PokemonBoxDisplay(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .fillMaxWidth()
         ) {
 
             PokemonBoxTitle(name = pokemon.name)
@@ -65,7 +67,7 @@ fun PokemonBoxDisplay(
                 textAlign = TextAlign.Center
             )
 
-            FavoriteButton(onClick = onClickFavorite)
+            FavoriteButton(filled = pokemon.isFavorite, onClick = onClickFavorite)
         }
         PokemonTypeDisplay(type = pokemon.type)
 
@@ -91,8 +93,8 @@ private fun PokemonSprite(spriteResource: Int) {
 fun PokemonListDisplay(
     pokemon: Pokemon,
     context: Context,
-    onClick: () ->  Unit  ,
-    onClickFavorite: () -> Unit = {}
+    onClick: () ->  Unit,
+    onClickFavorite: () -> Unit,
 ) {
     Row(
         Modifier
@@ -126,23 +128,24 @@ fun PokemonListDisplay(
 
         }
         Spacer(modifier = Modifier.weight(1.0f))
-        FavoriteButton(onClick = onClickFavorite)
+        FavoriteButton(filled = pokemon.isFavorite, onClick = onClickFavorite)
     }
 }
 
-@Preview
+
 @Composable
-private fun FavoriteButton(filled : Boolean = false, onClick: () -> Unit = {}) {
+private fun FavoriteButton(filled: Boolean = false, onClick: () -> Unit) {
+
     IconButton(
-        onClick = onClick,
+        onClick = onClick
     ) {
         Icon(
-            if (filled) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+            imageVector = if (filled) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
             contentDescription = "Favorite",
             modifier = Modifier
                 .size(ButtonDefaults.IconSize)
                 .scale(1.25f),
-            tint = Color.LightGray
+            tint = Color.Red,
         )
     }
 }
