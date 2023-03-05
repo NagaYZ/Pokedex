@@ -1,9 +1,13 @@
 package fr.uge.pokedex.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.Pokemon
 
 
@@ -26,16 +30,19 @@ fun FiltersBar(pokemons: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
         mutableStateOf(mutableListOf<Pokemon>())
     }
 
-    Row(Modifier.fillMaxWidth()) {
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.CenterHorizontally) {
         SearchBar(pokemonSearch = {
             search = it
         })
-        DropDownType(name = "Type 1", typeNum = {
-            type1 = it
-        })
-        DropDownType(name = "Type 2", typeNum = {
-            type2 = it
-        })
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+            DropDownType(name = "Type 1", typeNum = {
+                type1 = it
+            })
+            DropDownType(name = "Type 2", typeNum = {
+                type2 = it
+            })
+        }
+
     }
 
     if(type1 == "" && type2 == "" && search == ""){

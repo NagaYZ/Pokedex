@@ -1,13 +1,14 @@
 package fr.uge.pokedex.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import fr.uge.pokedex.data.Pokemon
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.Type
 
 @Composable
@@ -26,15 +27,18 @@ fun DropDownType(name: String, typeNum: (String) -> Unit) {
     }
 
 
-    IconButton(onClick = {
+    OutlinedButton(onClick = {
         state = true
-    }){
-        Row() {
+    }, border = BorderStroke(1.dp, Color.Gray), colors = ButtonDefaults.buttonColors(Color.Transparent)
 
-            Text(text = if (type != Type.NONE) type.toString() else name)
+    ){
+        Row(horizontalArrangement = Arrangement.Center) {
+
+            Text(text = if (type != Type.NONE) type.toString() else name, color = Color.Gray)
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Open Filter"
+                contentDescription = "Open Filter",
+                tint = Color.Gray
             )
         }
         DropdownMenu(
