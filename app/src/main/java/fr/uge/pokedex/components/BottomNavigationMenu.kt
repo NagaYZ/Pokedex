@@ -43,6 +43,7 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
     var currentIconeFavori by remember {
         mutableStateOf(-1L)
     }
+
     var fav by remember {
         mutableStateOf(Favorite(-1L, -1L))
     }
@@ -50,12 +51,16 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
         mutableStateOf(mutableListOf<Pokemon>())
     }
 
+
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
-            var favorites = profileDao.getProfileWithFavorites(profile.getId()).favorites
 
+            var favorites by remember {
+                mutableStateOf(profileDao.getProfileWithFavorites(profile.getId()).favorites)
+            }
+            println( copyPokemons.get(1)!!.isFavorite)
             Column() {
                 FiltersBar(pokemons = copyPokemons.values.toList())
                 {
@@ -75,6 +80,7 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
                     },
                     clickFavorite = {
                         fav = Favorite(currentIconeFavori, profile.getId())
+
                         if (!favorites.contains(fav)) {
                             favoriteData.addFavorite(fav)
                             copyPokemons.get(currentIconeFavori)!!.isFavorite = true
@@ -97,7 +103,7 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
         composable(route = Route.Favorite.path){
             //Call favorite composable
             var favorites by remember {
-                mutableStateOf(profileDao.getProfileWithFavorites(profile.getId()).favorites)
+                mutableStateOf(profileDao.getProfileWithFavorites(profile.getId()).favorites.toMutableList())
             }
 
             var pokemonsFav by remember {
@@ -105,7 +111,7 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
             }
 
             favorites.forEach { favorite ->
-                pokemonsFav.add(copyPokemons.get(favorite.getPokemonId())!!) }
+                pokemonsFav.add(copyPokemons.get(favorite.getPokemonId())!!)}
 
             Column() {
                 FiltersBar(pokemons = pokemonsFav.distinct(), filterList = {
@@ -122,9 +128,12 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
                         currentPokemon = it
                     }, getPokemonFavoriteId = { currentIconeFavori = it },
                     clickFavorite = {
-                        favorites.forEach { favorite -> if(favorite.getPokemonId() == currentIconeFavori && favorite.getProfileId() == profile.getId()){
-                            favoriteData.deleteFavorite(favorite)
-                            copyPokemons.get(currentIconeFavori)!!.isFavorite = false }
+                        favorites.forEach { favorite ->
+                            if (favorite.getPokemonId() == currentIconeFavori && favorite.getProfileId() == profile.getId()) {
+                                copyPokemons.get(currentIconeFavori)!!.isFavorite = false
+                                favoriteData.deleteFavorite(favorite)
+                                favorites.remove(favorite)
+                            }
                         }
                     }
                 )
