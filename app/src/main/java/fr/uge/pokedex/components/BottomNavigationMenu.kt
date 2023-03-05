@@ -74,7 +74,11 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
                         currentIconeFavori = it
                     },
                     clickFavorite = {
-
+                        fav = Favorite(currentIconeFavori, profile.getId())
+                        if (!favorites.contains(fav)) {
+                            favoriteData.addFavorite(fav)
+                            copyPokemons.get(currentIconeFavori)!!.isFavorite = true
+                        }
                     })
             }
         }
