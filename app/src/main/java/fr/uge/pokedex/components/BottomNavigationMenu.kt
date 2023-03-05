@@ -1,5 +1,6 @@
 package fr.uge.pokedex.components
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,12 +9,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import fr.uge.pokedex.database.Profile
+import fr.uge.pokedex.data.Pokemon
+import fr.uge.pokedex.database.*
 
 
 sealed class Route(val title: String, val path: String){
@@ -21,18 +24,76 @@ sealed class Route(val title: String, val path: String){
     object Favorite : Route("Favorite","favorite")
     object Teams : Route("Teams","teams")
     object Profiles : Route("Profiles","profiles")
+
+    object Card : Route("Card", "card")
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit){
+fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemons: Map<Long, Pokemon>){
+    var copyPokemons by remember {
+        mutableStateOf(pokemons)
+    }
+
+    var currentPokemon by remember {
+        mutableStateOf(-1L)
+    }
+    var currentIconeFavori by remember {
+        mutableStateOf(-1L)
+    }
+    var fav by remember {
+        mutableStateOf(Favorite(-1L, -1L))
+    }
+    var resultList by remember {
+        mutableStateOf(mutableListOf<Pokemon>())
+    }
+
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
-        composable(route = Route.Pokedex.path){
+
+        composable(route = Route.Pokedex.path) {
             //Call pokedex composable
-            Text(text = "Pokedex screen", style = MaterialTheme.typography.h1)
+            var favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+
+            Column() {
+                FiltersBar(pokemons = copyPokemons.values.toList())
+                {
+                    resultList = it.toMutableList()
+                }
+
+                DisplayPokedex(context = LocalContext.current,
+                    pokemons = resultList,
+                    navController = navController,
+                    favorites = favorites,
+                    profile = profile,
+                    getPokemonId = {
+                        currentPokemon = it
+                    },
+                    getPokemonFavoriteId = {
+                        currentIconeFavori = it
+                    },
+                    clickFavorite = {
+                        fav = Favorite(currentIconeFavori, profile.getId())
+                        if (!favorites.contains(fav)) {
+                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+                            copyPokemons.get(currentIconeFavori)!!.isFavorite = true
+                        }
+                    })
+            }
+        }
+
+
+        composable(route = Route.Card.path){
+            //Call a card pokemon composable
+            var pokemon by remember {
+                mutableStateOf(copyPokemons.get(currentPokemon)!!)
+            }
+            PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
+                fav = Favorite(pokemon.id, profile.getId())
+                PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+            })
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
-            Text(text = "Favorite screen", style = MaterialTheme.typography.h1)
+
         }
         composable(route = Route.Teams.path){
             //Call teams composable

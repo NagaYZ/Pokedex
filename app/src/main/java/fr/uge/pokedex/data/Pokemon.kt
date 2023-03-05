@@ -2,8 +2,10 @@ package fr.uge.pokedex.data
 
 import android.annotation.SuppressLint
 import android.content.Context
+
 import java.util.*
 import kotlin.collections.HashSet
+
 
 data class Pokemon(
     val id: Long,
@@ -25,7 +27,8 @@ data class Pokemon(
     var growRate: GrowRate = GrowRate.MEDIUM,
     val baseStats: BaseStats = BaseStats(),
     val abilities: Abilities = Abilities(),
-    val learnSet: MutableSet<LearnableMove> = HashSet()
+    val learnSet: MutableSet<LearnableMove> = HashSet(),
+    var isFavorite: Boolean = false
 ) {
 
     @SuppressLint("DiscouragedApi")
@@ -37,7 +40,14 @@ data class Pokemon(
     @SuppressLint("DiscouragedApi")
     @Suppress("unused")
     fun getIcon(context: Context): Int {
-        return context.resources.getIdentifier("icon_pkm_$id", "drawable", context.packageName)
+
+        val iconExist =
+            context.resources.getIdentifier("icon_pkm_$id", "drawable", context.packageName)
+
+        if (iconExist == 0) {
+            return context.resources.getIdentifier("pokemon_0", "drawable", context.packageName)
+        }
+        return iconExist
     }
 
     fun getWeaknesses(): Set<Type> {
@@ -50,5 +60,7 @@ data class Pokemon(
         val resistanceFirst = type.first.isResistantTo.subtract(type.second.isVulnerableTo)
         val resistanceSecond = type.second.isResistantTo.subtract(type.first.isVulnerableTo)
         return resistanceFirst.union(resistanceSecond)
+
     }
 }
+
