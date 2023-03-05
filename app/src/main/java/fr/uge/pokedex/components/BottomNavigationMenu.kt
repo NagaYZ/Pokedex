@@ -74,11 +74,7 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
                         currentIconeFavori = it
                     },
                     clickFavorite = {
-                        fav = Favorite(currentIconeFavori, profile.getId())
-                        if (!favorites.contains(fav)) {
-                            favoriteData.addFavorite(fav)
-                            copyPokemons.get(currentIconeFavori)!!.isFavorite = true
-                        }
+
                     })
             }
         }
@@ -96,7 +92,39 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
+            var favorites by remember {
+                mutableStateOf(profileDao.getProfileWithFavorites(profile.getId()).favorites)
+            }
 
+            var pokemonsFav by remember {
+                mutableStateOf(mutableListOf<Pokemon>())
+            }
+
+            favorites.forEach { favorite ->
+                pokemonsFav.add(copyPokemons.get(favorite.getPokemonId())!!) }
+
+            Column() {
+                FiltersBar(pokemons = pokemonsFav.distinct(), filterList = {
+                    resultList = it.toMutableList()
+                })
+                DisplayPokedex(
+                    sizeGrid = 1,
+                    context = LocalContext.current,
+                    pokemons = resultList,
+                    navController = navController,
+                    favorites = favorites,
+                    profile = profile,
+                    getPokemonId = {
+                        currentPokemon = it
+                    }, getPokemonFavoriteId = { currentIconeFavori = it },
+                    clickFavorite = {
+                        favorites.forEach { favorite -> if(favorite.getPokemonId() == currentIconeFavori && favorite.getProfileId() == profile.getId()){
+                            favoriteData.deleteFavorite(favorite)
+                            copyPokemons.get(currentIconeFavori)!!.isFavorite = false }
+                        }
+                    }
+                )
+            }
         }
         composable(route = Route.Teams.path){
             //Call teams composable
