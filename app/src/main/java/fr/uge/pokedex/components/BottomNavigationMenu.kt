@@ -51,8 +51,9 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
-            var favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
-
+            var favorites by remember {
+                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.toMutableList())
+            }
             Column() {
                 FiltersBar(pokemons = copyPokemons.values.toList())
                 {
@@ -62,7 +63,6 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
                 DisplayPokedex(context = LocalContext.current,
                     pokemons = resultList,
                     navController = navController,
-                    favorites = favorites,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
@@ -108,12 +108,12 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
                 FiltersBar(pokemons = pokemonsFav.distinct(), filterList = {
                     resultList = it.toMutableList()
                 })
+
                 DisplayPokedex(
                     sizeGrid = 1,
                     context = LocalContext.current,
                     pokemons = resultList,
                     navController = navController,
-                    favorites = favorites,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
@@ -123,11 +123,13 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
                             if (favorite.getPokemonId() == currentIconeFavori && favorite.getProfileId() == profile.getId()) {
                                 copyPokemons.get(currentIconeFavori)!!.isFavorite = false
                                 PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
-                                favorites.remove(favorite)
+
                             }
                         }
+
                     }
                 )
+
             }
         }
         composable(route = Route.Teams.path){
