@@ -1,14 +1,18 @@
 package fr.uge.pokedex.components
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import fr.uge.pokedex.R
 
 
 @Composable
@@ -17,14 +21,17 @@ fun SearchBar(pokemonSearch: (String) -> Unit) {
         mutableStateOf("")
     }
 
-    Icon(Icons.Default.Search, contentDescription = "Recherche", modifier = Modifier.size(30.dp, 60.dp) )
+    Row() {
+        Icon(painter = painterResource(id = R.drawable.pok), contentDescription = "Recherche", modifier = Modifier.padding(5.dp, 17.dp).size(30.dp), tint = Color.Unspecified )
 
-    TextField(
-        modifier = Modifier.size(200.dp, 60.dp),
-        value = search,
-        onValueChange = { search = it },
-        placeholder = { Text("Recherche par nom") }
-    )
-    pokemonSearch(search)
+        OutlinedTextField(
+            modifier = Modifier.padding(5.dp).fillMaxWidth(),
+            value = search,
+            onValueChange = { search = it },
+            placeholder = { Text("Recherche par nom") }
+        )
+        pokemonSearch(search)
+    }
+
 
 }
