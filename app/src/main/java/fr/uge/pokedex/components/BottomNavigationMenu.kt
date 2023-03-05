@@ -16,10 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.database.Favorite
-import fr.uge.pokedex.database.FavoriteDao
-import fr.uge.pokedex.database.Profile
-import fr.uge.pokedex.database.ProfileDao
+import fr.uge.pokedex.database.*
 
 
 sealed class Route(val title: String, val path: String){
@@ -32,7 +29,7 @@ sealed class Route(val title: String, val path: String){
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemons: Map<Long, Pokemon>, favoriteData : FavoriteDao){
+fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemons: Map<Long, Pokemon>){
     var copyPokemons by remember {
         mutableStateOf(pokemons)
     }
@@ -43,7 +40,6 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
     var currentIconeFavori by remember {
         mutableStateOf(-1L)
     }
-
     var fav by remember {
         mutableStateOf(Favorite(-1L, -1L))
     }
@@ -51,16 +47,12 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
         mutableStateOf(mutableListOf<Pokemon>())
     }
 
-
     NavHost(navController = navController, startDestination =  Route.Profiles.path){
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
+            var favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
 
-            var favorites by remember {
-                mutableStateOf(profileDao.getProfileWithFavorites(profile.getId()).favorites)
-            }
-            println( copyPokemons.get(1)!!.isFavorite)
             Column() {
                 FiltersBar(pokemons = copyPokemons.values.toList())
                 {
@@ -80,9 +72,8 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
                     },
                     clickFavorite = {
                         fav = Favorite(currentIconeFavori, profile.getId())
-
                         if (!favorites.contains(fav)) {
-                            favoriteData.addFavorite(fav)
+                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
                             copyPokemons.get(currentIconeFavori)!!.isFavorite = true
                         }
                     })
@@ -97,13 +88,13 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
             }
             PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
                 fav = Favorite(pokemon.id, profile.getId())
-                favoriteData.addFavorite(fav)
+                PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
             })
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
             var favorites by remember {
-                mutableStateOf(profileDao.getProfileWithFavorites(profile.getId()).favorites.toMutableList())
+                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.toMutableList())
             }
 
             var pokemonsFav by remember {
@@ -131,7 +122,7 @@ fun NavigationGraph(navController: NavHostController, profileDao: ProfileDao, se
                         favorites.forEach { favorite ->
                             if (favorite.getPokemonId() == currentIconeFavori && favorite.getProfileId() == profile.getId()) {
                                 copyPokemons.get(currentIconeFavori)!!.isFavorite = false
-                                favoriteData.deleteFavorite(favorite)
+                                PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
                                 favorites.remove(favorite)
                             }
                         }
