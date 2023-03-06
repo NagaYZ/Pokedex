@@ -28,7 +28,7 @@ fun SearchBar(pokemonSearch: (String) -> Unit) {
             modifier = Modifier.padding(5.dp).fillMaxWidth(),
             value = search,
             onValueChange = { search = it },
-            placeholder = { Text("Recherche par nom") }
+            placeholder = { Text("Search by name") }
         )
         pokemonSearch(search)
     }

@@ -44,12 +44,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             PokedexTheme {
                 val navController: NavHostController = rememberNavController()
-                val pokemons by remember {
+                val pokemonMap by remember {
                     mutableStateOf(mutableMapOf<Long, Pokemon>())
                 }
                 val context = LocalContext.current
-                LaunchedEffect(pokemons){
-                    PokemonRepository(context).data.forEach { t, u -> pokemons.put(t, u) }
+                LaunchedEffect(pokemonMap){
+                    PokemonRepository(context).data.forEach { t, u -> pokemonMap.put(t, u) }
                 }
 
 
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(bottomBar = { if(currentRoute != Route.Profiles.path) BottomNavigationMenu(navController)},
                         topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController, currentProfile) }) {
                         Log.d("Padding",it.toString())
-                        NavigationGraph(navController = navController, setCurrentProfile = {profile: Profile -> currentProfile = profile }, currentProfile, pokemons = pokemons)
+                        NavigationGraph(navController = navController, setCurrentProfile = {profile: Profile -> currentProfile = profile }, currentProfile, pokemonMap = pokemonMap)
                     }
                 }
 

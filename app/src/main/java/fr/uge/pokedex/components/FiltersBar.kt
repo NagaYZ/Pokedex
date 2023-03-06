@@ -12,7 +12,7 @@ import fr.uge.pokedex.data.Pokemon
 
 
 @Composable
-fun FiltersBar(pokemons: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
+fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
 
     var type1 by remember {
         mutableStateOf("")
@@ -46,12 +46,12 @@ fun FiltersBar(pokemons: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
     }
 
     if(type1 == "" && type2 == "" && search == ""){
-        filterList(pokemons)
+        filterList(pokemonList)
     }
 
     LaunchedEffect(type1, type2, search){
         resultList.clear()
-        for (pokemon in pokemons){
+        for (pokemon in pokemonList){
             if ((pokemon.type.first.toString().contains(type1) || pokemon.type.second.toString().contains(type1))  && (pokemon.type.first.toString().contains(type2) || pokemon.type.second.toString().contains(type2)) ){
                 resultList.add(pokemon)
             }
