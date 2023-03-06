@@ -1,12 +1,12 @@
 package fr.uge.pokedex.components
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -28,13 +28,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
+import java.util.*
 
+
+@SuppressLint("NewApi")
 @Composable
 fun PokemonBoxDisplay(
     pokemon: Pokemon,
     context: Context,
     onClick: () ->  Unit = {},
-    onClickFavorite: () -> Unit = {}
+    onClickFavorite: () -> Unit = {},
+    favoriteList: List<Long>
+
 ) {
 
     Column(
@@ -66,8 +71,16 @@ fun PokemonBoxDisplay(
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center
             )
+            var id : Optional<Long> = Optional.empty()
+            if(favoriteList.contains(pokemon.id)){
+                id = Optional.of(pokemon.id)
+            }
+                FavoriteButton(filled = id,notStillFilled = {
+                    if (!it){
+                        id = Optional.empty()
+                    }
+                }, onClick = onClickFavorite)
 
-            FavoriteButton(filled = pokemon.isFavorite, onClick = onClickFavorite)
         }
         PokemonTypeDisplay(type = pokemon.type)
 
@@ -89,12 +102,16 @@ private fun PokemonSprite(spriteResource: Int) {
     )
 }
 
+
+@SuppressLint("NewApi")
 @Composable
 fun PokemonListDisplay(
     pokemon: Pokemon,
     context: Context,
     onClick: () ->  Unit,
     onClickFavorite: () -> Unit,
+    favoriteList: List<Long>
+
 ) {
     Row(
         Modifier
@@ -128,26 +145,42 @@ fun PokemonListDisplay(
 
         }
         Spacer(modifier = Modifier.weight(1.0f))
-        FavoriteButton(filled = pokemon.isFavorite, onClick = onClickFavorite)
+
+        var id : Optional<Long> = Optional.empty()
+        if(favoriteList.contains(pokemon.id)){
+            id = Optional.of(pokemon.id)
+        }
+            FavoriteButton(filled = id, notStillFilled = {
+                                                         if (!it){
+                                                             id = Optional.empty()
+                                                         }
+            }, onClick = onClickFavorite)
+
     }
 }
 
-
+@SuppressLint("NewApi")
 @Composable
-private fun FavoriteButton(filled: Boolean = false, onClick: () -> Unit) {
+private fun FavoriteButton(filled: Optional<Long>, notStillFilled : (Boolean) -> Unit, onClick: () -> Unit) {
+    var isClicked by remember { mutableStateOf(filled.isPresent) }
 
-    IconButton(
-        onClick = onClick
-    ) {
-        Icon(
-            imageVector = if (filled) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
-            contentDescription = "Favorite",
-            modifier = Modifier
-                .size(ButtonDefaults.IconSize)
-                .scale(1.25f),
-            tint = Color.Red,
-        )
-    }
+    Icon(
+        imageVector = if (isClicked) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+        contentDescription = "Favorite",
+        modifier = Modifier
+            .size(ButtonDefaults.IconSize)
+            .scale(1.25f)
+            .clickable(onClick = {
+                onClick.invoke()
+                isClicked = !isClicked
+                notStillFilled(isClicked) }
+            ),
+        tint = Color.Red,
+    )
+
+
+
+
 }
 
 @Composable
@@ -176,13 +209,6 @@ private fun PokemonBoxTitle(name: String) {
                 blurRadius = 0.1f
             )
         )
-    )
-}
-
-@Composable
-private fun PokemonBoxDescription(description: String) {
-    Text(
-        text = description
     )
 }
 

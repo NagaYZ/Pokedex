@@ -1,6 +1,7 @@
 package fr.uge.pokedex.components
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,7 +17,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.database.*
+import fr.uge.pokedex.database.Favorite
+import fr.uge.pokedex.database.PokedexAppDatabaseConnection
+import fr.uge.pokedex.database.Profile
+import java.util.*
 
 
 sealed class Route(val title: String, val path: String){
@@ -28,16 +32,17 @@ sealed class Route(val title: String, val path: String){
     object Card : Route("Card", "card")
 }
 
+@SuppressLint("NewApi")
 @Composable
-fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemons: Map<Long, Pokemon>){
-    var copyPokemons by remember {
-        mutableStateOf(pokemons)
+fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemonMap: Map<Long, Pokemon>){
+    val copyPokemonMap by remember {
+        mutableStateOf(pokemonMap)
     }
 
     var currentPokemon by remember {
         mutableStateOf(-1L)
     }
-    var currentIconeFavori by remember {
+    var currentIconFavorite by remember {
         mutableStateOf(-1L)
     }
     var fav by remember {
@@ -51,30 +56,39 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
-            var favorites by remember {
+            val favorites by remember {
                 mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.toMutableList())
             }
             Column() {
-                FiltersBar(pokemons = copyPokemons.values.toList())
+                FiltersBar(pokemonList = copyPokemonMap.values.toList())
                 {
                     resultList = it.toMutableList()
                 }
 
                 DisplayPokedex(context = LocalContext.current,
-                    pokemons = resultList,
+                    pokemonList = resultList,
                     navController = navController,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
                     },
                     getPokemonFavoriteId = {
-                        currentIconeFavori = it
+                        currentIconFavorite = it
                     },
                     clickFavorite = {
-                        fav = Favorite(currentIconeFavori, profile.getId())
-                        if (!favorites.contains(fav)) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
-                            copyPokemons.get(currentIconeFavori)!!.isFavorite = true
+                        if(Optional.of(currentIconFavorite).isPresent){
+                            fav = Favorite(currentIconFavorite, profile.getId())
+                            if (!favorites.contains(fav)) {
+                                PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+                            }
+                        }
+                        else{
+
+                            favorites.forEach { favorite ->
+                                if (favorite.getPokemonId() == currentIconFavorite && favorite.getProfileId() == profile.getId()) {
+                                    PokedexAppDatabaseConnection.connection.favoriteDao()
+                                        .deleteFavorite(favorite)
+                                }}
                         }
                     })
             }
@@ -83,52 +97,50 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
 
         composable(route = Route.Card.path){
             //Call a card pokemon composable
-            var pokemon by remember {
-                mutableStateOf(copyPokemons.get(currentPokemon)!!)
+            val pokemon by remember {
+                mutableStateOf(copyPokemonMap.get(currentPokemon)!!)
             }
             PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
                 fav = Favorite(pokemon.id, profile.getId())
                 PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
-            })
+            },
+                favoriteList = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }.toList()
+            )
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
-            var favorites by remember {
+            val favorites by remember {
                 mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.toMutableList())
             }
 
-            var pokemonsFav by remember {
+            val pokemonsFav by remember {
                 mutableStateOf(mutableListOf<Pokemon>())
             }
 
             favorites.forEach { favorite ->
-                pokemonsFav.add(copyPokemons.get(favorite.getPokemonId())!!)}
+                pokemonsFav.add(copyPokemonMap.get(favorite.getPokemonId())!!)}
 
             Column() {
-                FiltersBar(pokemons = pokemonsFav.distinct(), filterList = {
+                FiltersBar(pokemonList = pokemonsFav.distinct(), filterList = {
                     resultList = it.toMutableList()
                 })
 
                 DisplayPokedex(
                     sizeGrid = 1,
                     context = LocalContext.current,
-                    pokemons = resultList,
+                    pokemonList = resultList,
                     navController = navController,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
-                    }, getPokemonFavoriteId = { currentIconeFavori = it },
+                    }, getPokemonFavoriteId = { currentIconFavorite = it },
                     clickFavorite = {
                         favorites.forEach { favorite ->
-                            if (favorite.getPokemonId() == currentIconeFavori && favorite.getProfileId() == profile.getId()) {
-                                copyPokemons.get(currentIconeFavori)!!.isFavorite = false
+                            if (favorite.getPokemonId() == currentIconFavorite && favorite.getProfileId() == profile.getId()) {
                                 PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
-
                             }
                         }
-
-                    }
-                )
+                    })
 
             }
         }
