@@ -18,18 +18,18 @@ import fr.uge.pokedex.database.Profile
 
 
 @Composable
-fun DisplayPokedex(sizeGrid: Int = 1, context: Context, pokemonList: List<Pokemon>, navController: NavHostController, profile: Profile, getPokemonId: (Long) -> Unit, getPokemonFavoriteId: (Long) -> Unit, clickFavorite : () -> Unit)  {
+fun DisplayPokedex(sizeGrid: Int = 1, context: Context, pokemonList: List<Pokemon>, navController: NavHostController, profile: Profile, getPokemonId: (Long) -> Unit, getPokemonFavoriteId: (Long) -> Unit, clickFavorite : (Boolean) -> Unit)  {
 
     LazyVerticalGrid(columns = GridCells.Fixed(sizeGrid), horizontalArrangement = Arrangement.spacedBy(30.dp), verticalArrangement = Arrangement.spacedBy(20.dp), contentPadding = PaddingValues(10.dp)) {
-        items(pokemonList) {
-            val favoriteList : List<Long> = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }.toList()
+        items(pokemonList) { pokemon ->
+            val favoriteList : List<Long> = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }.toList().distinct()
 
-            PokemonListDisplay(pokemon = it, context = context, onClick = {
+            PokemonListDisplay(pokemon = pokemon, context = context, onClick = {
                 navController.navigate("card")
-                getPokemonId(it.id)
+                getPokemonId(pokemon.id)
             }, onClickFavorite = {
-                getPokemonFavoriteId(it.id)
-                clickFavorite()
+                getPokemonFavoriteId(pokemon.id)
+                clickFavorite(it)
             }, favoriteList = favoriteList)
         }
     }

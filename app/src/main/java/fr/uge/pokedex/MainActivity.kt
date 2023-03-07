@@ -19,20 +19,18 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import fr.uge.pokedex.components.BottomNavigationMenu
 import fr.uge.pokedex.components.NavigationGraph
-
 import fr.uge.pokedex.components.Route
 import fr.uge.pokedex.components.TopBar
-
+import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.PokemonRepository
-import fr.uge.pokedex.database.FavoriteDao
 import fr.uge.pokedex.database.PokedexAppDatabaseConnection
 import fr.uge.pokedex.database.Profile
-import fr.uge.pokedex.database.ProfileDao
 import fr.uge.pokedex.ui.theme.PokedexTheme
-import fr.uge.pokedex.data.Pokemon
 
 class MainActivity : ComponentActivity() {
     private lateinit var pokemonRepository : PokemonRepository
+
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
