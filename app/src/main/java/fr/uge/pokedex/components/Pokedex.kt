@@ -22,13 +22,11 @@ import fr.uge.pokedex.database.Profile
 
 @Composable
 fun DisplayPokedex(sizeGrid: Int = 1, context: Context, pokemonList: List<Pokemon>, navController: NavHostController, profile: Profile, getPokemonId: (Long) -> Unit, getPokemonFavoriteId: (Long) -> Unit, clickFavorite : (Boolean) -> Unit)  {
-
+    val favoriteList by remember {
+        mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() })
+    }
     LazyVerticalGrid(columns = GridCells.Fixed(sizeGrid), horizontalArrangement = Arrangement.spacedBy(30.dp), verticalArrangement = Arrangement.spacedBy(20.dp), contentPadding = PaddingValues(10.dp)) {
         items(pokemonList) { pokemon ->
-            val favoriteList by remember {
-                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() })
-                }
-
             PokemonListDisplay(pokemon = pokemon, context = context, onClick = {
                 navController.navigate("card")
                 getPokemonId(pokemon.id)

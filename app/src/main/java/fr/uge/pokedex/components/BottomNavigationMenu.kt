@@ -54,7 +54,7 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
             var favorites by remember {
-                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.distinct())
+                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites)
             }
             Column() {
                 FiltersBar(pokemonList = copyPokemonMap.values.toList())
@@ -102,7 +102,7 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
             var pokemon by remember {
                 mutableStateOf(copyPokemonMap.get(currentPokemon)!!)
             }
-            val favorites by remember {
+            var favorites by remember {
                 mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.distinct())
             }
             PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
@@ -111,6 +111,8 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
                         if (favorite.getPokemonId() == pokemon.id) {
                             PokedexAppDatabaseConnection.connection.favoriteDao()
                                 .deleteFavorite(favorite)
+                            favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+
                         }
                     }
                 } else {
@@ -118,6 +120,8 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
                     if (!favorites.contains(fav)) {
 
                         PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+                        favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+
                     }
                 }
 
@@ -127,8 +131,8 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
         }
         composable(route = Route.Favorite.path){
             //Call favorite composable
-            val favorites by remember {
-                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.distinct())
+            var favorites by remember {
+                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites)
             }
 
             var pokemonsFav by remember {
