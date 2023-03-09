@@ -6,9 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -29,12 +31,15 @@ import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
 
+
 @Composable
 fun PokemonBoxDisplay(
     pokemon: Pokemon,
     context: Context,
     onClick: () ->  Unit = {},
-    onClickFavorite: () -> Unit = {}
+    onClickFavorite: (Boolean) -> Unit = {},
+    favoriteList: List<Long>
+
 ) {
 
     Column(
@@ -67,11 +72,9 @@ fun PokemonBoxDisplay(
                 textAlign = TextAlign.Center
             )
 
-            FavoriteButton(filled = pokemon.isFavorite, onClick = onClickFavorite)
+                FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
         }
         PokemonTypeDisplay(type = pokemon.type)
-
-//        PokemonBoxDescription(description = pokemon.description)
     }
 
 }
@@ -89,12 +92,17 @@ private fun PokemonSprite(spriteResource: Int) {
     )
 }
 
+
+
+
 @Composable
 fun PokemonListDisplay(
     pokemon: Pokemon,
     context: Context,
     onClick: () ->  Unit,
-    onClickFavorite: () -> Unit,
+    onClickFavorite: (Boolean) -> Unit,
+    favoriteList: List<Long>
+
 ) {
     Row(
         Modifier
@@ -125,29 +133,34 @@ fun PokemonListDisplay(
                 )
             }
             PokemonTypeDisplay(type = pokemon.type)
-
         }
         Spacer(modifier = Modifier.weight(1.0f))
-        FavoriteButton(filled = pokemon.isFavorite, onClick = onClickFavorite)
+
+            FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
     }
 }
 
 
 @Composable
-private fun FavoriteButton(filled: Boolean = false, onClick: () -> Unit) {
+private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
+    var isClicked by remember { mutableStateOf(filled) }
 
-    IconButton(
-        onClick = onClick
-    ) {
-        Icon(
-            imageVector = if (filled) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
-            contentDescription = "Favorite",
-            modifier = Modifier
-                .size(ButtonDefaults.IconSize)
-                .scale(1.25f),
-            tint = Color.Red,
-        )
-    }
+    Icon(
+        imageVector = if (isClicked) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+        contentDescription = "Favorite",
+        modifier = Modifier
+            .size(ButtonDefaults.IconSize)
+            .scale(1.25f)
+            .clickable(onClick = {
+                isClicked = !isClicked
+                onClick.invoke(isClicked) }
+            ),
+        tint = Color.Red,
+    )
+
+
+
+
 }
 
 @Composable
@@ -176,13 +189,6 @@ private fun PokemonBoxTitle(name: String) {
                 blurRadius = 0.1f
             )
         )
-    )
-}
-
-@Composable
-private fun PokemonBoxDescription(description: String) {
-    Text(
-        text = description
     )
 }
 
