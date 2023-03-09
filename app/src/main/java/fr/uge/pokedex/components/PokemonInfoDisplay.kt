@@ -10,14 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.*
-import fr.uge.pokedex.ui.theme.PokedexTheme
-import java.util.*
 
 @Preview
 @Composable
@@ -51,21 +47,20 @@ fun PokemonInfoDisplay(
         name = "Bulbasaur"
     )
 ) {
-    PokedexTheme() {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(30.dp),
-            verticalArrangement = Arrangement.spacedBy(30.dp)
-        ) {
-            item {
-                PokemonCharacteristics(pokemon)
-            }
-            item {
-                PokemonAbilities(pokemon.abilities)
-            }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
+        contentPadding = PaddingValues(30.dp)
+    ) {
+        item {
+            PokemonCharacteristics(pokemon)
+        }
+        item {
+            PokemonAbilities(pokemon.abilities)
         }
     }
+
 }
 
 @Composable
