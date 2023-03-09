@@ -20,7 +20,7 @@ class DataParser(private val context: Context) {
         setPokemonFlavorText(pokemon)
         setPokemonAbilities(pokemon)
         setPokemonMoves(pokemon)
-        return pokemon
+        return pokemon.filterKeys { it < 649L } // Remove pokemon alt form and limit data to fifth generation
     }
 
     private fun parseLines(filename: String, action: (Map<String, String>) -> Unit) {

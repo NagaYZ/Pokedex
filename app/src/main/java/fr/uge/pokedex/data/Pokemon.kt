@@ -14,6 +14,7 @@ data class Pokemon(
     val weight: Int, // unit is 1/10th of a kilogram, ex: 69 = 6.9kg
     var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE),
     var name: String = "",
+    var description: String = "", // Most recent description
     val pokedexEntries: MutableSet<FlavorText> = HashSet(),
     var genus: String = "",
     val encounters: MutableSet<Encounter> = HashSet(),

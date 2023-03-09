@@ -70,6 +70,7 @@ class PokemonRepositoryTest {
             PokemonRepository(appContext)
 
         val pokemon = pokemonRepository.getAll()
+        println(pokemon.size)
         assertFalse(pokemon.isEmpty())
     }
 }
