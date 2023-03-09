@@ -20,10 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.database.Favorite
-import fr.uge.pokedex.database.PokedexAppDatabaseConnection
-import fr.uge.pokedex.database.Profile
+import fr.uge.pokedex.database.*
 import fr.uge.pokedex.ui.theme.Purple200
 import fr.uge.pokedex.ui.theme.Purple500
 
@@ -87,7 +86,7 @@ fun PopupWindow(
 ) {
     var createTeam by remember { mutableStateOf(false) }
     val team by remember {
-        mutableStateOf(mutableMapOf<Long, Long>())
+        mutableStateOf(mutableListOf<Long>())
     }
     var pickedPokemon by remember { mutableStateOf(-1L) }
 
@@ -113,7 +112,7 @@ fun PopupWindow(
                         }
                     )
                     if (pickedPokemon != -1L) {
-                        team.put(i.toLong(), pickedPokemon)
+                        team.add(pickedPokemon)
                     }
                     pickedPokemon = -1L
                 }
@@ -127,16 +126,27 @@ fun PopupWindow(
                 Button(
                     onClick = { close(); createTeam = true }
                 ) {
-                    Text("Create Team")
+                    Text("Done")
                 }
             }
         }
     )
     if (createTeam) {
-        //TODO
-
+        AddTeamToDatabase(team, profile)
     }
 
+}
+
+@Composable
+fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
+    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
+    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
+    val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
+    val teamId: Long = teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))
+
+    team.forEach { pokemon ->
+        teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -253,7 +263,7 @@ fun Dialog_preview() {
             Button(
                 onClick = { }
             ) {
-                Text("Create Team")
+                Text("Done")
             }
         }
     )
