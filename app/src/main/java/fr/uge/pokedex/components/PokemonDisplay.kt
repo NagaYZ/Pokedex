@@ -6,8 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.shape.RoundedCornerShape
+
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -71,7 +71,7 @@ fun PokemonBoxDisplay(
         }
         PokemonTypeDisplay(type = pokemon.type)
 
-//        PokemonBoxDescription(description = pokemon.description)
+        //PokemonBoxDescription(description = pokemon.description)
     }
 
 }
@@ -133,8 +133,9 @@ fun PokemonListDisplay(
 }
 
 
+@Preview
 @Composable
-private fun FavoriteButton(filled: Boolean = false, onClick: () -> Unit) {
+private fun FavoriteButton(filled: Boolean = false, onClick: () -> Unit = {}) {
 
     IconButton(
         onClick = onClick
@@ -145,7 +146,7 @@ private fun FavoriteButton(filled: Boolean = false, onClick: () -> Unit) {
             modifier = Modifier
                 .size(ButtonDefaults.IconSize)
                 .scale(1.25f),
-            tint = Color.Red,
+            tint = Color(0xFF8D8D8D),
         )
     }
 }
@@ -190,15 +191,15 @@ private fun PokemonBoxDescription(description: String) {
 @Composable
 private fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.ELECTRIC, Type.DRAGON)) {
     Row() {
-        TypeBox(type.first)
+        TypeDisplay(type.first)
         Spacer(modifier = Modifier.width(3.dp))
-        TypeBox(type.second)
+        TypeDisplay(type.second)
     }
 }
 
 @Preview
 @Composable
-private fun TypeBox(type: Type = Type.NORMAL) {
+private fun TypeDisplay(type: Type = Type.NORMAL) {
     if (type == Type.NONE) {
         return
     }

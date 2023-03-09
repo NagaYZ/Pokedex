@@ -67,6 +67,7 @@ class DataParser(private val context: Context) {
             val version = Version.values()[versionId.toInt() - 1]
             val flavorText = FlavorText(description, version)
             pokemon[speciesId.toLong()]?.pokedexEntries?.add(flavorText)
+            pokemon[speciesId.toLong()]?.description = description
         }
     }
 
@@ -199,9 +200,8 @@ class DataParser(private val context: Context) {
 
         parseLines("csv/core/ability_flavor_text.csv") { row ->
             val id = row["ability_id"]?.toLong()!!
-            val versionGroup = VersionGroup.values()[row["version_group_id"]?.toInt()!! - 1]
             val flavorText = row["flavor_text"]!!
-            abilities[id]?.descriptions?.set(versionGroup, flavorText)
+            abilities[id]?.flavorText = flavorText
         }
 
         parseLines("csv/core/pokemon_abilities.csv") { row ->
