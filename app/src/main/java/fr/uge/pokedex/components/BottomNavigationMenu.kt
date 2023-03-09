@@ -1,6 +1,7 @@
 package fr.uge.pokedex.components
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -39,6 +40,7 @@ sealed class Route(val title: String, val path: String) {
     object Card : Route("Card", "card")
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
@@ -80,35 +82,37 @@ fun NavigationGraph(
                 }
 
                 DisplayPokedex(pokemonList = resultList,
-                    navController = navController,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
                     },
                     getPokemonFavoriteId = {
                         currentIconFavorite = it
-                    }
-                ) {
-                    println(it)
-                    if (!it) {
-                        favorites.forEach { favorite ->
-                            if (favorite.getPokemonId() == currentIconFavorite) {
+                    },
+                    clickFavorite = {
+                        println(it)
+                        if (!it) {
+                            favorites.forEach { favorite ->
+                                if (favorite.getPokemonId() == currentIconFavorite) {
+                                    PokedexAppDatabaseConnection.connection.favoriteDao()
+                                        .deleteFavorite(favorite)
+                                    favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                        .getProfileWithFavorites(profile.getId()).favorites
+                                }
+                            }
+                        } else {
+                            fav = Favorite(currentIconFavorite, profile.getId())
+                            if (!favorites.contains(fav)) {
                                 PokedexAppDatabaseConnection.connection.favoriteDao()
-                                    .deleteFavorite(favorite)
+                                    .addFavorite(fav)
                                 favorites = PokedexAppDatabaseConnection.connection.profileDao()
                                     .getProfileWithFavorites(profile.getId()).favorites
                             }
                         }
-                    } else {
-                        fav = Favorite(currentIconFavorite, profile.getId())
-                        if (!favorites.contains(fav)) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao()
-                                .addFavorite(fav)
-                            favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                .getProfileWithFavorites(profile.getId()).favorites
-                        }
-                    }
-                }
+                    },
+                    onClick = {
+                        navController.navigate("card")
+                    })
             }
         }
 
@@ -179,7 +183,6 @@ fun NavigationGraph(
                 DisplayPokedex(
                     sizeGrid = 1,
                     pokemonList = resultList,
-                    navController = navController,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
@@ -197,9 +200,19 @@ fun NavigationGraph(
         }
         composable(route = Route.Teams.path) {
             //Call teams composable
-            Text(text = "Teams screen", style = MaterialTheme.typography.h1)
+            val favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                .getProfileWithFavorites(profile.getId()).favorites
+
+            Text(text = "Teams screen", style = MaterialTheme.typography.h3)
+            DisplayTeams(
+                pokemons,
+                context = LocalContext.current,
+                favorites = favorites,
+                profile
+            )
         }
-        composable(route = Route.Profiles.path) {
+
+        composable(route = Route.Profiles.path){
             //Call teams composable
 //            Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
             ProfilesScreen(navController, setCurrentProfile)

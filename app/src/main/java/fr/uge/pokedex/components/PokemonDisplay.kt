@@ -237,6 +237,48 @@ private fun TypeDisplay(type: Type = Type.NORMAL) {
     )
 }
 
+@Composable
+fun PokemonTeamDisplay(
+    pokemon: Pokemon,
+    context: Context,
+    onClick: () -> Unit,
+) {
+    Row(
+        Modifier
+            .clickable(onClick = onClick)
+            .background(MaterialTheme.colors.background)
+            .height(70.dp)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        PokemonIcon(pokemon.getIcon(context))
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                PokemonBoxTitle(name = pokemon.name)
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = "#${pokemon.id.toString().padStart(3, '0')}",
+                    color = Color.LightGray,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center
+                )
+            }
+            PokemonTypeDisplay(type = pokemon.type)
+        }
+        Spacer(modifier = Modifier.weight(1.0f))
+
+    }
+
+}
+
 private fun typeToColor(type: Type): Color {
     return when (type) {
         Type.NORMAL -> Color(0xFFBBBCAD)
