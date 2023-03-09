@@ -5,12 +5,11 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,26 +27,29 @@ import fr.uge.pokedex.ui.theme.Purple500
 
 @Composable
 fun DisplayTeams(
-    pokemons: Map<Long, Pokemon>,
-    context: Context,
-    favorites: List<Favorite>,
-    profile: Profile
+    pokemons: Map<Long, Pokemon>, context: Context, favorites: List<Favorite>, profile: Profile
 ) {
     var showNewTeamDialog by remember { mutableStateOf(false) }
-/*
-    LazyVerticalGrid(columns = GridCells.Fixed(sizeGrid), horizontalArrangement = Arrangement.spacedBy(40.dp), verticalArrangement = Arrangement.spacedBy(50.dp), contentPadding = PaddingValues(30.dp, 30.dp)) {
-        items(pokemons) {
-            favorites.forEach { fav -> if(fav.getPokemonId() == it.id && fav.getProfileId() == profile.getId()) it.isFavorite = true }
-            PokemonListDisplay(pokemon = it, context = context, onClick = {
-                navController.navigate("card")
-                getPokemonId(it.id)
-            }, onClickFavorite = {
-                getPokemonFavoriteId(it.id)
-                clickFavorite()
-            })
-        }
-    }*/
+    var test = mutableListOf<Pokemon>()
 
+    pokemons.get(1)?.let { test.add(it) }
+    pokemons.get(2)?.let { test.add(it) }
+    pokemons.get(3)?.let { test.add(it) }
+    pokemons.get(4)?.let { test.add(it) }
+    pokemons.get(5)?.let { test.add(it) }
+    pokemons.get(6)?.let { test.add(it) }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(1),
+        horizontalArrangement = Arrangement.spacedBy(40.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        contentPadding = PaddingValues(30.dp, 35.dp)
+    ) {
+        items(5) {
+            TeamDisplay(pokemon_team = test.toList(), context = context) {}
+        }
+    }
+/*
     //display list of team
     //Add new team button
     Column(
@@ -70,7 +72,7 @@ fun DisplayTeams(
             favorites,
             profile
         ) { showNewTeamDialog = false }
-    }
+    }*/
 }
 
 
@@ -91,8 +93,7 @@ fun PopupWindow(
     var pickedPokemon by remember { mutableStateOf(-1L) }
 
     if (!show) return
-    AlertDialog(
-        onDismissRequest = { close() },
+    AlertDialog(onDismissRequest = { close() },
         title = { Text("Team creation") },
         backgroundColor = Purple500,
         text = {
@@ -102,15 +103,9 @@ fun PopupWindow(
                     .padding(horizontal = 16.dp)
             ) {
                 for (i in 1..6) {
-                    PickPokemon(
-                        pokemons,
-                        context,
-                        favorites,
-                        profile,
-                        getPokemonId = {
-                            pickedPokemon = it
-                        }
-                    )
+                    PickPokemon(pokemons, context, favorites, profile, getPokemonId = {
+                        pickedPokemon = it
+                    })
                     if (pickedPokemon != -1L) {
                         team.add(pickedPokemon)
                     }
@@ -120,17 +115,13 @@ fun PopupWindow(
         },
         confirmButton = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = { close(); createTeam = true }
-                ) {
+                Button(onClick = { close(); createTeam = true }) {
                     Text("Done")
                 }
             }
-        }
-    )
+        })
     if (createTeam) {
         AddTeamToDatabase(team, profile)
     }
@@ -196,10 +187,8 @@ fun PickPokemon(
     if (showPokemonList) {
 
         Dialog(
-            onDismissRequest = { showPokemonList = false },
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-                usePlatformDefaultWidth = false
+            onDismissRequest = { showPokemonList = false }, properties = DialogProperties(
+                dismissOnBackPress = true, usePlatformDefaultWidth = false
             )
         ) {
             Column(
@@ -207,8 +196,7 @@ fun PickPokemon(
                     .background(MaterialTheme.colors.background)
                     .fillMaxSize()
             ) {
-                FiltersBar(pokemons = pokemons.values.toList())
-                {
+                FiltersBar(pokemons = pokemons.values.toList()) {
                     resultList = it.toMutableList()
                 }
 
@@ -228,7 +216,8 @@ fun PickPokemon(
                             PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
                             copyPokemons.get(currentIconeFavori)!!.isFavorite = true
                         }
-                    }, onClick = { showPokemonList = false })
+                    },
+                    onClick = { showPokemonList = false })
             }
         }
 
@@ -239,32 +228,27 @@ fun PickPokemon(
 @Composable
 fun Dialog_preview() {
 
-    AlertDialog(
-        onDismissRequest = { },
-        title = { Text("Team creation") },
-        text = {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-            ) {
-                repeat(6) {
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .height(70.dp)
-                            .fillMaxWidth()
-                            .background(Color.Gray, RoundedCornerShape(8.dp))
-                    )
-                }
-            }
-
-        },
-        confirmButton = {
-            Button(
-                onClick = { }
-            ) {
-                Text("Done")
+    AlertDialog(onDismissRequest = { }, title = { Text("Team creation") }, text = {
+        Column(
+            Modifier.fillMaxWidth()
+        ) {
+            repeat(6) {
+                Box(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .height(70.dp)
+                        .fillMaxWidth()
+                        .background(Color.Gray, RoundedCornerShape(8.dp))
+                )
             }
         }
-    )
+
+    }, confirmButton = {
+        Button(onClick = { }) {
+            Text("Done")
+        }
+    })
 }
+
+
+

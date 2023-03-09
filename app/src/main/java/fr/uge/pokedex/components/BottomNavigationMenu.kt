@@ -203,7 +203,7 @@ fun NavigationGraph(
             val favorites = PokedexAppDatabaseConnection.connection.profileDao()
                 .getProfileWithFavorites(profile.getId()).favorites
 
-            Text(text = "Teams screen", style = MaterialTheme.typography.h3)
+          //  Text(text = "Teams screen", style = MaterialTheme.typography.h3)
             DisplayTeams(
                 pokemons,
                 context = LocalContext.current,

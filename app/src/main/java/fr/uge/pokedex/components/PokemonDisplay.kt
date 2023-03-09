@@ -13,6 +13,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +26,8 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
+import fr.uge.pokedex.ui.theme.Purple200
+import fr.uge.pokedex.ui.theme.Purple500
+
 
 
 @Composable
@@ -199,6 +207,16 @@ private fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.ELECTRIC, Type
 
 @Preview
 @Composable
+private fun PokemonTypeTeamDisplay(type: Pair<Type, Type> = Pair(Type.ELECTRIC, Type.DRAGON)) {
+    Column() {
+        TypeBox(type.first)
+        Spacer(modifier = Modifier.height(3.dp))
+        TypeBox(type.second)
+    }
+}
+
+@Preview
+@Composable
 private fun TypeDisplay(type: Type = Type.NORMAL) {
     if (type == Type.NONE) {
         return
@@ -277,6 +295,78 @@ fun PokemonTeamDisplay(
 
     }
 
+}
+
+@Composable
+fun TeamDisplay(
+    pokemon_team: List<Pokemon>,
+    context: Context,
+    onClick: () -> Unit
+) {
+    Column(
+        Modifier
+            .background(Purple500, RoundedCornerShape(4.dp))
+            .padding(8.dp)
+    ) {
+        Row(
+            Modifier
+                .height(40.dp)
+                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Equipe 1", Modifier.weight(1f), style = TextStyle(fontSize = 24.sp))
+            Button(onClick = { /*TODO*/ }) {
+                Icon(Icons.Rounded.Edit, "Edit Team")
+            }
+            Spacer(modifier = Modifier.width(2.dp))
+            Button(onClick = { /*TODO*/ }) {
+                Icon(Icons.Rounded.Delete, "Delete Team")
+            }
+        }
+
+        repeat(2) {
+            Row(
+                Modifier
+                    .height(IntrinsicSize.Max)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(3) {
+                    Box(Modifier.weight(1 / 3f)) {
+                        PokemonTeamCard(pokemon = pokemon_team[1], context = context) {
+                            //TODO open pokemon card
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+}
+
+@Composable
+fun PokemonTeamCard(
+    pokemon: Pokemon,
+    context: Context,
+    onClick: () -> Unit
+) {
+    Column(
+        Modifier
+            .padding(2.dp)
+            .fillMaxHeight()
+            .background(Purple200, RoundedCornerShape(4.dp))
+    ) {
+        Column(
+            Modifier
+                .padding(2.dp)
+                .fillMaxHeight()
+                .background(Purple200, RoundedCornerShape(4.dp))
+        ) {
+            PokemonIcon(pokemon.getIcon(context))
+            PokemonBoxTitle(name = pokemon.name)
+            PokemonTypeTeamDisplay(type = pokemon.type)
+        }
+    }
 }
 
 private fun typeToColor(type: Type): Color {
