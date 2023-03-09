@@ -9,38 +9,30 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.database.Favorite
+import fr.uge.pokedex.database.PokedexAppDatabaseConnection
 import fr.uge.pokedex.database.Profile
 
 
 @Composable
-fun DisplayPokedex(
-    sizeGrid: Int = 1,
-    context: Context,
-    pokemon: List<Pokemon>,
-    navController: NavHostController,
-    favorites: List<Favorite>, profile: Profile,
-    getPokemonId: (Long) -> Unit,
-    getPokemonFavoriteId: (Long) -> Unit,
-    clickFavorite : () -> Unit
-)  {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(sizeGrid),
-        horizontalArrangement = Arrangement.spacedBy(40.dp),
-        verticalArrangement = Arrangement.spacedBy(50.dp)
-    ) {
-        items(pokemon) {
-            favorites.forEach { fav -> if(fav.getPokemonId() == it.id && fav.getProfileId() == profile.getId()) it.isFavorite = true }
-            PokemonListDisplay(pokemon = it, context = context, onClick = {
+fun DisplayPokedex(sizeGrid: Int = 1, context: Context, pokemonList: List<Pokemon>, navController: NavHostController, profile: Profile, getPokemonId: (Long) -> Unit, getPokemonFavoriteId: (Long) -> Unit, clickFavorite : (Boolean) -> Unit)  {
+    val favoriteList by remember {
+        mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() })
+    }
+    LazyVerticalGrid(columns = GridCells.Fixed(sizeGrid), horizontalArrangement = Arrangement.spacedBy(30.dp), verticalArrangement = Arrangement.spacedBy(20.dp), contentPadding = PaddingValues(10.dp)) {
+        items(pokemonList) { pokemon ->
+            PokemonListDisplay(pokemon = pokemon, context = context, onClick = {
                 navController.navigate("card")
-                getPokemonId(it.id)
+                getPokemonId(pokemon.id)
             }, onClickFavorite = {
-                getPokemonFavoriteId(it.id)
-                clickFavorite()
-            })
+                getPokemonFavoriteId(pokemon.id)
+                clickFavorite(it)
+            }, favoriteList = favoriteList)
         }
     }
 }
