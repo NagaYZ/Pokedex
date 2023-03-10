@@ -1,6 +1,9 @@
 package fr.uge.pokedex.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -23,18 +26,25 @@ fun SearchBar(pokemonSearch: (String) -> Unit = {}) {
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(5.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.pok),
             contentDescription = "Search",
-            modifier = Modifier.scale(1f).height(30.dp).padding(horizontal = 10.dp),
+            modifier = Modifier
+                .scale(1f)
+                .height(30.dp)
+                .padding(horizontal = 10.dp),
             tint = Color.Unspecified
         )
 
         OutlinedTextField(
-            modifier = Modifier.padding(5.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth(),
             value = search,
             onValueChange = { search = it },
             placeholder = { Text("Search by name") }

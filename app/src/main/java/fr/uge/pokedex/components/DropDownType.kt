@@ -27,11 +27,14 @@ fun DropDownType(name: String, typeNum: (String) -> Unit) {
     }
 
 
-    OutlinedButton(onClick = {
-        state = true
-    }, border = BorderStroke(1.dp, Color.Gray), colors = ButtonDefaults.buttonColors(Color.Transparent)
+    OutlinedButton(
+        onClick = {
+            state = true
+        },
+        border = BorderStroke(1.dp, Color.Gray),
+        colors = ButtonDefaults.buttonColors(Color.Transparent)
 
-    ){
+    ) {
         Row(horizontalArrangement = Arrangement.Center) {
 
             Text(text = if (type != Type.NONE) type.toString() else name, color = Color.Gray)

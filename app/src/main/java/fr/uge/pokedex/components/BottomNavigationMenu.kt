@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -80,8 +79,7 @@ fun NavigationGraph(
                     resultList = it.toMutableList()
                 }
 
-                DisplayPokedex(context = LocalContext.current,
-                    pokemonList = resultList,
+                DisplayPokedex(pokemonList = resultList,
                     navController = navController,
                     profile = profile,
                     getPokemonId = {
@@ -89,28 +87,28 @@ fun NavigationGraph(
                     },
                     getPokemonFavoriteId = {
                         currentIconFavorite = it
-                    },
-                    clickFavorite = {
-                        println(it)
-                        if (!it) {
-                            favorites.forEach { favorite ->
-                                if (favorite.getPokemonId() == currentIconFavorite) {
-                                    PokedexAppDatabaseConnection.connection.favoriteDao()
-                                        .deleteFavorite(favorite)
-                                    favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                        .getProfileWithFavorites(profile.getId()).favorites
-                                }
-                            }
-                        } else {
-                            fav = Favorite(currentIconFavorite, profile.getId())
-                            if (!favorites.contains(fav)) {
+                    }
+                ) {
+                    println(it)
+                    if (!it) {
+                        favorites.forEach { favorite ->
+                            if (favorite.getPokemonId() == currentIconFavorite) {
                                 PokedexAppDatabaseConnection.connection.favoriteDao()
-                                    .addFavorite(fav)
+                                    .deleteFavorite(favorite)
                                 favorites = PokedexAppDatabaseConnection.connection.profileDao()
                                     .getProfileWithFavorites(profile.getId()).favorites
                             }
                         }
-                    })
+                    } else {
+                        fav = Favorite(currentIconFavorite, profile.getId())
+                        if (!favorites.contains(fav)) {
+                            PokedexAppDatabaseConnection.connection.favoriteDao()
+                                .addFavorite(fav)
+                            favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                .getProfileWithFavorites(profile.getId()).favorites
+                        }
+                    }
+                }
             }
         }
 
@@ -127,7 +125,7 @@ fun NavigationGraph(
                 )
             }
             PokemonBoxDisplay(
-                context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
+                pokemon = pokemon, onClickFavorite = {
                     if (!it) {
                         favorites.forEach { favorite ->
                             if (favorite.getPokemonId() == pokemon.id) {
@@ -149,8 +147,7 @@ fun NavigationGraph(
                         }
                     }
 
-                },
-                favoriteList = PokedexAppDatabaseConnection.connection.profileDao()
+                }, favoriteList = PokedexAppDatabaseConnection.connection.profileDao()
                     .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }
                     .toList()
             )
@@ -179,21 +176,20 @@ fun NavigationGraph(
 
                 DisplayPokedex(
                     sizeGrid = 1,
-                    context = LocalContext.current,
                     pokemonList = resultList,
                     navController = navController,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
-                    }, getPokemonFavoriteId = { currentIconFavorite = it },
-                    clickFavorite = {
-                        favorites.forEach { favorite ->
-                            if (favorite.getPokemonId() == currentIconFavorite) {
-                                PokedexAppDatabaseConnection.connection.favoriteDao()
-                                    .deleteFavorite(favorite)
-                            }
+                    },
+                    getPokemonFavoriteId = { currentIconFavorite = it }) {
+                    favorites.forEach { favorite ->
+                        if (favorite.getPokemonId() == currentIconFavorite) {
+                            PokedexAppDatabaseConnection.connection.favoriteDao()
+                                .deleteFavorite(favorite)
                         }
-                    })
+                    }
+                }
 
             }
         }

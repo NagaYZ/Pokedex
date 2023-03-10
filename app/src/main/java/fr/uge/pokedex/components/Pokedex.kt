@@ -1,9 +1,6 @@
 package fr.uge.pokedex.components
 
 
-
-
-import android.content.Context
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,15 +20,25 @@ import fr.uge.pokedex.database.Profile
 
 
 @Composable
-fun DisplayPokedex(sizeGrid: Int = 1, context: Context, pokemonList: List<Pokemon>, navController: NavHostController, profile: Profile, getPokemonId: (Long) -> Unit, getPokemonFavoriteId: (Long) -> Unit, clickFavorite : (Boolean) -> Unit)  {
+fun DisplayPokedex(
+    sizeGrid: Int = 1,
+    pokemonList: List<Pokemon>,
+    navController: NavHostController,
+    profile: Profile,
+    getPokemonId: (Long) -> Unit,
+    getPokemonFavoriteId: (Long) -> Unit,
+    clickFavorite: (Boolean) -> Unit
+) {
     val favoriteList by remember {
-        mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() })
+        mutableStateOf(
+            PokedexAppDatabaseConnection.connection.profileDao()
+                .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() })
     }
     LazyVerticalGrid(
         columns = GridCells.Fixed(sizeGrid)
     ) {
         items(pokemonList) { pokemon ->
-            PokemonListDisplay(pokemon = pokemon, context = context, onClick = {
+            PokemonListDisplay(pokemon = pokemon, onClick = {
                 navController.navigate("card")
                 getPokemonId(pokemon.id)
             }, onClickFavorite = {
@@ -39,7 +46,9 @@ fun DisplayPokedex(sizeGrid: Int = 1, context: Context, pokemonList: List<Pokemo
                 clickFavorite(it)
             }, favoriteList = favoriteList)
             Divider(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
             )
         }
     }

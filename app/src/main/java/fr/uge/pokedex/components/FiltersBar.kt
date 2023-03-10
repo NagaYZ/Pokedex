@@ -1,6 +1,9 @@
 package fr.uge.pokedex.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -9,7 +12,7 @@ import fr.uge.pokedex.data.Pokemon
 
 
 @Composable
-fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
+fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit) {
 
     var type1 by remember {
         mutableStateOf("")
@@ -27,7 +30,11 @@ fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
         mutableStateOf(mutableListOf<Pokemon>())
     }
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         SearchBar(pokemonSearch = {
             search = it
         })
@@ -45,14 +52,17 @@ fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
 
     }
 
-    if(type1 == "" && type2 == "" && search == ""){
+    if (type1 == "" && type2 == "" && search == "") {
         filterList(pokemonList)
     }
 
-    LaunchedEffect(type1, type2, search){
+    LaunchedEffect(type1, type2, search) {
         resultList.clear()
-        for (pokemon in pokemonList){
-            if ((pokemon.type.first.toString().contains(type1) || pokemon.type.second.toString().contains(type1))  && (pokemon.type.first.toString().contains(type2) || pokemon.type.second.toString().contains(type2)) ){
+        for (pokemon in pokemonList) {
+            if ((pokemon.type.first.toString().contains(type1) || pokemon.type.second.toString()
+                    .contains(type1)) && (pokemon.type.first.toString()
+                    .contains(type2) || pokemon.type.second.toString().contains(type2))
+            ) {
                 resultList.add(pokemon)
             }
         }

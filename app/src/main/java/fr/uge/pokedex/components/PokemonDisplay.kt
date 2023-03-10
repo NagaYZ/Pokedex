@@ -1,6 +1,5 @@
 package fr.uge.pokedex.components
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,11 +34,9 @@ import fr.uge.pokedex.data.Type
 @Composable
 fun PokemonBoxDisplay(
     pokemon: Pokemon,
-    context: Context,
-    onClick: () ->  Unit = {},
+    onClick: () -> Unit = {},
     onClickFavorite: (Boolean) -> Unit = {},
     favoriteList: List<Long>
-
 ) {
 
     Column(
@@ -52,7 +49,7 @@ fun PokemonBoxDisplay(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
 
-        PokemonSprite(spriteResource = pokemon.getSprite(context))
+        PokemonSprite(spriteResource = pokemon.sprite)
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -72,7 +69,7 @@ fun PokemonBoxDisplay(
                 textAlign = TextAlign.Center
             )
 
-                FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
+            FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
         }
         PokemonTypeDisplay(type = pokemon.type)
     }
@@ -80,7 +77,7 @@ fun PokemonBoxDisplay(
 }
 
 @Composable
-private fun PokemonSprite(spriteResource: Int) {
+fun PokemonSprite(spriteResource: Int) {
     Image(
         painter = painterResource(id = spriteResource),
         contentDescription = "Pokemon sprite",
@@ -95,8 +92,7 @@ private fun PokemonSprite(spriteResource: Int) {
 @Composable
 fun PokemonListDisplay(
     pokemon: Pokemon,
-    context: Context,
-    onClick: () ->  Unit,
+    onClick: () -> Unit,
     onClickFavorite: (Boolean) -> Unit,
     favoriteList: List<Long>
 
@@ -109,7 +105,7 @@ fun PokemonListDisplay(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        PokemonIcon(pokemon.getIcon(context))
+        PokemonIcon(pokemon.icon)
         Column(
             modifier = Modifier
                 .fillMaxHeight()
