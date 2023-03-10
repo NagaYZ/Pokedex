@@ -19,7 +19,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -262,7 +261,7 @@ fun PickPokemon(
     }
     //show pokedex to select pokemon
     if (showPokemonList) {
-        PokedexDisplay(pokemons, context, favorites, profile, getPokemonId) {
+        PokedexDisplay(pokemons, context, profile, getPokemonId) {
             showPokemonList = false
         }
     }
@@ -273,15 +272,10 @@ fun PickPokemon(
 fun PokedexDisplay(
     pokemons: Map<Long, Pokemon>,
     context: Context,
-    favorites: List<Favorite>,
     profile: Profile,
     getPokemonId: (Long) -> Unit,
     onClick: () -> Unit
 ) {
-
-    var currentPokemon by remember {
-        mutableStateOf(-1L)
-    }
 
     var resultList by remember {
         mutableStateOf(mutableListOf<Pokemon>())
@@ -289,14 +283,16 @@ fun PokedexDisplay(
     var fav by remember {
         mutableStateOf(Favorite(-1L, -1L))
     }
-    var currentIconeFavori by remember {
+    var currentIconFavorite by remember {
         mutableStateOf(-1L)
     }
 
-    val copyPokemons by remember {
-        mutableStateOf(pokemons)
+    var favorites by remember {
+        mutableStateOf(
+            PokedexAppDatabaseConnection.connection.profileDao()
+                .getProfileWithFavorites(profile.getId()).favorites
+        )
     }
-
     Dialog(
         onDismissRequest = { onClick() }, properties = DialogProperties(
             dismissOnBackPress = true, usePlatformDefaultWidth = false
@@ -307,25 +303,39 @@ fun PokedexDisplay(
                 .background(MaterialTheme.colors.background)
                 .fillMaxSize()
         ) {
-            FiltersBar(pokemons = pokemons.values.toList()) {
+            FiltersBar(pokemons.values.toList()) {
                 resultList = it.toMutableList()
             }
 
-            DisplayPokedex(context = LocalContext.current,
+            DisplayPokedex(
+                context = context,
                 pokemons = resultList,
-                favorites = favorites,
                 profile = profile,
-                getPokemonId = {
-                    currentPokemon = it
-                },
+                getPokemonId = getPokemonId,
                 getPokemonFavoriteId = {
-                    currentIconeFavori = it
+                    currentIconFavorite = it
                 },
                 clickFavorite = {
-                    fav = Favorite(currentIconeFavori, profile.getId())
-                    if (!favorites.contains(fav)) {
-                        PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
-                        copyPokemons.get(currentIconeFavori)!!.isFavorite = true
+                    println(it)
+                    if (!it) {
+                        println("deleted 1")
+                        favorites.forEach { favorite ->
+                            println("deleted 2")
+                            if (favorite.getPokemonId() == currentIconFavorite) {
+                                println("deleted")
+                                PokedexAppDatabaseConnection.connection.favoriteDao()
+                                    .deleteFavorite(favorite)
+                                favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                    .getProfileWithFavorites(profile.getId()).favorites
+                            }
+                        }
+                    } else {
+                        fav = Favorite(currentIconFavorite, profile.getId())
+                        if (!favorites.contains(fav)) {
+                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+                            favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                .getProfileWithFavorites(profile.getId()).favorites
+                        }
                     }
                 },
                 onClick = { onClick() })
