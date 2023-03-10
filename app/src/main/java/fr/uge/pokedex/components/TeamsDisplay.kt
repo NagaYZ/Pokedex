@@ -83,12 +83,17 @@ fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
 }
 
 @Composable
-fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profile) {
+fun DisplayTeams(
+    pokemons: Map<Long, Pokemon>,
+    context: Context,
+    profile: Profile,
+    onPokemonClick: () -> Unit
+) {
     var showNewTeamDialog by remember { mutableStateOf(false) }
     var delete by remember { mutableStateOf(false) }
     var edit by remember { mutableStateOf(false) }
     var teamId by remember { mutableStateOf(-1L) }
-    var teams = getTeams(profile = profile)
+    val teams = getTeams(profile = profile)
 
     //display list of team
     LazyVerticalGrid(
@@ -98,10 +103,13 @@ fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profil
         contentPadding = PaddingValues(10.dp)
     ) {
         items(teams) { poketeam ->
-            TeamDisplay(pokemon_team = poketeam,
+            TeamDisplay(
+                pokemon_team = poketeam,
                 context = context,
                 { teamId = it; edit = true },
-                { teamId = it; delete = true }) {}
+                { teamId = it; delete = true },
+                onPokemonClick
+            ) {}
         }
     }
 
@@ -237,7 +245,7 @@ fun PickPokemon(
     ) {
         Text("Choose Pokemon...", fontSize = 20.sp)
         copyPokemons.get(currentPokemon)?.let {
-            PokemonTeamDisplay(it, context) {}
+            PokemonListTeamDisplay(it, context) {}
             getPokemonId(it.id)
         }
         Button(
@@ -380,5 +388,30 @@ fun Dialog_preview() {
     })
 }
 
-
-
+@Preview
+@Composable
+fun PreviewPokemonTeamCard() {
+    var clicked by remember { mutableStateOf(false) }
+    var clicked2 by remember { mutableStateOf(false) }
+    val backgroundColor = if (clicked) Color.Green else Color.Red
+    val backgroundColor2 = if (clicked2) Color.Yellow else Color.Cyan
+    Column(
+        Modifier
+            .padding(2.dp)
+            .fillMaxHeight()
+            .background(backgroundColor)
+            .clickable { clicked = true }
+    ) {
+        Column(
+            Modifier
+                .padding(2.dp)
+                .fillMaxHeight()
+                .background(backgroundColor2)
+                .clickable { clicked2 = true }
+        ) {
+            Text("a")
+            Text("bbbbbbb")
+            Text(text = "ccccc")
+        }
+    }
+}

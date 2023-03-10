@@ -211,13 +211,16 @@ fun NavigationGraph(
             DisplayTeams(
                 pokemonMap,
                 context = LocalContext.current,
-                profile
+                profile,
+                onPokemonClick = {
+                    navController.navigate("card")
+                }
             )
         }
 
         composable(route = Route.Profiles.path){
             //Call teams composable
-//            Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
+            // Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
             ProfilesScreen(navController, setCurrentProfile)
         }
     }

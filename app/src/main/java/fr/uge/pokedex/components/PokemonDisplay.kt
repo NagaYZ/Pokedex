@@ -1,6 +1,7 @@
 package fr.uge.pokedex.components
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -255,10 +256,10 @@ private fun TypeDisplay(type: Type = Type.NORMAL) {
 }
 
 @Composable
-fun PokemonTeamDisplay(
+fun PokemonListTeamDisplay(
     pokemon: Pokemon,
     context: Context,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Row(
         Modifier
@@ -300,7 +301,8 @@ fun TeamDisplay(
     context: Context,
     editOnClick: (Long) -> Unit,
     deleteOnClick: (Long) -> Unit,
-    showTeam: () -> Unit
+    showTeam: () -> Unit,
+    onPokemonClick: () -> Unit,
 ) {
     Column(
         Modifier
@@ -342,9 +344,7 @@ fun TeamDisplay(
                     val pokemon =
                         getPokemonFromId(pokemon_team.teamMembers[i * 3 + j].getPokemonId())
                     Box(Modifier.weight(1 / 3f)) {
-                        PokemonTeamCard(pokemon = pokemon, context = context) {
-                            //TODO open pokemon card
-                        }
+                        PokemonTeamCard(pokemon = pokemon, context = context, onPokemonClick)
                     }
                 }
             }
@@ -363,16 +363,42 @@ fun PokemonTeamCard(
             .padding(2.dp)
             .fillMaxHeight()
             .background(Purple200, RoundedCornerShape(4.dp))
+            .clickable { onClick() }
     ) {
         Column(
             Modifier
                 .padding(2.dp)
                 .fillMaxHeight()
                 .background(Purple200, RoundedCornerShape(4.dp))
+                .clickable { onClick() }
         ) {
             PokemonIcon(pokemon.getIcon(context))
             PokemonBoxTitle(name = pokemon.name)
             PokemonTypeTeamDisplay(type = pokemon.type)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PokemonTeamCard() {
+    Column(
+        Modifier
+            .padding(2.dp)
+            .fillMaxHeight()
+            .background(Purple200, RoundedCornerShape(4.dp))
+            .clickable { Log.d("MDR", "clciekedeaezeazeazeazez") }
+    ) {
+        Column(
+            Modifier
+                .padding(2.dp)
+                .fillMaxHeight()
+                .background(Purple500, RoundedCornerShape(4.dp))
+                .clickable { Log.d("MDR", "zzzzzzzzzzz") }
+        ) {
+            Text("a")
+            Text("bbbbbbb")
+            Text(text = "ccccc")
         }
     }
 }
