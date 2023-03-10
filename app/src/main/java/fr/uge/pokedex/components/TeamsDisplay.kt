@@ -183,7 +183,7 @@ fun PopupWindow(
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
             ) {
-                Button(onClick = { close(); createTeam = true }) {
+                Button(enabled = (team.size == 6), onClick = { close(); createTeam = true }) {
                     Text("Done")
                 }
             }
