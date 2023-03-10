@@ -44,7 +44,13 @@ fun PokemonInfoDisplay(
             )
         ),
         identifier = "bulbasaur",
-        name = "Bulbasaur"
+        name = "Bulbasaur",
+        pokedexEntries = mutableSetOf(
+            FlavorText("A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.", Version.RED),
+            FlavorText("A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.", Version.BLUE),
+            FlavorText("It can go for days without eating a single morsel. In the bulb on its back, it stores energy.", Version.YELLOW),
+            FlavorText("The seed on its back is filled with nutrients. The seed grows steadily larger as its body grows.", Version.GOLD),
+        )
     )
 ) {
     LazyColumn(
@@ -58,6 +64,9 @@ fun PokemonInfoDisplay(
         }
         item {
             PokemonAbilities(pokemon.abilities)
+        }
+        item {
+            PokedexEntries(pokedexEntries = pokemon.pokedexEntries)
         }
     }
 
@@ -154,6 +163,24 @@ private fun InfoDisplay(icon: Int, title: String, content: String) {
         TextDisplay(title = title , content = content)
     }
 }
+
+@Composable
+private fun PokedexEntries(pokedexEntries: MutableSet<FlavorText>) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Text(text = "Pokédex Entries", style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.Bold)
+        Divider()
+        for(pokedexEntry in pokedexEntries) {
+            TextDisplay(title = pokedexEntry.version.toString(), content = pokedexEntry.description)
+            Divider()
+        }
+    }
+}
+
+
 
 @Composable
 private fun TextDisplay(title: String, content: String) {
