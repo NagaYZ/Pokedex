@@ -106,9 +106,7 @@ fun EditTeam( teamss : Team,
 */
 
 @Composable
-fun DisplayTeams(
-    pokemons: Map<Long, Pokemon>, context: Context, favorites: List<Favorite>, profile: Profile
-) {
+fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profile) {
     var showNewTeamDialog by remember { mutableStateOf(false) }
     var delete by remember { mutableStateOf(false) }
     var edit by remember { mutableStateOf(false) }
@@ -160,7 +158,6 @@ fun DisplayTeams(
             show = showNewTeamDialog,
             pokemons,
             context,
-            favorites,
             profile
         ) { showNewTeamDialog = false }
     }
@@ -173,7 +170,6 @@ fun PopupWindow(
     show: Boolean,
     pokemons: Map<Long, Pokemon>,
     context: Context,
-    favorites: List<Favorite>,
     profile: Profile,
     close: () -> Unit
 ) {
@@ -194,7 +190,7 @@ fun PopupWindow(
                     .padding(horizontal = 16.dp)
             ) {
                 for (i in 1..6) {
-                    PickPokemon(pokemons, context, favorites, profile, getPokemonId = {
+                    PickPokemon(pokemons, context, profile, getPokemonId = {
                         pickedPokemon = it
                     })
                     if (pickedPokemon != -1L) {
@@ -235,7 +231,6 @@ fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
 fun PickPokemon(
     pokemons: Map<Long, Pokemon>,
     context: Context,
-    favorites: List<Favorite>,
     profile: Profile,
     getPokemonId: (Long) -> Unit
 ) {
@@ -257,6 +252,18 @@ fun PickPokemon(
         copyPokemons.get(currentPokemon)?.let {
             PokemonTeamDisplay(it, context) {}
             getPokemonId(it.id)
+        }
+        Button(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(40.dp)
+        ) {
+            Icon(
+                Icons.Rounded.Delete,
+                contentDescription = "Delete Selected Pokemon",
+                Modifier.scale(3f)
+            )
         }
     }
     //show pokedex to select pokemon

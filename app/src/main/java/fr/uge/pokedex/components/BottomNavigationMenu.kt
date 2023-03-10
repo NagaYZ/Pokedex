@@ -211,7 +211,6 @@ fun NavigationGraph(
             DisplayTeams(
                 pokemonMap,
                 context = LocalContext.current,
-                favorites = favorites,
                 profile
             )
         }
