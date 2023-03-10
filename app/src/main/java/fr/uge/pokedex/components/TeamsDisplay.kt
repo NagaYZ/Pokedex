@@ -42,9 +42,17 @@ private fun DeleteTeam(teamId: Long) {
 private fun getTeams(profile: Profile): List<TeamWithMembers> {
     PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val profileDao: ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-
     return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
 }
+
+@Composable
+private fun getPokemonsFromTeamId(teamId: Long): List<Long> {
+    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
+    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
+    val teamWithMembers = teamDao.getTeamWithMembers(teamId)
+    return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
+}
+
 /*
 
 @Composable
@@ -116,9 +124,9 @@ fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profil
     //display list of team
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
-        horizontalArrangement = Arrangement.spacedBy(40.dp),
+        horizontalArrangement = Arrangement.spacedBy(30.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(30.dp, 35.dp)
+        contentPadding = PaddingValues(10.dp)
     ) {
         items(teams) { poketeam ->
             TeamDisplay(
@@ -142,25 +150,25 @@ fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profil
         }
     }
 
-
     if (delete) {
         DeleteTeam(teamId)
         delete = false
     }
-    if (edit) {
-        // EditTeam(teamId)
-        edit = false
-    }
-
 
     if (showNewTeamDialog) {
         PopupWindow(
             show = showNewTeamDialog,
             pokemons,
             context,
-            profile
+            profile,
+            teamId,
+            edit,
         ) { showNewTeamDialog = false }
+
+        edit = false
     }
+
+
 }
 
 
@@ -171,17 +179,32 @@ fun PopupWindow(
     pokemons: Map<Long, Pokemon>,
     context: Context,
     profile: Profile,
+    teamId: Long,
+    edit: Boolean,
     close: () -> Unit
 ) {
     var createTeam by remember { mutableStateOf(false) }
     val team by remember {
-        mutableStateOf(mutableListOf<Long>())
+        mutableStateOf(mutableMapOf<Int, Long>())
     }
     var pickedPokemon by remember { mutableStateOf(-1L) }
+    var pokemonsInTeam: List<Long> = listOf()
+    var pokemonIdInTeam by remember { mutableStateOf(-1L) }
+
+    if (edit) {
+        pokemonsInTeam = getPokemonsFromTeamId(teamId)
+    }
 
     if (!show) return
-    AlertDialog(onDismissRequest = { close() },
-        title = { Text("Team creation") },
+    AlertDialog(
+        onDismissRequest = { close() },
+        title = {
+            if (edit) {
+                Text("Team edition")
+            } else {
+                Text("Team creation")
+            }
+        },
         backgroundColor = Purple500,
         text = {
             Column(
@@ -190,13 +213,18 @@ fun PopupWindow(
                     .padding(horizontal = 16.dp)
             ) {
                 for (i in 1..6) {
-                    PickPokemon(pokemons, context, profile, getPokemonId = {
+                    if (edit) {
+                        pokemonIdInTeam = pokemonsInTeam.get(i)
+                    }
+                    PickPokemon(pokemons, context, profile, edit, pokemonIdInTeam, getPokemonId = {
                         pickedPokemon = it
                     })
                     if (pickedPokemon != -1L) {
-                        team.add(pickedPokemon)
+                        team.put(i, pickedPokemon)
+                        pickedPokemon = -1L
+                    } else {
+                        team.put(i, -1L)
                     }
-                    pickedPokemon = -1L
                 }
             }
         },
@@ -210,7 +238,11 @@ fun PopupWindow(
             }
         })
     if (createTeam) {
-        AddTeamToDatabase(team, profile)
+        if (edit) {
+            //TODO EditTeam(team.values.toList(), teamId)
+        } else {
+            AddTeamToDatabase(team.values.toList(), profile)
+        }
     }
 
 }
@@ -232,11 +264,17 @@ fun PickPokemon(
     pokemons: Map<Long, Pokemon>,
     context: Context,
     profile: Profile,
+    edit: Boolean,
+    pokemonIdInTeam: Long,
     getPokemonId: (Long) -> Unit
 ) {
     var showPokemonList by remember { mutableStateOf(false) }
-    val currentPokemon by remember { mutableStateOf(-1L) }
+    var currentPokemon by remember { mutableStateOf(-1L) }
     val copyPokemons by remember { mutableStateOf(pokemons) }
+
+    if (edit) {
+        currentPokemon = pokemonIdInTeam
+    }
 
     Box(
         modifier = Modifier
@@ -254,7 +292,7 @@ fun PickPokemon(
             getPokemonId(it.id)
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { currentPokemon = -1L; getPokemonId(-1L) },
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .size(40.dp)
