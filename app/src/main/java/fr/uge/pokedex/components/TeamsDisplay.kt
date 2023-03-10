@@ -56,60 +56,11 @@ private fun getPokemonsFromTeamId(teamId: Long): List<Long> {
 /*
 
 @Composable
-fun EditTeam( teamss : Team,
-    show: Boolean,
-              pokemons: Map<Long, Pokemon>,
-              context: Context,
-              favorites: List<Favorite>,
-              profile: Profile,
-              close: () -> Unit) {
-    var createTeam by remember { mutableStateOf(false) }
-    val team by remember {
-        mutableStateOf(mutableListOf<Long>())
-    }
-    var pickedPokemon by remember { mutableStateOf(-1L) }
-
-    if (!show) return
-    AlertDialog(onDismissRequest = { close() },
-        title = { Text("Team creation") },
-        backgroundColor = Purple500,
-        text = {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                for (i in 1..6) {
-                    PickPokemon(pokemons, context, favorites, profile, getPokemonId = {
-                        pickedPokemon = it
-                    })
-                    if (pickedPokemon != -1L) {
-                        team.add(pickedPokemon)
-                    }
-                    pickedPokemon = -1L
-                }
-            }
-        },
-        confirmButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-            ) {
-                Button(onClick = { close(); createTeam = true }) {
-                    Text("Done")
-                }
-            }
-        })
-    if (createTeam) {
-        AddTeamToDatabase(team, profile)
-    }
-
-    //show pokedex to select pokemon
-    if (showPokemonList) {
-        PokedexDisplay(pokemons, context, favorites, profile, getPokemonId) {
-            showPokemonList = false
-        }
-
-    }
+fun EditTeam( teamId: Long) {
+    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
+    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
+    val team: Team = teamDao.getTeam(teamId)
+    teamDao.deleteTeam(team)
 }
 */
 
