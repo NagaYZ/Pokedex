@@ -131,7 +131,8 @@ fun PokemonInfoDisplay(
             PokemonAbilities(pokemon.abilities)
         }
         item {
-            PokemonEvolutions(pokemon.evolvesFrom, pokemon.evolvesInto)
+            val baseSpecies = pokemon.evolvesFrom?.species?.evolvesFrom?.species ?: pokemon
+            PokemonEvolutions(baseSpecies.evolvesFrom, baseSpecies.evolvesInto)
         }
         item {
             PokedexEntries(pokemon.pokedexEntries)
@@ -300,7 +301,7 @@ private fun EvolutionDisplay(evolution: Evolution) {
     ) {
         Text(
             text = if (evolution.evolutionTrigger == EvolutionTrigger.LEVEL_UP) {
-                "Level ${evolution.minimumLevel}"
+                "Level ${evolution.minimumLevel ?: "up + Trigger"}"
             } else {
                 evolution.evolutionTrigger.toString()
             },
