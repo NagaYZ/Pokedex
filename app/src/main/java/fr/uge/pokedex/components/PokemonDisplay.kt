@@ -1,5 +1,6 @@
 package fr.uge.pokedex.components
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,8 +41,6 @@ import fr.uge.pokedex.database.TeamWithMembers
 import fr.uge.pokedex.ui.theme.Purple200
 import fr.uge.pokedex.ui.theme.Purple500
 
-
-
 @Composable
 fun PokemonBoxDisplay(
     pokemon: Pokemon,
@@ -71,7 +70,6 @@ fun PokemonBoxDisplay(
         ) {
 
             PokemonBoxTitle(name = pokemon.name)
-
             Spacer(modifier = Modifier.width(3.dp))
             Text(
                 text = "#${pokemon.id.toString().padStart(3, '0')}",
@@ -293,9 +291,7 @@ fun PokemonTeamDisplay(
             PokemonTypeDisplay(type = pokemon.type)
         }
         Spacer(modifier = Modifier.weight(1.0f))
-
     }
-
 }
 
 @Composable
@@ -353,8 +349,6 @@ fun TeamDisplay(
                 }
             }
         }
-
-
     }
 }
 

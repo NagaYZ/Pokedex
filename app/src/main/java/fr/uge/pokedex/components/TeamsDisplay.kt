@@ -70,7 +70,6 @@ fun EditTeam(pokemonList: List<Long>, teamId: Long) {
 
 }
 
-
 @Composable
 fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
     PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
@@ -99,8 +98,7 @@ fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profil
         contentPadding = PaddingValues(10.dp)
     ) {
         items(teams) { poketeam ->
-            TeamDisplay(
-                pokemon_team = poketeam,
+            TeamDisplay(pokemon_team = poketeam,
                 context = context,
                 { teamId = it; edit = true },
                 { teamId = it; delete = true }) {}
@@ -138,9 +136,7 @@ fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profil
         edit = false
     }
 
-
 }
-
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -166,47 +162,42 @@ fun PopupWindow(
     }
 
     if (!show) return
-    AlertDialog(
-        onDismissRequest = { close() },
-        title = {
-            if (edit) {
-                Text("Team edition")
-            } else {
-                Text("Team creation")
-            }
-        },
-        backgroundColor = Purple500,
-        text = {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                for (i in 1..6) {
-                    if (edit) {
-                        pokemonIdInTeam = pokemonsInTeam[i - 1]
-                    }
-                    PickPokemon(pokemons, context, profile, edit, pokemonIdInTeam, getPokemonId = {
-                        pickedPokemon = it
-                    })
-                    if (pickedPokemon != -1L) {
-                        team.put(i, pickedPokemon)
-                        pickedPokemon = -1L
-                    } else {
-                        team.put(i, -1L)
-                    }
+    AlertDialog(onDismissRequest = { close() }, title = {
+        if (edit) {
+            Text("Team edition")
+        } else {
+            Text("Team creation")
+        }
+    }, backgroundColor = Purple500, text = {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            for (i in 1..6) {
+                if (edit) {
+                    pokemonIdInTeam = pokemonsInTeam[i - 1]
+                }
+                PickPokemon(pokemons, context, profile, edit, pokemonIdInTeam, getPokemonId = {
+                    pickedPokemon = it
+                })
+                if (pickedPokemon != -1L) {
+                    team.put(i, pickedPokemon)
+                    pickedPokemon = -1L
+                } else {
+                    team.put(i, -1L)
                 }
             }
-        },
-        confirmButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-            ) {
-                Button(enabled = (team.size == 6), onClick = { close(); createTeam = true }) {
-                    Text("Done")
-                }
+        }
+    }, confirmButton = {
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+        ) {
+            Button(enabled = (team.size == 6), onClick = { close(); createTeam = true }) {
+                Text("Done")
             }
-        })
+        }
+    })
     if (createTeam) {
         if (edit) {
             EditTeam(team.values.toList(), teamId)
@@ -356,7 +347,7 @@ fun Dialog_preview() {
             Modifier.fillMaxWidth()
         ) {
             repeat(6) {
-                Row() {
+                Row {
                     Box(
                         modifier = Modifier
                             .padding(4.dp)
