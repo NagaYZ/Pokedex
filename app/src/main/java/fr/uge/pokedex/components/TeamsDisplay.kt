@@ -12,10 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,7 +46,65 @@ private fun getTeams(profile: Profile): List<TeamWithMembers> {
 
     return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
 }
+/*
 
+@Composable
+fun EditTeam( teamss : Team,
+    show: Boolean,
+              pokemons: Map<Long, Pokemon>,
+              context: Context,
+              favorites: List<Favorite>,
+              profile: Profile,
+              close: () -> Unit) {
+    var createTeam by remember { mutableStateOf(false) }
+    val team by remember {
+        mutableStateOf(mutableListOf<Long>())
+    }
+    var pickedPokemon by remember { mutableStateOf(-1L) }
+
+    if (!show) return
+    AlertDialog(onDismissRequest = { close() },
+        title = { Text("Team creation") },
+        backgroundColor = Purple500,
+        text = {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                for (i in 1..6) {
+                    PickPokemon(pokemons, context, favorites, profile, getPokemonId = {
+                        pickedPokemon = it
+                    })
+                    if (pickedPokemon != -1L) {
+                        team.add(pickedPokemon)
+                    }
+                    pickedPokemon = -1L
+                }
+            }
+        },
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            ) {
+                Button(onClick = { close(); createTeam = true }) {
+                    Text("Done")
+                }
+            }
+        })
+    if (createTeam) {
+        AddTeamToDatabase(team, profile)
+    }
+
+    //show pokedex to select pokemon
+    if (showPokemonList) {
+        PokedexDisplay(pokemons, context, favorites, profile, getPokemonId) {
+            showPokemonList = false
+        }
+
+    }
+}
+*/
 
 @Composable
 fun DisplayTeams(
@@ -91,7 +151,7 @@ fun DisplayTeams(
         delete = false
     }
     if (edit) {
-        //EditTeam(teamId)
+        // EditTeam(teamId)
         edit = false
     }
 
@@ -283,13 +343,29 @@ fun Dialog_preview() {
             Modifier.fillMaxWidth()
         ) {
             repeat(6) {
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .height(70.dp)
-                        .fillMaxWidth()
-                        .background(Color.Gray, RoundedCornerShape(8.dp))
-                )
+                Row() {
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .height(70.dp)
+                            .fillMaxWidth()
+                            .background(Color.Gray, RoundedCornerShape(8.dp))
+                    ) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.Rounded.Delete,
+                                contentDescription = "Delete Selected Pokemon",
+                                Modifier.scale(3f)
+                            )
+                        }
+                    }
+                }
+
             }
         }
 
