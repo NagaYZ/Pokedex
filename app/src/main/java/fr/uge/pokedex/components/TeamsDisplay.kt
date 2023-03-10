@@ -186,7 +186,7 @@ fun PopupWindow(
             ) {
                 for (i in 1..6) {
                     if (edit) {
-                        pokemonIdInTeam = pokemonsInTeam.get(i)
+                        pokemonIdInTeam = pokemonsInTeam[i - 1]
                     }
                     PickPokemon(pokemons, context, profile, edit, pokemonIdInTeam, getPokemonId = {
                         pickedPokemon = it
