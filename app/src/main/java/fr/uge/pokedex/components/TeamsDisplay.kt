@@ -53,8 +53,6 @@ private fun getPokemonsFromTeamId(teamId: Long): List<Long> {
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
 }
 
-
-
 @Composable
 fun EditTeam(pokemonList: List<Long>, teamId: Long) {
     PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)

@@ -342,9 +342,9 @@ fun TeamDisplay(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                for (j in 1..3) {
+                for (j in 0..2) {
                     val pokemon =
-                        getPokemonFromId(pokemon_team.teamMembers.get(i * 3 + j).getPokemonId())
+                        getPokemonFromId(pokemon_team.teamMembers[i * 3 + j].getPokemonId())
                     Box(Modifier.weight(1 / 3f)) {
                         PokemonTeamCard(pokemon = pokemon, context = context) {
                             //TODO open pokemon card
