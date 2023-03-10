@@ -53,16 +53,37 @@ private fun getPokemonsFromTeamId(teamId: Long): List<Long> {
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
 }
 
-/*
+
 
 @Composable
-fun EditTeam( teamId: Long) {
+fun EditTeam(pokemonList: List<Long>, teamId: Long) {
     PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-    val team: Team = teamDao.getTeam(teamId)
-    teamDao.deleteTeam(team)
+    val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
+    val teamWithMembers = teamDao.getTeamWithMembers(teamId)
+
+    for (i in 0..5) {
+        teamMemberDao.deleteTeamMember(teamWithMembers.teamMembers[i])
+    }
+
+    pokemonList.forEach { pokemon ->
+        teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))
+    }
+
 }
-*/
+
+
+@Composable
+fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
+    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
+    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
+    val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
+    val teamId: Long = teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))
+
+    team.forEach { pokemon ->
+        teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))
+    }
+}
 
 @Composable
 fun DisplayTeams(pokemons: Map<Long, Pokemon>, context: Context, profile: Profile) {
@@ -190,24 +211,12 @@ fun PopupWindow(
         })
     if (createTeam) {
         if (edit) {
-            //TODO EditTeam(team.values.toList(), teamId)
+            EditTeam(team.values.toList(), teamId)
         } else {
             AddTeamToDatabase(team.values.toList(), profile)
         }
     }
 
-}
-
-@Composable
-fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
-    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-    val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
-    val teamId: Long = teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))
-
-    team.forEach { pokemon ->
-        teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))
-    }
 }
 
 @Composable
