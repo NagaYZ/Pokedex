@@ -187,14 +187,18 @@ fun NavigationGraph(
                     getPokemonId = {
                         currentPokemon = it
                     },
-                    getPokemonFavoriteId = { currentIconFavorite = it }) {
-                    favorites.forEach { favorite ->
-                        if (favorite.getPokemonId() == currentIconFavorite) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao()
-                                .deleteFavorite(favorite)
+                    getPokemonFavoriteId = { currentIconFavorite = it },
+                    clickFavorite = {
+                        favorites.forEach { favorite ->
+                            if (favorite.getPokemonId() == currentIconFavorite) {
+                                PokedexAppDatabaseConnection.connection.favoriteDao()
+                                    .deleteFavorite(favorite)
+                            }
                         }
-                    }
-                }
+                    },
+                    onClick = {
+                        navController.navigate("card")
+                    })
 
             }
         }
@@ -205,7 +209,7 @@ fun NavigationGraph(
 
           //  Text(text = "Teams screen", style = MaterialTheme.typography.h3)
             DisplayTeams(
-                pokemons,
+                pokemonMap,
                 context = LocalContext.current,
                 favorites = favorites,
                 profile
