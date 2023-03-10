@@ -34,8 +34,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.Pokemon
+import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.data.Type
+import fr.uge.pokedex.database.TeamWithMembers
 import fr.uge.pokedex.ui.theme.Purple200
 import fr.uge.pokedex.ui.theme.Purple500
 
@@ -299,9 +302,11 @@ fun PokemonTeamDisplay(
 
 @Composable
 fun TeamDisplay(
-    pokemon_team: List<Pokemon>,
+    pokemon_team: TeamWithMembers,
     context: Context,
-    onClick: () -> Unit
+    editOnClick: (Long) -> Unit,
+    deleteOnClick: (Long) -> Unit,
+    showTeam: () -> Unit
 ) {
     Column(
         Modifier
@@ -311,28 +316,39 @@ fun TeamDisplay(
         Row(
             Modifier
                 .height(40.dp)
-                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth()
+                .clickable { showTeam() },
+            verticalAlignment = Alignment.CenterVertically
+
         ) {
-            Text("Equipe 1", Modifier.weight(1f), style = TextStyle(fontSize = 24.sp))
-            Button(onClick = { /*TODO*/ }) {
+            Text(
+                "Equipe 1",
+                Modifier
+                    .weight(1f)
+                    .clickable { showTeam() },
+                style = TextStyle(fontSize = 24.sp)
+            )
+            Button(onClick = { editOnClick(pokemon_team.team.getTeamId()) }) {
                 Icon(Icons.Rounded.Edit, "Edit Team")
             }
             Spacer(modifier = Modifier.width(2.dp))
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { deleteOnClick(pokemon_team.team.getTeamId()) }) {
                 Icon(Icons.Rounded.Delete, "Delete Team")
             }
         }
 
-        repeat(2) {
+        for (i in 0..1) {
             Row(
                 Modifier
                     .height(IntrinsicSize.Max)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(3) {
+                for (j in 1..3) {
+                    val pokemon =
+                        getPokemonFromId(pokemon_team.teamMembers.get(i * 3 + j).getPokemonId())
                     Box(Modifier.weight(1 / 3f)) {
-                        PokemonTeamCard(pokemon = pokemon_team[1], context = context) {
+                        PokemonTeamCard(pokemon = pokemon, context = context) {
                             //TODO open pokemon card
                         }
                     }
@@ -367,6 +383,13 @@ fun PokemonTeamCard(
             PokemonTypeTeamDisplay(type = pokemon.type)
         }
     }
+}
+
+private fun getPokemonFromId(pokemonId: Long): Pokemon {
+    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+    val pokemonRepository = PokemonRepository(appContext)
+
+    return pokemonRepository.get(pokemonId)!!
 }
 
 private fun typeToColor(type: Type): Color {

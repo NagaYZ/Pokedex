@@ -7,9 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,32 +30,49 @@ import fr.uge.pokedex.ui.theme.Purple200
 import fr.uge.pokedex.ui.theme.Purple500
 
 @Composable
+private fun DeleteTeam(teamId: Long) {
+    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
+    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
+    val team: Team = teamDao.getTeam(teamId)
+    teamDao.deleteTeam(team)
+}
+
+@Composable
+private fun getTeams(profile: Profile): List<TeamWithMembers> {
+    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
+    val profileDao: ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
+
+    return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
+}
+
+
+@Composable
 fun DisplayTeams(
     pokemons: Map<Long, Pokemon>, context: Context, favorites: List<Favorite>, profile: Profile
 ) {
     var showNewTeamDialog by remember { mutableStateOf(false) }
-    var test = mutableListOf<Pokemon>()
+    var delete by remember { mutableStateOf(false) }
+    var edit by remember { mutableStateOf(false) }
+    var teamId by remember { mutableStateOf(-1L) }
+    var teams = getTeams(profile = profile)
 
-    pokemons.get(1)?.let { test.add(it) }
-    pokemons.get(2)?.let { test.add(it) }
-    pokemons.get(3)?.let { test.add(it) }
-    pokemons.get(4)?.let { test.add(it) }
-    pokemons.get(5)?.let { test.add(it) }
-    pokemons.get(6)?.let { test.add(it) }
-
+    //display list of team
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
         horizontalArrangement = Arrangement.spacedBy(40.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(30.dp, 35.dp)
     ) {
-        items(5) {
-            TeamDisplay(pokemon_team = test.toList(), context = context) {}
+        items(teams) { poketeam ->
+            TeamDisplay(
+                pokemon_team = poketeam,
+                context = context,
+                { teamId = it; edit = true },
+                { teamId = it; delete = true }) {}
         }
     }
-/*
-    //display list of team
-    //Add new team button
+
+    //Button : Add New Team
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom,
@@ -64,6 +85,17 @@ fun DisplayTeams(
         }
     }
 
+
+    if (delete) {
+        DeleteTeam(teamId)
+        delete = false
+    }
+    if (edit) {
+        //EditTeam(teamId)
+        edit = false
+    }
+
+
     if (showNewTeamDialog) {
         PopupWindow(
             show = showNewTeamDialog,
@@ -72,7 +104,7 @@ fun DisplayTeams(
             favorites,
             profile
         ) { showNewTeamDialog = false }
-    }*/
+    }
 }
 
 
@@ -140,7 +172,6 @@ fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PickPokemon(
     pokemons: Map<Long, Pokemon>,
@@ -150,22 +181,9 @@ fun PickPokemon(
     getPokemonId: (Long) -> Unit
 ) {
     var showPokemonList by remember { mutableStateOf(false) }
+    val currentPokemon by remember { mutableStateOf(-1L) }
+    val copyPokemons by remember { mutableStateOf(pokemons) }
 
-    var currentPokemon by remember {
-        mutableStateOf(-1L)
-    }
-    var currentIconeFavori by remember {
-        mutableStateOf(-1L)
-    }
-    val copyPokemons by remember {
-        mutableStateOf(pokemons)
-    }
-    var resultList by remember {
-        mutableStateOf(mutableListOf<Pokemon>())
-    }
-    var fav by remember {
-        mutableStateOf(Favorite(-1L, -1L))
-    }
     Box(
         modifier = Modifier
             .padding(4.dp)
@@ -182,46 +200,78 @@ fun PickPokemon(
             getPokemonId(it.id)
         }
     }
-
     //show pokedex to select pokemon
     if (showPokemonList) {
-
-        Dialog(
-            onDismissRequest = { showPokemonList = false }, properties = DialogProperties(
-                dismissOnBackPress = true, usePlatformDefaultWidth = false
-            )
-        ) {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.background)
-                    .fillMaxSize()
-            ) {
-                FiltersBar(pokemons = pokemons.values.toList()) {
-                    resultList = it.toMutableList()
-                }
-
-                DisplayPokedex(context = LocalContext.current,
-                    pokemons = resultList,
-                    favorites = favorites,
-                    profile = profile,
-                    getPokemonId = {
-                        currentPokemon = it
-                    },
-                    getPokemonFavoriteId = {
-                        currentIconeFavori = it
-                    },
-                    clickFavorite = {
-                        fav = Favorite(currentIconeFavori, profile.getId())
-                        if (!favorites.contains(fav)) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
-                            copyPokemons.get(currentIconeFavori)!!.isFavorite = true
-                        }
-                    },
-                    onClick = { showPokemonList = false })
-            }
+        PokedexDisplay(pokemons, context, favorites, profile, getPokemonId) {
+            showPokemonList = false
         }
-
     }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun PokedexDisplay(
+    pokemons: Map<Long, Pokemon>,
+    context: Context,
+    favorites: List<Favorite>,
+    profile: Profile,
+    getPokemonId: (Long) -> Unit,
+    onClick: () -> Unit
+) {
+
+    var currentPokemon by remember {
+        mutableStateOf(-1L)
+    }
+
+    var resultList by remember {
+        mutableStateOf(mutableListOf<Pokemon>())
+    }
+    var fav by remember {
+        mutableStateOf(Favorite(-1L, -1L))
+    }
+    var currentIconeFavori by remember {
+        mutableStateOf(-1L)
+    }
+
+    val copyPokemons by remember {
+        mutableStateOf(pokemons)
+    }
+
+    Dialog(
+        onDismissRequest = { onClick() }, properties = DialogProperties(
+            dismissOnBackPress = true, usePlatformDefaultWidth = false
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize()
+        ) {
+            FiltersBar(pokemons = pokemons.values.toList()) {
+                resultList = it.toMutableList()
+            }
+
+            DisplayPokedex(context = LocalContext.current,
+                pokemons = resultList,
+                favorites = favorites,
+                profile = profile,
+                getPokemonId = {
+                    currentPokemon = it
+                },
+                getPokemonFavoriteId = {
+                    currentIconeFavori = it
+                },
+                clickFavorite = {
+                    fav = Favorite(currentIconeFavori, profile.getId())
+                    if (!favorites.contains(fav)) {
+                        PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+                        copyPokemons.get(currentIconeFavori)!!.isFavorite = true
+                    }
+                },
+                onClick = { onClick() })
+        }
+    }
+
 }
 
 @Preview
