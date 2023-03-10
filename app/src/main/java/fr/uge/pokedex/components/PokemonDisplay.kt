@@ -1,7 +1,6 @@
 package fr.uge.pokedex.components
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -375,30 +374,6 @@ fun PokemonTeamCard(
             PokemonIcon(pokemon.getIcon(context))
             PokemonBoxTitle(name = pokemon.name)
             PokemonTypeTeamDisplay(type = pokemon.type)
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PokemonTeamCard() {
-    Column(
-        Modifier
-            .padding(2.dp)
-            .fillMaxHeight()
-            .background(Purple200, RoundedCornerShape(4.dp))
-            .clickable { Log.d("MDR", "clciekedeaezeazeazeazez") }
-    ) {
-        Column(
-            Modifier
-                .padding(2.dp)
-                .fillMaxHeight()
-                .background(Purple500, RoundedCornerShape(4.dp))
-                .clickable { Log.d("MDR", "zzzzzzzzzzz") }
-        ) {
-            Text("a")
-            Text("bbbbbbb")
-            Text(text = "ccccc")
         }
     }
 }

@@ -387,7 +387,7 @@ fun Dialog_preview() {
         }
     })
 }
-
+/*
 @Preview
 @Composable
 fun PreviewPokemonTeamCard() {
@@ -415,3 +415,4 @@ fun PreviewPokemonTeamCard() {
         }
     }
 }
+*/
