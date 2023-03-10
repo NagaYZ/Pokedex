@@ -124,8 +124,12 @@ fun NavigationGraph(
                         .getProfileWithFavorites(profile.getId()).favorites.distinct()
                 )
             }
-            PokemonBoxDisplay(
-                pokemon = pokemon, onClickFavorite = {
+            PokemonInfoDisplay(
+                pokemon,
+                favoriteList = PokedexAppDatabaseConnection.connection.profileDao()
+                    .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }
+                    .toList(),
+                onClickFavorite = {
                     if (!it) {
                         favorites.forEach { favorite ->
                             if (favorite.getPokemonId() == pokemon.id) {
@@ -147,9 +151,7 @@ fun NavigationGraph(
                         }
                     }
 
-                }, favoriteList = PokedexAppDatabaseConnection.connection.profileDao()
-                    .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }
-                    .toList()
+                }
             )
         }
         composable(route = Route.Favorite.path) {
@@ -246,7 +248,8 @@ fun BottomMenuButton(
                 modifier = Modifier
                     .padding(5.dp)
                     .size(ButtonDefaults.IconSize)
-                    .scale(1.3f)
+                    .scale(1.3f),
+                tint = Color.White
             )
             Text(
                 text = route.title,

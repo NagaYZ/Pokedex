@@ -153,7 +153,7 @@ private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
                 onClick.invoke(isClicked)
             }
             ),
-        tint = if (isClicked) Color(0xFFFFAFAF) else Color.LightGray,
+        tint = if (isClicked) Color(0xFFFF8686) else Color.LightGray,
     )
 }
 

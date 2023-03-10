@@ -66,7 +66,8 @@ class DataParser(private val context: Context) {
         parseLines("csv/core/pokemon_species_flavor_text.csv") { row ->
             val speciesId = row["species_id"]!!
             val versionId = row["version_id"]!!
-            val description = row["flavor_text"]?.removeSurrounding("\"")!!
+            val description = row["flavor_text"]
+                ?.removeSurrounding("\"")?.replace("\n", " ")!!
             val version = Version.values()[versionId.toInt() - 1]
             val flavorText = FlavorText(description, version)
             pokemon[speciesId.toLong()]?.pokedexEntries?.add(flavorText)

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.*
+import fr.uge.pokedex.database.Favorite
 
 @Preview
 @Composable
@@ -106,7 +107,9 @@ fun PokemonInfoDisplay(
         ),
         icon = fr.uge.pokedex.R.drawable.icon_pkm_1,
         sprite = fr.uge.pokedex.R.drawable.pokemon_1
-    )
+    ),
+    onClickFavorite: (Boolean) -> Unit = {},
+    favoriteList: List<Long> = emptyList()
 ) {
     LazyColumn(
         modifier = Modifier
@@ -114,6 +117,13 @@ fun PokemonInfoDisplay(
         verticalArrangement = Arrangement.spacedBy(30.dp),
         contentPadding = PaddingValues(30.dp)
     ) {
+        item {
+            PokemonBoxDisplay(
+                pokemon,
+                favoriteList = favoriteList,
+                onClickFavorite = onClickFavorite
+            )
+        }
         item {
             PokemonCharacteristics(pokemon)
         }
@@ -235,7 +245,7 @@ private fun PokedexEntries(pokedexEntries: MutableSet<FlavorText>) {
             fontWeight = FontWeight.Bold
         )
         Divider()
-        for (pokedexEntry in pokedexEntries) {
+        for (pokedexEntry in pokedexEntries.sortedBy { it.version.ordinal }) {
             TextDisplay(title = pokedexEntry.version.toString(), content = pokedexEntry.description)
             Divider()
         }
