@@ -14,7 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -92,9 +92,6 @@ private fun PokemonSprite(spriteResource: Int) {
     )
 }
 
-
-
-
 @Composable
 fun PokemonListDisplay(
     pokemon: Pokemon,
@@ -134,14 +131,17 @@ fun PokemonListDisplay(
             }
             PokemonTypeDisplay(type = pokemon.type)
         }
-        Spacer(modifier = Modifier.weight(1.0f))
-
+        Row(
+            modifier = Modifier.weight(1.0f),
+            horizontalArrangement = Arrangement.End
+        ) {
             FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
+            Spacer(modifier = Modifier.width(15.dp))
+        }
     }
 }
 
 
-@Preview
 @Composable
 private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
     var isClicked by remember { mutableStateOf(filled) }
@@ -154,14 +154,11 @@ private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
             .scale(1.25f)
             .clickable(onClick = {
                 isClicked = !isClicked
-                onClick.invoke(isClicked) }
+                onClick.invoke(isClicked)
+            }
             ),
-        tint = Color.Red,
+        tint = if (isClicked) Color(0xFFFFAFAF) else Color.LightGray,
     )
-
-
-
-
 }
 
 @Composable

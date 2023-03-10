@@ -1,9 +1,6 @@
 package fr.uge.pokedex.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +31,10 @@ fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit){
         SearchBar(pokemonSearch = {
             search = it
         })
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
             DropDownType(name = "Type 1", typeNum = {
                 type1 = it
             })
