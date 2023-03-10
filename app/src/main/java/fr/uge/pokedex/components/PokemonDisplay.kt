@@ -14,7 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -141,6 +141,7 @@ fun PokemonListDisplay(
 }
 
 
+@Preview
 @Composable
 private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
     var isClicked by remember { mutableStateOf(filled) }
@@ -196,15 +197,15 @@ private fun PokemonBoxTitle(name: String) {
 @Composable
 private fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.ELECTRIC, Type.DRAGON)) {
     Row() {
-        TypeBox(type.first)
+        TypeDisplay(type.first)
         Spacer(modifier = Modifier.width(3.dp))
-        TypeBox(type.second)
+        TypeDisplay(type.second)
     }
 }
 
 @Preview
 @Composable
-private fun TypeBox(type: Type = Type.NORMAL) {
+private fun TypeDisplay(type: Type = Type.NORMAL) {
     if (type == Type.NONE) {
         return
     }

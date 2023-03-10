@@ -43,13 +43,13 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
         mutableStateOf(-1L)
     }
     var fav by remember {
-        mutableStateOf(Favorite(-1L, -1L))
+        mutableStateOf(Favorite(0L, 0L))
     }
     var resultList by remember {
         mutableStateOf(mutableListOf<Pokemon>())
     }
 
-    NavHost(navController = navController, startDestination =  Route.Profiles.path){
+    NavHost(navController = navController, startDestination =  Route.Profiles.path) {
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable

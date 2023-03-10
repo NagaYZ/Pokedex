@@ -15,8 +15,9 @@ import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.R
 
 
+@Preview
 @Composable
-fun SearchBar(pokemonSearch: (String) -> Unit) {
+fun SearchBar(pokemonSearch: (String) -> Unit = {}) {
     var search by remember {
         mutableStateOf("")
     }
@@ -34,4 +35,5 @@ fun SearchBar(pokemonSearch: (String) -> Unit) {
     }
 
 
+    pokemonSearch(search)
 }
