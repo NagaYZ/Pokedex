@@ -18,10 +18,12 @@ class PokemonRepositoryTest {
 
         assertNotNull(pokemon)
         assertEquals("bulbasaur", pokemon?.identifier)
+        assertEquals(pokemon?.icon, R.drawable.icon_pkm_1)
+        assertEquals(pokemon?.sprite, R.drawable.pokemon_1)
         assertEquals(Pair(Type.GRASS, Type.POISON), pokemon?.type)
         if (pokemon != null) {
             assertFalse(pokemon.genus.isBlank())
-            assertTrue(pokemon.evolvesInto.first().evolvedSpeciesId == 2)
+            assertEquals(2L, pokemon.evolvesInto.first().evolvedSpecies.id)
             assertNull(pokemon.evolvesFrom)
             assertTrue(pokemon.evolvesInto.first().evolutionTrigger == EvolutionTrigger.LEVEL_UP)
             assertTrue(pokemon.evolvesInto.first().minimumLevel == 16)

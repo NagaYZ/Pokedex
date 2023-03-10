@@ -1,17 +1,15 @@
 package fr.uge.pokedex.data
 
-import android.annotation.SuppressLint
-import android.content.Context
-
-import java.util.*
 import kotlin.collections.HashSet
 
 
 data class Pokemon(
     val id: Long,
     val identifier: String,
-    val height: Int, // unit is 1/10th of a meter, ex: 7 = 0.7m
-    val weight: Int, // unit is 1/10th of a kilogram, ex: 69 = 6.9kg
+    val icon: Int,
+    val sprite: Int,
+    val height: Int = 0, // unit is 1/10th of a meter, ex: 7 = 0.7m
+    val weight: Int = 0, // unit is 1/10th of a kilogram, ex: 69 = 6.9kg
     var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE),
     var name: String = "",
     var description: String = "", // Most recent description
@@ -30,25 +28,6 @@ data class Pokemon(
     val abilities: Abilities = Abilities(),
     val learnSet: MutableSet<LearnableMove> = HashSet()
 ) {
-
-    @SuppressLint("DiscouragedApi")
-    @Suppress("unused")
-    fun getSprite(context: Context): Int {
-        return context.resources.getIdentifier("pokemon_$id", "drawable", context.packageName)
-    }
-
-    @SuppressLint("DiscouragedApi")
-    @Suppress("unused")
-    fun getIcon(context: Context): Int {
-
-        val iconExist =
-            context.resources.getIdentifier("icon_pkm_$id", "drawable", context.packageName)
-
-        if (iconExist == 0) {
-            return context.resources.getIdentifier("pokemon_0", "drawable", context.packageName)
-        }
-        return iconExist
-    }
 
     fun getWeaknesses(): Set<Type> {
         val weaknessFirst = type.first.isVulnerableTo.subtract(type.second.isResistantTo)

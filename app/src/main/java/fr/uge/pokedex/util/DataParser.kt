@@ -32,14 +32,17 @@ class DataParser(private val context: Context) {
     private fun getPokemonFromAssets(): List<Pokemon> {
         return csvReader().open(context.assets.open("csv/core/pokemon.csv")) {
             return@open readAllWithHeaderAsSequence().map { row ->
+                val id = row["id"]?.toLong()!!
                 return@map Pokemon(
-                    id = row["id"]?.toLong()!!,
+                    id = id,
                     identifier = row["identifier"]!!,
                     height = row["height"]?.toInt()!!,
                     weight = row["weight"]?.toInt()!!,
                     baseExperience = if (row["base_experience"]?.isNotBlank()!!)
                         row["base_experience"]?.toInt()!!
-                    else 0
+                    else 0,
+                    icon = context.resources.getIdentifier("icon_pkm_$id", "drawable", context.packageName),
+                    sprite = context.resources.getIdentifier("pokemon_$id", "drawable", context.packageName),
                 )
             }.toList()
         }
@@ -135,7 +138,9 @@ class DataParser(private val context: Context) {
             val growthRateId = row["growth_rate_id"]!!
 
             if (evolvesFromSpeciesId.isNotBlank()) {
-                val evolution = Evolution(evolvesFromSpeciesId.toInt(), id.toInt())
+                val evolvedSpecies = pokemon[id.toLong()]!!
+                val species = pokemon[evolvesFromSpeciesId.toLong()]!!
+                val evolution = Evolution(species = species, evolvedSpecies = evolvedSpecies)
                 pokemon[id.toLong()]?.evolvesFrom = evolution
                 pokemon[evolvesFromSpeciesId.toLong()]?.evolvesInto?.add(evolution)
             }

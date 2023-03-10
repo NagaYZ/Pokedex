@@ -1,5 +1,7 @@
 package fr.uge.pokedex.data
 
+import java.util.*
+
 enum class EvolutionTrigger {
     LEVEL_UP,
     TRADE,
@@ -14,5 +16,10 @@ enum class EvolutionTrigger {
     AGILE_STYLE_MOVE,
     STRONG_STYLE_MOVE,
     RECOIL_DAMAGE,
-    UNDEFINED
+    UNDEFINED;
+
+    override fun toString(): String {
+        return super.toString().replace("_", " ").split(" ")
+            .joinToString(" ") { it.lowercase().capitalize(Locale.ROOT) }
+    }
 }
