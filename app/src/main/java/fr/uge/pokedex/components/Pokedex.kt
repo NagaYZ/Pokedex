@@ -1,8 +1,7 @@
 package fr.uge.pokedex.components
 
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -35,7 +34,8 @@ fun DisplayPokedex(
                 .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() })
     }
     LazyVerticalGrid(
-        columns = GridCells.Fixed(sizeGrid)
+        columns = GridCells.Fixed(sizeGrid),
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         items(pokemonList) { pokemon ->
             PokemonListDisplay(pokemon = pokemon, onClick = {
@@ -50,6 +50,9 @@ fun DisplayPokedex(
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
             )
+        }
+        item {
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }

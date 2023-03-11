@@ -1,12 +1,10 @@
 package fr.uge.pokedex.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.Pokemon
 
@@ -31,7 +29,9 @@ fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit) 
     }
 
     Column(
-        Modifier.fillMaxWidth(),
+        Modifier
+            .fillMaxWidth()
+            .shadow(2.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -49,7 +49,7 @@ fun FiltersBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit) 
                 type2 = it
             })
         }
-
+        Spacer(modifier = Modifier.height(6.dp))
     }
 
     if (type1 == "" && type2 == "" && search == "") {

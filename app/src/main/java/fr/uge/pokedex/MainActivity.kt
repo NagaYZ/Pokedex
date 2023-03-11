@@ -28,8 +28,7 @@ import fr.uge.pokedex.database.Profile
 import fr.uge.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
-    private lateinit var pokemonRepository : PokemonRepository
-
+    private lateinit var pokemonRepository: PokemonRepository
 
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -46,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(mutableMapOf<Long, Pokemon>())
                 }
                 val context = LocalContext.current
-                LaunchedEffect(pokemonMap){
+                LaunchedEffect(pokemonMap) {
                     PokemonRepository(context).data.forEach { t, u -> pokemonMap.put(t, u) }
                 }
 
@@ -61,10 +60,24 @@ class MainActivity : ComponentActivity() {
 
                     var currentProfile by remember { mutableStateOf(Profile("")) }
 
-                    Scaffold(bottomBar = { if(currentRoute != Route.Profiles.path) BottomNavigationMenu(navController)},
-                        topBar = { if(currentRoute != Route.Profiles.path) TopBar(navController, currentProfile) }) {
-                        Log.d("Padding",it.toString())
-                        NavigationGraph(navController = navController, setCurrentProfile = {profile: Profile -> currentProfile = profile }, currentProfile, pokemonMap = pokemonMap)
+                    Scaffold(bottomBar = {
+                        if (currentRoute != Route.Profiles.path) BottomNavigationMenu(
+                            navController
+                        )
+                    },
+                        topBar = {
+                            if (currentRoute != Route.Profiles.path) TopBar(
+                                navController,
+                                currentProfile
+                            )
+                        }) {
+                        Log.d("Padding", it.toString())
+                        NavigationGraph(
+                            navController = navController,
+                            setCurrentProfile = { profile: Profile -> currentProfile = profile },
+                            currentProfile,
+                            pokemonMap = pokemonMap
+                        )
                     }
                 }
 

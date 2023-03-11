@@ -17,8 +17,6 @@ import fr.uge.pokedex.database.Profile
 
 @Composable
 fun TopBar(navController: NavHostController, currentProfile: Profile) {
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -100,7 +100,7 @@ fun PokemonInfoDisplay(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(30.dp),
         contentPadding = PaddingValues(30.dp)
     ) {
@@ -122,6 +122,9 @@ fun PokemonInfoDisplay(
         }
         item {
             PokedexEntries(pokemon.pokedexEntries)
+        }
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 

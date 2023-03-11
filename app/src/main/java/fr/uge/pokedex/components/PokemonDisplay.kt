@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -79,13 +81,14 @@ fun PokemonBoxDisplay(
 @Composable
 fun PokemonSprite(spriteResource: Int) {
     Image(
-        painter = painterResource(id = spriteResource),
+        bitmap = ImageBitmap.imageResource(id = spriteResource),
         contentDescription = "Pokemon sprite",
         modifier = Modifier
             .background(Color.White)
             .aspectRatio(1f)
             .fillMaxWidth()
-            .border(width = 1.dp, color = Color.LightGray)
+            .border(width = 1.dp, color = Color.LightGray),
+        filterQuality = FilterQuality.None
     )
 }
 
@@ -160,13 +163,11 @@ private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
 @Composable
 private fun PokemonIcon(iconResource: Int) {
     Image(
-        painter = painterResource(id = iconResource),
+        bitmap = ImageBitmap.imageResource(id = iconResource),
         contentDescription = "Pokemon icon",
         modifier = Modifier
-            .background(Color.White)
             .aspectRatio(1f)
             .fillMaxHeight()
-            .border(width = 1.dp, color = Color.LightGray)
     )
 }
 
