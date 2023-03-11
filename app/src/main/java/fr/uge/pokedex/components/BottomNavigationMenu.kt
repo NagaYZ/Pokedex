@@ -4,12 +4,21 @@ package fr.uge.pokedex.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -21,17 +30,22 @@ import fr.uge.pokedex.database.PokedexAppDatabaseConnection
 import fr.uge.pokedex.database.Profile
 
 
-sealed class Route(val title: String, val path: String){
-    object Pokedex : Route("Pokedex","pokedex")
-    object Favorite : Route("Favorite","favorite")
-    object Teams : Route("Teams","teams")
-    object Profiles : Route("Profiles","profiles")
+sealed class Route(val title: String, val path: String) {
+    object Pokedex : Route("Pokedex", "pokedex")
+    object Favorite : Route("Favorite", "favorite")
+    object Teams : Route("Teams", "teams")
+    object Profiles : Route("Profiles", "profiles")
 
     object Card : Route("Card", "card")
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profile : Profile) -> Unit, profile: Profile, pokemonMap: Map<Long, Pokemon>){
+fun NavigationGraph(
+    navController: NavHostController,
+    setCurrentProfile: (profile: Profile) -> Unit,
+    profile: Profile,
+    pokemonMap: Map<Long, Pokemon>
+) {
     val copyPokemonMap by remember {
         mutableStateOf(pokemonMap)
     }
@@ -49,12 +63,15 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
         mutableStateOf(mutableListOf<Pokemon>())
     }
 
-    NavHost(navController = navController, startDestination =  Route.Profiles.path) {
+    NavHost(navController = navController, startDestination = Route.Profiles.path) {
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
             var favorites by remember {
-                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites)
+                mutableStateOf(
+                    PokedexAppDatabaseConnection.connection.profileDao()
+                        .getProfileWithFavorites(profile.getId()).favorites
+                )
             }
             Column() {
                 FiltersBar(pokemonList = copyPokemonMap.values.toList())
@@ -62,8 +79,7 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
                     resultList = it.toMutableList()
                 }
 
-                DisplayPokedex(context = LocalContext.current,
-                    pokemonList = resultList,
+                DisplayPokedex(pokemonList = resultList,
                     navController = navController,
                     profile = profile,
                     getPokemonId = {
@@ -71,106 +87,119 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
                     },
                     getPokemonFavoriteId = {
                         currentIconFavorite = it
-                    },
-                    clickFavorite = {
-                            println(it)
-                            if (!it) {
-                                println("deleted 1")
-                                favorites.forEach { favorite ->
-                                    println("deleted 2")
-                                    if (favorite.getPokemonId() == currentIconFavorite) {
-                                        println("deleted")
-                                        PokedexAppDatabaseConnection.connection.favoriteDao()
-                                            .deleteFavorite(favorite)
-                                        favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
-                                    }
-                                }
-                            } else {
-                                fav = Favorite(currentIconFavorite, profile.getId())
-                                if (!favorites.contains(fav)) {
-                                    PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
-                                    favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+                    }
+                ) {
+                    println(it)
+                    if (!it) {
+                        favorites.forEach { favorite ->
+                            if (favorite.getPokemonId() == currentIconFavorite) {
+                                PokedexAppDatabaseConnection.connection.favoriteDao()
+                                    .deleteFavorite(favorite)
+                                favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                    .getProfileWithFavorites(profile.getId()).favorites
                             }
                         }
-                    })
+                    } else {
+                        fav = Favorite(currentIconFavorite, profile.getId())
+                        if (!favorites.contains(fav)) {
+                            PokedexAppDatabaseConnection.connection.favoriteDao()
+                                .addFavorite(fav)
+                            favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                .getProfileWithFavorites(profile.getId()).favorites
+                        }
+                    }
+                }
             }
         }
 
 
-        composable(route = Route.Card.path){
+        composable(route = Route.Card.path) {
             //Call a card pokemon composable
             var pokemon by remember {
                 mutableStateOf(copyPokemonMap.get(currentPokemon)!!)
             }
             var favorites by remember {
-                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.distinct())
+                mutableStateOf(
+                    PokedexAppDatabaseConnection.connection.profileDao()
+                        .getProfileWithFavorites(profile.getId()).favorites.distinct()
+                )
             }
-            PokemonBoxDisplay(context = LocalContext.current, pokemon = pokemon, onClickFavorite = {
-                if (!it) {
-                    favorites.forEach { favorite ->
-                        if (favorite.getPokemonId() == pokemon.id) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao()
-                                .deleteFavorite(favorite)
-                            favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+            PokemonInfoDisplay(
+                pokemon,
+                favoriteList = PokedexAppDatabaseConnection.connection.profileDao()
+                    .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }
+                    .toList(),
+                onClickFavorite = {
+                    if (!it) {
+                        favorites.forEach { favorite ->
+                            if (favorite.getPokemonId() == pokemon.id) {
+                                PokedexAppDatabaseConnection.connection.favoriteDao()
+                                    .deleteFavorite(favorite)
+                                favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                    .getProfileWithFavorites(profile.getId()).favorites
+
+                            }
+                        }
+                    } else {
+                        fav = Favorite(pokemon.id, profile.getId())
+                        if (!favorites.contains(fav)) {
+
+                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+                            favorites = PokedexAppDatabaseConnection.connection.profileDao()
+                                .getProfileWithFavorites(profile.getId()).favorites
 
                         }
                     }
-                } else {
-                    fav = Favorite(pokemon.id, profile.getId())
-                    if (!favorites.contains(fav)) {
 
-                        PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
-                        favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
-
-                    }
                 }
-
-            },
-                favoriteList = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }.toList()
             )
         }
-        composable(route = Route.Favorite.path){
+        composable(route = Route.Favorite.path) {
             //Call favorite composable
             var favorites by remember {
-                mutableStateOf(PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites)
+                mutableStateOf(
+                    PokedexAppDatabaseConnection.connection.profileDao()
+                        .getProfileWithFavorites(profile.getId()).favorites
+                )
             }
 
-            var pokemonsFav by remember {
+            var favoritesPokemon by remember {
                 mutableStateOf(mutableListOf<Pokemon>())
             }
 
             favorites.forEach { favorite ->
-                pokemonsFav.add(copyPokemonMap.get(favorite.getPokemonId())!!)}
+                favoritesPokemon.add(copyPokemonMap.get(favorite.getPokemonId())!!)
+            }
 
             Column() {
-                FiltersBar(pokemonList = pokemonsFav.distinct(), filterList = {
+                FiltersBar(pokemonList = favoritesPokemon.distinct(), filterList = {
                     resultList = it.toMutableList()
                 })
 
                 DisplayPokedex(
                     sizeGrid = 1,
-                    context = LocalContext.current,
                     pokemonList = resultList,
                     navController = navController,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
-                    }, getPokemonFavoriteId = { currentIconFavorite = it },
-                    clickFavorite = {
-                        favorites.forEach { favorite ->
-                            if (favorite.getPokemonId() == currentIconFavorite) {
-                                PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
-                            }
+                    },
+                    getPokemonFavoriteId = { currentIconFavorite = it }) {
+                    favorites.forEach { favorite ->
+                        if (favorite.getPokemonId() == currentIconFavorite) {
+                            PokedexAppDatabaseConnection.connection.favoriteDao()
+                                .deleteFavorite(favorite)
                         }
-                    })
+                    }
+                }
 
             }
         }
-        composable(route = Route.Teams.path){
+        composable(route = Route.Teams.path) {
             //Call teams composable
             Text(text = "Teams screen", style = MaterialTheme.typography.h1)
         }
-        composable(route = Route.Profiles.path){
+        composable(route = Route.Profiles.path) {
             //Call teams composable
 //            Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
             ProfilesScreen(navController, setCurrentProfile)
@@ -179,28 +208,70 @@ fun NavigationGraph(navController: NavHostController, setCurrentProfile :(profil
 }
 
 @Composable
-fun BottomNavigationMenu(navController: NavHostController){
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .height(40.dp)
-        .background(color = MaterialTheme.colors.primary), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
+fun BottomNavigationMenu(navController: NavHostController) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colors.primary)
+            .padding(7.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
 
-        BottomMenuButton(Route.Pokedex, navController)
-        BottomMenuButton(Route.Favorite, navController)
-        BottomMenuButton(Route.Teams, navController)
+        BottomMenuButton(Route.Pokedex, navController, Icons.Filled.Menu)
+        BottomMenuButton(Route.Favorite, navController, Icons.Filled.Favorite)
+        BottomMenuButton(Route.Teams, navController, Icons.Filled.Add)
     }
 }
 
 @Composable
-fun BottomMenuButton(route: Route, navController: NavHostController){
+fun BottomMenuButton(
+    route: Route,
+    navController: NavHostController,
+    icon: ImageVector
+) {
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.clickable {
-        navController.navigate(route.path)
-    }) {
-        if(currentRoute == route.path) Text(text = route.title, style = MaterialTheme.typography.button, modifier = Modifier.padding(12.dp), color = MaterialTheme.colors.onPrimary)
-        else Text(text = route.title, style = MaterialTheme.typography.button, modifier = Modifier.padding(12.dp))
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.clickable {
+            navController.navigate(route.path)
+        }
+    ) {
+        if (currentRoute == route.path) {
+            Icon(
+                imageVector = icon,
+                contentDescription = "Favorite",
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(ButtonDefaults.IconSize)
+                    .scale(1.3f),
+                tint = Color.White
+            )
+            Text(
+                text = route.title,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.subtitle2,
+                color = MaterialTheme.colors.onPrimary
+            )
+        } else {
+            Icon(
+                imageVector = icon,
+                contentDescription = "Favorite",
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(ButtonDefaults.IconSize)
+                    .scale(1.2f),
+                tint = Color(0x65FFFFFF)
+            )
+            Text(
+                text = route.title,
+                style = MaterialTheme.typography.subtitle2,
+                color = Color(0x99FFFFFF)
+            )
+        }
     }
 }

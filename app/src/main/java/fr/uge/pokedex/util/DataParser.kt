@@ -32,14 +32,17 @@ class DataParser(private val context: Context) {
     private fun getPokemonFromAssets(): List<Pokemon> {
         return csvReader().open(context.assets.open("csv/core/pokemon.csv")) {
             return@open readAllWithHeaderAsSequence().map { row ->
+                val id = row["id"]?.toLong()!!
                 return@map Pokemon(
-                    id = row["id"]?.toLong()!!,
+                    id = id,
                     identifier = row["identifier"]!!,
                     height = row["height"]?.toInt()!!,
                     weight = row["weight"]?.toInt()!!,
                     baseExperience = if (row["base_experience"]?.isNotBlank()!!)
                         row["base_experience"]?.toInt()!!
-                    else 0
+                    else 0,
+                    icon = context.resources.getIdentifier("icon_pkm_$id", "drawable", context.packageName),
+                    sprite = context.resources.getIdentifier("pokemon_$id", "drawable", context.packageName),
                 )
             }.toList()
         }
@@ -63,10 +66,11 @@ class DataParser(private val context: Context) {
         parseLines("csv/core/pokemon_species_flavor_text.csv") { row ->
             val speciesId = row["species_id"]!!
             val versionId = row["version_id"]!!
-            val description = row["flavor_text"]?.removeSurrounding("\"")!!
+            val description = row["flavor_text"]
+                ?.removeSurrounding("\"")?.replace("\n", " ")!!
             val version = Version.values()[versionId.toInt() - 1]
-            val flavorText = FlavorText(description, version)
-            pokemon[speciesId.toLong()]?.pokedexEntries?.add(flavorText)
+
+            pokemon[speciesId.toLong()]?.pokedexEntries?.put(version, description)
             pokemon[speciesId.toLong()]?.description = description
         }
     }
@@ -125,6 +129,8 @@ class DataParser(private val context: Context) {
     }
 
     private fun setPokemonEvolutions(pokemon: Map<Long, Pokemon>) {
+        val evolvesFrom = mutableMapOf<Long, Evolution>()
+
         // First set up the lineage
         parseLines("csv/core/pokemon_species.csv") { row ->
             val id = row["id"]!!
@@ -135,9 +141,16 @@ class DataParser(private val context: Context) {
             val growthRateId = row["growth_rate_id"]!!
 
             if (evolvesFromSpeciesId.isNotBlank()) {
-                val evolution = Evolution(evolvesFromSpeciesId.toInt(), id.toInt())
+                val evolvedSpecies = pokemon[id.toLong()]!!
+                val species = pokemon[evolvesFromSpeciesId.toLong()]!!
+                val evolution = Evolution(species = species, evolvedSpecies = evolvedSpecies)
                 pokemon[id.toLong()]?.evolvesFrom = evolution
                 pokemon[evolvesFromSpeciesId.toLong()]?.evolvesInto?.add(evolution)
+                evolvesFrom[id.toLong()] = evolution
+
+                pokemon[id.toLong()]?.evolutionChain =
+                    pokemon[evolvesFromSpeciesId.toLong()]?.evolutionChain!!
+                pokemon[id.toLong()]?.evolutionChain?.evolutions?.add(evolution)
             }
 
             pokemon[id.toLong()]?.captureRate = captureRate.toInt()
@@ -152,9 +165,9 @@ class DataParser(private val context: Context) {
             val evolutionTrigger =
                 EvolutionTrigger.values()[row["evolution_trigger_id"]?.toInt()!! - 1]
             val minimumLevel = row["minimum_level"]!!
-            pokemon[evolvedSpeciesId]?.evolvesFrom?.evolutionTrigger = evolutionTrigger
+            evolvesFrom[evolvedSpeciesId]?.evolutionTrigger = evolutionTrigger
             if (evolutionTrigger == EvolutionTrigger.LEVEL_UP && minimumLevel.isNotBlank()) {
-                pokemon[evolvedSpeciesId]?.evolvesFrom?.minimumLevel = minimumLevel.toInt()
+                evolvesFrom[evolvedSpeciesId]?.minimumLevel = minimumLevel.toInt()
             }
         }
     }

@@ -1,5 +1,7 @@
 package fr.uge.pokedex.data
 
+import java.util.*
+
 enum class Version {
     RED,
     BLUE,
@@ -41,5 +43,10 @@ enum class Version {
     SHINING_PEARL,
     LEGENDS_ARCEUS,
     SCARLET,
-    VIOLET,
+    VIOLET;
+
+    override fun toString(): String {
+        return super.toString().replace("_", " ").split(" ")
+            .joinToString(" ") { it.lowercase().capitalize(Locale.ROOT) }
+    }
 }

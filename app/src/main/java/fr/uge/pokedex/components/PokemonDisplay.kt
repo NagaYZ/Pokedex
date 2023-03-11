@@ -1,6 +1,5 @@
 package fr.uge.pokedex.components
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,14 +13,16 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,11 +36,9 @@ import fr.uge.pokedex.data.Type
 @Composable
 fun PokemonBoxDisplay(
     pokemon: Pokemon,
-    context: Context,
-    onClick: () ->  Unit = {},
+    onClick: () -> Unit = {},
     onClickFavorite: (Boolean) -> Unit = {},
     favoriteList: List<Long>
-
 ) {
 
     Column(
@@ -52,7 +51,7 @@ fun PokemonBoxDisplay(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
 
-        PokemonSprite(spriteResource = pokemon.getSprite(context))
+        PokemonSprite(spriteResource = pokemon.sprite)
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -72,7 +71,7 @@ fun PokemonBoxDisplay(
                 textAlign = TextAlign.Center
             )
 
-                FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
+            FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
         }
         PokemonTypeDisplay(type = pokemon.type)
     }
@@ -80,26 +79,23 @@ fun PokemonBoxDisplay(
 }
 
 @Composable
-private fun PokemonSprite(spriteResource: Int) {
+fun PokemonSprite(spriteResource: Int) {
     Image(
-        painter = painterResource(id = spriteResource),
+        bitmap = ImageBitmap.imageResource(id = spriteResource),
         contentDescription = "Pokemon sprite",
         modifier = Modifier
             .background(Color.White)
             .aspectRatio(1f)
             .fillMaxWidth()
-            .border(width = 1.dp, color = Color.LightGray)
+            .border(width = 1.dp, color = Color.LightGray),
+        filterQuality = FilterQuality.None
     )
 }
-
-
-
 
 @Composable
 fun PokemonListDisplay(
     pokemon: Pokemon,
-    context: Context,
-    onClick: () ->  Unit,
+    onClick: () -> Unit,
     onClickFavorite: (Boolean) -> Unit,
     favoriteList: List<Long>
 
@@ -112,7 +108,7 @@ fun PokemonListDisplay(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        PokemonIcon(pokemon.getIcon(context))
+        PokemonIcon(pokemon.icon)
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -134,14 +130,17 @@ fun PokemonListDisplay(
             }
             PokemonTypeDisplay(type = pokemon.type)
         }
-        Spacer(modifier = Modifier.weight(1.0f))
-
+        Row(
+            modifier = Modifier.weight(1.0f),
+            horizontalArrangement = Arrangement.End
+        ) {
             FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
+            Spacer(modifier = Modifier.width(15.dp))
+        }
     }
 }
 
 
-@Preview
 @Composable
 private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
     var isClicked by remember { mutableStateOf(filled) }
@@ -154,26 +153,21 @@ private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
             .scale(1.25f)
             .clickable(onClick = {
                 isClicked = !isClicked
-                onClick.invoke(isClicked) }
+                onClick.invoke(isClicked)
+            }
             ),
-        tint = Color.Red,
+        tint = if (isClicked) Color(0xFFFF8686) else Color.LightGray,
     )
-
-
-
-
 }
 
 @Composable
 private fun PokemonIcon(iconResource: Int) {
     Image(
-        painter = painterResource(id = iconResource),
+        bitmap = ImageBitmap.imageResource(id = iconResource),
         contentDescription = "Pokemon icon",
         modifier = Modifier
-            .background(Color.White)
             .aspectRatio(1f)
             .fillMaxHeight()
-            .border(width = 1.dp, color = Color.LightGray)
     )
 }
 
