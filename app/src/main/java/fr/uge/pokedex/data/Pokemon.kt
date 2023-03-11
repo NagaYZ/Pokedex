@@ -13,11 +13,12 @@ data class Pokemon(
     var type: Pair<Type, Type> = Pair(Type.NONE, Type.NONE),
     var name: String = "",
     var description: String = "", // Most recent description
-    val pokedexEntries: MutableSet<FlavorText> = HashSet(),
+    var pokedexEntries: MutableMap<Version, String> = mutableMapOf(),
     var genus: String = "",
     val encounters: MutableSet<Encounter> = HashSet(),
     var evolvesFrom: Evolution? = null,
     var evolvesInto: MutableSet<Evolution> = HashSet(),
+    var evolutionChain: EvolutionChain = EvolutionChain(),
     var eggGroups: MutableSet<EggGroup> = HashSet(),
     var baseExperience: Int = 0,
     var captureRate: Int = 0, // 0 to 255

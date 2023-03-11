@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.*
-import fr.uge.pokedex.database.Favorite
 
 @Preview
 @Composable
@@ -87,23 +86,11 @@ fun PokemonInfoDisplay(
         ),
         identifier = "bulbasaur",
         name = "Bulbasaur",
-        pokedexEntries = mutableSetOf(
-            FlavorText(
-                "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.",
-                Version.RED
-            ),
-            FlavorText(
-                "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.",
-                Version.BLUE
-            ),
-            FlavorText(
-                "It can go for days without eating a single morsel. In the bulb on its back, it stores energy.",
-                Version.YELLOW
-            ),
-            FlavorText(
-                "The seed on its back is filled with nutrients. The seed grows steadily larger as its body grows.",
-                Version.GOLD
-            ),
+        pokedexEntries = hashMapOf(
+            Version.RED to "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.",
+            Version.BLUE to "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.",
+            Version.YELLOW to "It can go for days without eating a single morsel. In the bulb on its back, it stores energy.",
+            Version.GOLD to "The seed on its back is filled with nutrients. The seed grows steadily larger as its body grows."
         ),
         icon = fr.uge.pokedex.R.drawable.icon_pkm_1,
         sprite = fr.uge.pokedex.R.drawable.pokemon_1
@@ -131,8 +118,7 @@ fun PokemonInfoDisplay(
             PokemonAbilities(pokemon.abilities)
         }
         item {
-            val baseSpecies = pokemon.evolvesFrom?.species?.evolvesFrom?.species ?: pokemon
-            PokemonEvolutions(baseSpecies.evolvesFrom, baseSpecies.evolvesInto)
+            EvolutionChainDisplay(pokemon.evolutionChain)
         }
         item {
             PokedexEntries(pokemon.pokedexEntries)
@@ -236,7 +222,7 @@ private fun InfoDisplay(icon: Int, title: String, content: String) {
 }
 
 @Composable
-private fun PokedexEntries(pokedexEntries: MutableSet<FlavorText>) {
+private fun PokedexEntries(pokedexEntries: MutableMap<Version, String>) {
     Column(
         Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -246,8 +232,13 @@ private fun PokedexEntries(pokedexEntries: MutableSet<FlavorText>) {
             fontWeight = FontWeight.Bold
         )
         Divider()
-        for (pokedexEntry in pokedexEntries.sortedBy { it.version.ordinal }) {
-            TextDisplay(title = pokedexEntry.version.toString(), content = pokedexEntry.description)
+        println(pokedexEntries)
+        for (pokedexEntry in pokedexEntries.map { it.value to it.key }
+            .groupBy({ it.first }, { it.second }).entries.sortedBy { it.value.first().ordinal }) {
+            TextDisplay(
+                title = pokedexEntry.value.joinToString(" - "),
+                content = pokedexEntry.key
+            )
             Divider()
         }
     }
@@ -266,7 +257,7 @@ private fun TextDisplay(title: String, content: String) {
 }
 
 @Composable
-private fun PokemonEvolutions(evolvesFrom: Evolution?, evolvesInto: Set<Evolution>) {
+private fun EvolutionChainDisplay(evolutionChain: EvolutionChain) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -276,19 +267,9 @@ private fun PokemonEvolutions(evolvesFrom: Evolution?, evolvesInto: Set<Evolutio
             fontWeight = FontWeight.Bold
         )
         Divider()
-        if (evolvesFrom != null) {
-            EvolutionDisplay(evolvesFrom)
-            Divider()
-        }
-        for (evolution in evolvesInto) {
+        for(evolution in evolutionChain.evolutions) {
             EvolutionDisplay(evolution)
             Divider()
-            if (evolvesFrom == null) {
-                for (finalEvolution in evolution.evolvedSpecies.evolvesInto) {
-                    EvolutionDisplay(finalEvolution)
-                    Divider()
-                }
-            }
         }
     }
 }
