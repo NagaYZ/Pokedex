@@ -291,6 +291,7 @@ fun PokemonListTeamDisplay(
 
 @Composable
 fun TeamDisplay(
+    index: Int,
     pokemon_team: TeamWithMembers,
     editOnClick: (Long) -> Unit,
     deleteOnClick: (Long) -> Unit,
@@ -311,7 +312,7 @@ fun TeamDisplay(
 
         ) {
             Text(
-                "Equipe 1",
+                "Team $index",
                 Modifier
                     .weight(1f)
                     .clickable { showTeam() },

@@ -6,7 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -38,7 +38,7 @@ private fun DeleteTeam(teamId: Long) {
 }
 
 @Composable
-private fun getTeams(profile: Profile): List<TeamWithMembers> {
+private fun getTeamsFromProfile(profile: Profile): List<TeamWithMembers> {
     PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val profileDao: ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
     return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
@@ -66,7 +66,6 @@ fun EditTeam(pokemonList: List<Long>, teamId: Long) {
     pokemonList.forEach { pokemon ->
         teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))
     }
-
 }
 
 @Composable
@@ -91,7 +90,7 @@ fun DisplayTeams(
     var delete by remember { mutableStateOf(false) }
     var edit by remember { mutableStateOf(false) }
     var teamId by remember { mutableStateOf(-1L) }
-    val teams = getTeams(profile = profile)
+    val teams = getTeamsFromProfile(profile = profile)
 
     //display list of team
     LazyVerticalGrid(
@@ -100,8 +99,9 @@ fun DisplayTeams(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(10.dp)
     ) {
-        items(teams) { poketeam ->
+        itemsIndexed(teams) { i, poketeam ->
             TeamDisplay(
+                i + 1,
                 pokemon_team = poketeam,
                 { teamId = it; edit = true },
                 { teamId = it; delete = true },
@@ -139,7 +139,6 @@ fun DisplayTeams(
 
         edit = false
     }
-
 }
 
 @SuppressLint("MutableCollectionMutableState")
@@ -409,3 +408,27 @@ fun PreviewPokemonTeamCard() {
     }
 }
 */
+
+@Preview
+@Composable
+fun PreviePokemonTeamCard() {
+    var j = mutableListOf<Int>(1, 2, 3)
+    //display list of team
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(1),
+        horizontalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        contentPadding = PaddingValues(10.dp)
+    ) {
+        itemsIndexed(j) { i, poketeam ->
+            PreviewPokemonTeamCard(i + 1)
+        }
+    }
+
+}
+
+@Composable
+fun PreviewPokemonTeamCard(i: Int) {
+    Text("team $i")
+
+}
