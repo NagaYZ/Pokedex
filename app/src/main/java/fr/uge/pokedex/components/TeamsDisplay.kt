@@ -1,7 +1,6 @@
 package fr.uge.pokedex.components
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -85,7 +84,6 @@ fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
 @Composable
 fun DisplayTeams(
     pokemons: Map<Long, Pokemon>,
-    context: Context,
     profile: Profile,
     onPokemonClick: () -> Unit
 ) {
@@ -105,7 +103,6 @@ fun DisplayTeams(
         items(teams) { poketeam ->
             TeamDisplay(
                 pokemon_team = poketeam,
-                context = context,
                 { teamId = it; edit = true },
                 { teamId = it; delete = true },
                 onPokemonClick
@@ -135,7 +132,6 @@ fun DisplayTeams(
         PopupWindow(
             show = showNewTeamDialog,
             pokemons,
-            context,
             profile,
             teamId,
             edit,
@@ -151,7 +147,6 @@ fun DisplayTeams(
 fun PopupWindow(
     show: Boolean,
     pokemons: Map<Long, Pokemon>,
-    context: Context,
     profile: Profile,
     teamId: Long,
     edit: Boolean,
@@ -186,7 +181,7 @@ fun PopupWindow(
                 if (edit) {
                     pokemonIdInTeam = pokemonsInTeam[i - 1]
                 }
-                PickPokemon(pokemons, context, profile, edit, pokemonIdInTeam, getPokemonId = {
+                PickPokemon(pokemons, profile, edit, pokemonIdInTeam, getPokemonId = {
                     pickedPokemon = it
                 })
                 if (pickedPokemon != -1L) {
@@ -219,7 +214,6 @@ fun PopupWindow(
 @Composable
 fun PickPokemon(
     pokemons: Map<Long, Pokemon>,
-    context: Context,
     profile: Profile,
     edit: Boolean,
     pokemonIdInTeam: Long,
@@ -245,7 +239,7 @@ fun PickPokemon(
     ) {
         Text("Choose Pokemon...", fontSize = 20.sp)
         copyPokemons.get(currentPokemon)?.let {
-            PokemonListTeamDisplay(it, context) {}
+            PokemonListTeamDisplay(it) {}
             getPokemonId(it.id)
         }
         Button(
@@ -263,17 +257,17 @@ fun PickPokemon(
     }
     //show pokedex to select pokemon
     if (showPokemonList) {
-        PokedexDisplay(pokemons, context, profile, getPokemonId) {
+        PokedexDisplay(pokemons, profile, getPokemonId) {
             showPokemonList = false
         }
     }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PokedexDisplay(
     pokemons: Map<Long, Pokemon>,
-    context: Context,
     profile: Profile,
     getPokemonId: (Long) -> Unit,
     onClick: () -> Unit
@@ -310,8 +304,7 @@ fun PokedexDisplay(
             }
 
             DisplayPokedex(
-                context = context,
-                pokemons = resultList,
+                pokemonList = resultList,
                 profile = profile,
                 getPokemonId = getPokemonId,
                 getPokemonFavoriteId = {

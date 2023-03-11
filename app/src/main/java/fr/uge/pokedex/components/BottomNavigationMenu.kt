@@ -210,7 +210,6 @@ fun NavigationGraph(
           //  Text(text = "Teams screen", style = MaterialTheme.typography.h3)
             DisplayTeams(
                 pokemonMap,
-                context = LocalContext.current,
                 profile,
                 onPokemonClick = {
                     navController.navigate("card")

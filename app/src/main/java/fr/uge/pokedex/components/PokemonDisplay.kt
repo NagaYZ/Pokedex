@@ -1,6 +1,5 @@
 package fr.uge.pokedex.components
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,8 +12,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +22,6 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -257,7 +253,6 @@ private fun TypeDisplay(type: Type = Type.NORMAL) {
 @Composable
 fun PokemonListTeamDisplay(
     pokemon: Pokemon,
-    context: Context,
     onClick: () -> Unit
 ) {
     Row(
@@ -268,7 +263,7 @@ fun PokemonListTeamDisplay(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        PokemonIcon(pokemon.getIcon(context))
+        PokemonIcon(pokemon.icon)
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -297,7 +292,6 @@ fun PokemonListTeamDisplay(
 @Composable
 fun TeamDisplay(
     pokemon_team: TeamWithMembers,
-    context: Context,
     editOnClick: (Long) -> Unit,
     deleteOnClick: (Long) -> Unit,
     showTeam: () -> Unit,
@@ -343,7 +337,7 @@ fun TeamDisplay(
                     val pokemon =
                         getPokemonFromId(pokemon_team.teamMembers[i * 3 + j].getPokemonId())
                     Box(Modifier.weight(1 / 3f)) {
-                        PokemonTeamCard(pokemon = pokemon, context = context, onPokemonClick)
+                        PokemonTeamCard(pokemon = pokemon, onPokemonClick)
                     }
                 }
             }
@@ -354,7 +348,6 @@ fun TeamDisplay(
 @Composable
 fun PokemonTeamCard(
     pokemon: Pokemon,
-    context: Context,
     onClick: () -> Unit
 ) {
     Column(
@@ -371,7 +364,7 @@ fun PokemonTeamCard(
                 .background(Purple200, RoundedCornerShape(4.dp))
                 .clickable { onClick() }
         ) {
-            PokemonIcon(pokemon.getIcon(context))
+            PokemonIcon(pokemon.icon)
             PokemonBoxTitle(name = pokemon.name)
             PokemonTypeTeamDisplay(type = pokemon.type)
         }
