@@ -408,27 +408,71 @@ fun PreviewPokemonTeamCard() {
     }
 }
 */
-
 @Preview
 @Composable
 fun PreviePokemonTeamCard() {
-    var j = mutableListOf<Int>(1, 2, 3)
-    //display list of team
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        horizontalArrangement = Arrangement.spacedBy(30.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(10.dp)
+    var b by remember {
+        mutableStateOf(false)
+    }
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .height(70.dp)
+            .fillMaxWidth()
+            .background(Purple200, RoundedCornerShape(8.dp))
+            .clickable {
+                b = true
+            },
     ) {
-        itemsIndexed(j) { i, poketeam ->
-            PreviewPokemonTeamCard(i + 1)
+        Text("Choose Pokemon...", fontSize = 20.sp)
+
+        if (b) {
+            PreviewPokemonTeamCard()
+        }
+        Button(
+            onClick = { },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(40.dp)
+        ) {
+            Icon(
+                Icons.Rounded.Delete,
+                contentDescription = "Delete Selected Pokemon",
+                Modifier.scale(3f)
+            )
         }
     }
-
 }
 
 @Composable
-fun PreviewPokemonTeamCard(i: Int) {
-    Text("team $i")
-
+fun PreviewPokemonTeamCard() {
+    var back by remember {
+        mutableStateOf(Color.Red)
+    }
+    Row(
+        Modifier
+            .clickable(onClick = { back = Color.Green })
+            .background(back)
+            .height(70.dp)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("aaaaaaaa")
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text("c")
+                Spacer(modifier = Modifier.width(3.dp))
+            }
+            Text("bb")
+        }
+        Spacer(modifier = Modifier.weight(1.0f))
+    }
 }
