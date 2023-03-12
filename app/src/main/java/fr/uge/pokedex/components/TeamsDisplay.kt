@@ -152,9 +152,7 @@ fun PopupWindow(
     close: () -> Unit
 ) {
     var createTeam by remember { mutableStateOf(false) }
-    val team by remember {
-        mutableStateOf(mutableMapOf<Int, Long>())
-    }
+    val team by remember { mutableStateOf(mutableMapOf<Int, Long>()) }
     var pickedPokemon by remember { mutableStateOf(-1L) }
     var pokemonsInTeam: List<Long> = listOf()
     var pokemonIdInTeam by remember { mutableStateOf(-1L) }
@@ -195,7 +193,9 @@ fun PopupWindow(
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
         ) {
-            Button(enabled = (team.size == 6), onClick = { close(); createTeam = true }) {
+            Button(
+                enabled = (team.filterValues { id -> id != -1L }.size == 6),
+                onClick = { close(); createTeam = true }) {
                 Text("Done")
             }
         }
@@ -207,7 +207,6 @@ fun PopupWindow(
             AddTeamToDatabase(team.values.toList(), profile)
         }
     }
-
 }
 
 @Composable
@@ -238,7 +237,7 @@ fun PickPokemon(
     ) {
         Text("Choose Pokemon...", fontSize = 20.sp)
         copyPokemons.get(currentPokemon)?.let {
-            PokemonListTeamDisplay(it) {}
+            PokemonListTeamDisplay(it) { showPokemonList = true }
             getPokemonId(it.id)
         }
         Button(
@@ -408,71 +407,3 @@ fun PreviewPokemonTeamCard() {
     }
 }
 */
-@Preview
-@Composable
-fun PreviePokemonTeamCard() {
-    var b by remember {
-        mutableStateOf(false)
-    }
-    Box(
-        modifier = Modifier
-            .padding(4.dp)
-            .height(70.dp)
-            .fillMaxWidth()
-            .background(Purple200, RoundedCornerShape(8.dp))
-            .clickable {
-                b = true
-            },
-    ) {
-        Text("Choose Pokemon...", fontSize = 20.sp)
-
-        if (b) {
-            PreviewPokemonTeamCard()
-        }
-        Button(
-            onClick = { },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(40.dp)
-        ) {
-            Icon(
-                Icons.Rounded.Delete,
-                contentDescription = "Delete Selected Pokemon",
-                Modifier.scale(3f)
-            )
-        }
-    }
-}
-
-@Composable
-fun PreviewPokemonTeamCard() {
-    var back by remember {
-        mutableStateOf(Color.Red)
-    }
-    Row(
-        Modifier
-            .clickable(onClick = { back = Color.Green })
-            .background(back)
-            .height(70.dp)
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text("aaaaaaaa")
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(horizontal = 8.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Text("c")
-                Spacer(modifier = Modifier.width(3.dp))
-            }
-            Text("bb")
-        }
-        Spacer(modifier = Modifier.weight(1.0f))
-    }
-}
