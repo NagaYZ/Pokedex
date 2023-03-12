@@ -1,6 +1,7 @@
 package fr.uge.pokedex.components
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -98,7 +99,7 @@ fun DisplayTeams(
                 i + 1,
                 pokemon_team = poketeam,
                 pokemons,
-                { teamId = it; edit = true },
+                { teamId = it; edit = true; showNewTeamDialog = true },
                 { teamId = it; delete = true },
                 onPokemonClick
             ) {}
@@ -128,21 +129,17 @@ fun DisplayTeams(
 
     if (showNewTeamDialog) {
         PopupWindow(
-            show = showNewTeamDialog,
             pokemons,
             profile,
             teamId,
             edit,
-        ) { showNewTeamDialog = false }
-
-        edit = false
+        ) { showNewTeamDialog = false; edit = false }
     }
 }
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun PopupWindow(
-    show: Boolean,
     pokemons: Map<Long, Pokemon>,
     profile: Profile,
     teamId: Long,
@@ -155,12 +152,13 @@ fun PopupWindow(
     var pokemonsInTeam: List<Long> = listOf()
     var pokemonIdInTeam by remember { mutableStateOf(-1L) }
     var enableButton by remember { mutableStateOf(false) }
+    var once by remember { mutableStateOf(false) }
 
+    Log.d("MDR", "aaaaaaaaaaaaaaaaaaaaaaaaa " + edit.toString())
     if (edit) {
+        once = true
         pokemonsInTeam = getPokemonsFromTeamId(teamId)
     }
-
-    if (!show) return
     AlertDialog(
         onDismissRequest = { close() },
         title = {
@@ -178,10 +176,10 @@ fun PopupWindow(
                     .padding(horizontal = 4.dp)
             ) {
                 for (i in 1..6) {
-                    if (edit) {
+                    if (edit && once) {
                         pokemonIdInTeam = pokemonsInTeam[i - 1]
                     }
-                    PickPokemon(pokemons, profile, edit, pokemonIdInTeam, getPokemonId = {
+                    PickPokemon(pokemons, profile, edit && once, pokemonIdInTeam, getPokemonId = {
                         pickedPokemon = it
                     })
                     enableButton = team.filterValues { id -> id != -1L }.size == 6
@@ -192,6 +190,7 @@ fun PopupWindow(
                         team.put(i, -1L)
                     }
                 }
+                once = false
             }
         }, confirmButton = {
             Row(
@@ -214,6 +213,7 @@ fun PopupWindow(
         }
         close()
     }
+
 }
 
 @Composable
