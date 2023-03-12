@@ -103,6 +103,9 @@ fun DisplayTeams(
                 onPokemonClick
             ) {}
         }
+        item {
+            Spacer(modifier = Modifier.padding(bottom = 40.dp))
+        }
     }
 
     //Button : Add New Team
@@ -179,36 +182,37 @@ fun PopupWindow(
                         pokemonIdInTeam = pokemonsInTeam[i - 1]
                     }
                     PickPokemon(pokemons, profile, edit, pokemonIdInTeam, getPokemonId = {
-                    pickedPokemon = it
-                })
+                        pickedPokemon = it
+                    })
                     enableButton = team.filterValues { id -> id != -1L }.size == 6
-                if (pickedPokemon != -1L) {
-
-                    team.put(i, pickedPokemon)
-                    pickedPokemon = -1L
-                } else {
-                    team.put(i, -1L)
+                    if (pickedPokemon != -1L) {
+                        team.put(i, pickedPokemon)
+                        pickedPokemon = -1L
+                    } else {
+                        team.put(i, -1L)
+                    }
                 }
             }
-        }
-    }, confirmButton = {
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-        ) {
-            Button(
-                enabled = enableButton,
-                onClick = { close(); createTeam = true }) {
-                Text("Done")
+        }, confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    enabled = enableButton,
+                    onClick = {
+                        createTeam = true
+                    }) {
+                    Text("Done")
+                }
             }
-        }
-    })
-
+        })
     if (createTeam) {
         if (edit) {
             EditTeam(team.values.toList(), teamId)
         } else {
             AddTeamToDatabase(team.values.toList(), profile)
         }
+        close()
     }
 }
 
