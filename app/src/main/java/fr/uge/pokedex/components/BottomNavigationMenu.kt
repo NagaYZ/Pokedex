@@ -147,7 +147,6 @@ fun NavigationGraph(
                     } else {
                         fav = Favorite(pokemon.id, profile.getId())
                         if (!favorites.contains(fav)) {
-
                             PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
                             favorites = PokedexAppDatabaseConnection.connection.profileDao()
                                 .getProfileWithFavorites(profile.getId()).favorites
@@ -204,21 +203,18 @@ fun NavigationGraph(
         }
         composable(route = Route.Teams.path) {
             //Call teams composable
-            val favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                .getProfileWithFavorites(profile.getId()).favorites
-
-          //  Text(text = "Teams screen", style = MaterialTheme.typography.h3)
             DisplayTeams(
                 pokemonMap,
                 profile,
                 onPokemonClick = {
+                    currentPokemon = it
                     navController.navigate("card")
                 }
             )
         }
 
         composable(route = Route.Profiles.path){
-            //Call teams composable
+            //Call profiles composable
             // Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
             ProfilesScreen(navController, setCurrentProfile)
         }

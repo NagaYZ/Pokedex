@@ -99,7 +99,6 @@ fun PokemonListDisplay(
     onClick: () -> Unit,
     onClickFavorite: (Boolean) -> Unit,
     favoriteList: List<Long>
-
 ) {
     Row(
         Modifier
@@ -140,7 +139,6 @@ fun PokemonListDisplay(
         }
     }
 }
-
 
 @Composable
 private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
@@ -295,7 +293,7 @@ fun TeamDisplay(
     editOnClick: (Long) -> Unit,
     deleteOnClick: (Long) -> Unit,
     showTeam: () -> Unit,
-    onPokemonClick: () -> Unit,
+    onPokemonClick: (Long) -> Unit,
 ) {
     Column(
         Modifier
@@ -349,21 +347,21 @@ fun TeamDisplay(
 @Composable
 fun PokemonTeamCard(
     pokemon: Pokemon,
-    onClick: () -> Unit
+    onClick: (Long) -> Unit
 ) {
+
     Column(
         Modifier
             .padding(2.dp)
             .fillMaxHeight()
             .background(Purple200, RoundedCornerShape(4.dp))
-            .clickable { onClick() }
     ) {
         Column(
             Modifier
                 .padding(2.dp)
                 .fillMaxHeight()
                 .background(Purple200, RoundedCornerShape(4.dp))
-                .clickable { onClick() }
+                .clickable { onClick(pokemon.id) }
         ) {
             PokemonIcon(pokemon.icon)
             PokemonBoxTitle(name = pokemon.name)
@@ -371,7 +369,6 @@ fun PokemonTeamCard(
         }
     }
 }
-
 
 private fun typeToColor(type: Type): Color {
     return when (type) {

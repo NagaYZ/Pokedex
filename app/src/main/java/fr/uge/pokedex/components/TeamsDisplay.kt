@@ -1,7 +1,6 @@
 package fr.uge.pokedex.components
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -79,7 +78,7 @@ fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
 fun DisplayTeams(
     pokemons: Map<Long, Pokemon>,
     profile: Profile,
-    onPokemonClick: () -> Unit
+    onPokemonClick: (Long) -> Unit
 ) {
     var showNewTeamDialog by remember { mutableStateOf(false) }
     var delete by remember { mutableStateOf(false) }
@@ -101,8 +100,9 @@ fun DisplayTeams(
                 pokemons,
                 { teamId = it; edit = true; showNewTeamDialog = true },
                 { teamId = it; delete = true },
+                {},
                 onPokemonClick
-            ) {}
+            )
         }
         item {
             Spacer(modifier = Modifier.padding(bottom = 40.dp))
@@ -154,7 +154,6 @@ fun PopupWindow(
     var enableButton by remember { mutableStateOf(false) }
     var once by remember { mutableStateOf(false) }
 
-    Log.d("MDR", "aaaaaaaaaaaaaaaaaaaaaaaaa " + edit.toString())
     if (edit) {
         once = true
         pokemonsInTeam = getPokemonsFromTeamId(teamId)
@@ -213,7 +212,6 @@ fun PopupWindow(
         }
         close()
     }
-
 }
 
 @Composable
@@ -339,7 +337,6 @@ fun PokedexDisplay(
                 onClick = { onClick() })
         }
     }
-
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -424,33 +421,3 @@ fun Dialog_preview() {
         }
     })
 }
-
-/*
-@Preview
-@Composable
-fun PreviewPokemonTeamCard() {
-    var clicked by remember { mutableStateOf(false) }
-    var clicked2 by remember { mutableStateOf(false) }
-    val backgroundColor = if (clicked) Color.Green else Color.Red
-    val backgroundColor2 = if (clicked2) Color.Yellow else Color.Cyan
-    Column(
-        Modifier
-            .padding(2.dp)
-            .fillMaxHeight()
-            .background(backgroundColor)
-            .clickable { clicked = true }
-    ) {
-        Column(
-            Modifier
-                .padding(2.dp)
-                .fillMaxHeight()
-                .background(backgroundColor2)
-                .clickable { clicked2 = true }
-        ) {
-            Text("a")
-            Text("bbbbbbb")
-            Text(text = "ccccc")
-        }
-    }
-}
-*/
