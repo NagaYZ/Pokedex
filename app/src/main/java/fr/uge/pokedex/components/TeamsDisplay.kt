@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.database.*
 import fr.uge.pokedex.ui.theme.Purple200
@@ -31,7 +30,6 @@ import fr.uge.pokedex.ui.theme.Purple500
 
 @Composable
 private fun DeleteTeam(teamId: Long) {
-    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val team: Team = teamDao.getTeam(teamId)
     teamDao.deleteTeam(team)
@@ -39,14 +37,12 @@ private fun DeleteTeam(teamId: Long) {
 
 @Composable
 private fun getTeamsFromProfile(profile: Profile): List<TeamWithMembers> {
-    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val profileDao: ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
     return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
 }
 
 @Composable
 private fun getPokemonsFromTeamId(teamId: Long): List<Long> {
-    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamWithMembers = teamDao.getTeamWithMembers(teamId)
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
@@ -54,7 +50,6 @@ private fun getPokemonsFromTeamId(teamId: Long): List<Long> {
 
 @Composable
 fun EditTeam(pokemonList: List<Long>, teamId: Long) {
-    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
     val teamWithMembers = teamDao.getTeamWithMembers(teamId)
@@ -70,7 +65,6 @@ fun EditTeam(pokemonList: List<Long>, teamId: Long) {
 
 @Composable
 fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
-    PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
     val teamId: Long = teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))
@@ -103,6 +97,7 @@ fun DisplayTeams(
             TeamDisplay(
                 i + 1,
                 pokemon_team = poketeam,
+                pokemons,
                 { teamId = it; edit = true },
                 { teamId = it; delete = true },
                 onPokemonClick
@@ -116,7 +111,7 @@ fun DisplayTeams(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.End
     ) {
-        Button(modifier = Modifier.padding(38.dp), onClick = {
+        Button(modifier = Modifier.padding(vertical = 60.dp, horizontal = 20.dp), onClick = {
             showNewTeamDialog = true
         }) {
             Icon(Icons.Rounded.Add, "Add Team")
@@ -156,32 +151,39 @@ fun PopupWindow(
     var pickedPokemon by remember { mutableStateOf(-1L) }
     var pokemonsInTeam: List<Long> = listOf()
     var pokemonIdInTeam by remember { mutableStateOf(-1L) }
+    var enableButton by remember { mutableStateOf(false) }
 
     if (edit) {
         pokemonsInTeam = getPokemonsFromTeamId(teamId)
     }
 
     if (!show) return
-    AlertDialog(onDismissRequest = { close() }, title = {
-        if (edit) {
-            Text("Team edition")
-        } else {
-            Text("Team creation")
-        }
-    }, backgroundColor = Purple500, text = {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            for (i in 1..6) {
-                if (edit) {
-                    pokemonIdInTeam = pokemonsInTeam[i - 1]
-                }
-                PickPokemon(pokemons, profile, edit, pokemonIdInTeam, getPokemonId = {
+    AlertDialog(
+        onDismissRequest = { close() },
+        title = {
+            if (edit) {
+                Text("Team edition")
+            } else {
+                Text("Team creation")
+            }
+        },
+        backgroundColor = Purple500,
+        text = {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp)
+            ) {
+                for (i in 1..6) {
+                    if (edit) {
+                        pokemonIdInTeam = pokemonsInTeam[i - 1]
+                    }
+                    PickPokemon(pokemons, profile, edit, pokemonIdInTeam, getPokemonId = {
                     pickedPokemon = it
                 })
+                    enableButton = team.filterValues { id -> id != -1L }.size == 6
                 if (pickedPokemon != -1L) {
+
                     team.put(i, pickedPokemon)
                     pickedPokemon = -1L
                 } else {
@@ -194,12 +196,13 @@ fun PopupWindow(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                enabled = (team.filterValues { id -> id != -1L }.size == 6),
+                enabled = enableButton,
                 onClick = { close(); createTeam = true }) {
                 Text("Done")
             }
         }
     })
+
     if (createTeam) {
         if (edit) {
             EditTeam(team.values.toList(), teamId)
@@ -255,7 +258,7 @@ fun PickPokemon(
     }
     //show pokedex to select pokemon
     if (showPokemonList) {
-        PokedexDisplay(pokemons, profile, getPokemonId) {
+        PokedexDisplay(pokemons, profile, getPokemonId = { currentPokemon = it }) {
             showPokemonList = false
         }
     }
@@ -311,11 +314,8 @@ fun PokedexDisplay(
                 clickFavorite = {
                     println(it)
                     if (!it) {
-                        println("deleted 1")
                         favorites.forEach { favorite ->
-                            println("deleted 2")
                             if (favorite.getPokemonId() == currentIconFavorite) {
-                                println("deleted")
                                 PokedexAppDatabaseConnection.connection.favoriteDao()
                                     .deleteFavorite(favorite)
                                 favorites = PokedexAppDatabaseConnection.connection.profileDao()
@@ -325,7 +325,8 @@ fun PokedexDisplay(
                     } else {
                         fav = Favorite(currentIconFavorite, profile.getId())
                         if (!favorites.contains(fav)) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
+                            PokedexAppDatabaseConnection.connection.favoriteDao()
+                                .addFavorite(fav)
                             favorites = PokedexAppDatabaseConnection.connection.profileDao()
                                 .getProfileWithFavorites(profile.getId()).favorites
                         }
@@ -335,6 +336,47 @@ fun PokedexDisplay(
         }
     }
 
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Preview
+@Composable
+fun Dialo_preview() {
+
+    Dialog(
+        onDismissRequest = { }, properties = DialogProperties(
+            dismissOnBackPress = true, usePlatformDefaultWidth = true
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .background(Color.Red)
+                .fillMaxSize()
+        ) {
+            Row(Modifier.weight(1 / 2f)) {
+                Box(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxSize()
+                        .background(Color.Cyan, RoundedCornerShape(8.dp))
+                ) {
+
+                }
+            }
+            Row(Modifier.weight(1 / 2f)) {
+                Box(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxSize()
+                        .background(Color.Gray, RoundedCornerShape(8.dp))
+                ) {
+
+                }
+            }
+
+        }
+
+    }
 }
 
 @Preview
@@ -378,6 +420,7 @@ fun Dialog_preview() {
         }
     })
 }
+
 /*
 @Preview
 @Composable

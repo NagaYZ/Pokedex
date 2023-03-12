@@ -29,9 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.data.PokemonRepository
 import fr.uge.pokedex.data.Type
 import fr.uge.pokedex.database.TeamWithMembers
 import fr.uge.pokedex.ui.theme.Purple200
@@ -293,6 +291,7 @@ fun PokemonListTeamDisplay(
 fun TeamDisplay(
     index: Int,
     pokemon_team: TeamWithMembers,
+    pokemons: Map<Long, Pokemon>,
     editOnClick: (Long) -> Unit,
     deleteOnClick: (Long) -> Unit,
     showTeam: () -> Unit,
@@ -335,10 +334,11 @@ fun TeamDisplay(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 for (j in 0..2) {
-                    val pokemon =
-                        getPokemonFromId(pokemon_team.teamMembers[i * 3 + j].getPokemonId())
+                    val pokemon = pokemons.get(pokemon_team.teamMembers[i * 3 + j].getPokemonId())
                     Box(Modifier.weight(1 / 3f)) {
-                        PokemonTeamCard(pokemon = pokemon, onPokemonClick)
+                        if (pokemon != null) {
+                            PokemonTeamCard(pokemon = pokemon, onPokemonClick)
+                        }
                     }
                 }
             }
@@ -372,12 +372,6 @@ fun PokemonTeamCard(
     }
 }
 
-private fun getPokemonFromId(pokemonId: Long): Pokemon {
-    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    val pokemonRepository = PokemonRepository(appContext)
-
-    return pokemonRepository.get(pokemonId)!!
-}
 
 private fun typeToColor(type: Type): Color {
     return when (type) {
