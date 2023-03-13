@@ -8,7 +8,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.R
 import fr.uge.pokedex.components.list.PokemonBoxDisplay
+import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.pokedex.*
+import fr.uge.pokedex.data.user.Favorite
 
 @Preview
 @Composable
@@ -86,8 +88,8 @@ fun PokemonCardDisplay(
         icon = R.drawable.icon_pkm_1,
         sprite = R.drawable.pokemon_1
     ),
-    onClickFavorite: (Boolean) -> Unit = {},
-    favoriteList: List<Long> = emptyList()
+    onClickFavorite: (Long, Favorite?) -> Unit = {pokemonId:Long, favorite:Favorite? ->},
+    favoriteList: List<Favorite> = emptyList()
 ) {
     LazyColumn(
         modifier = Modifier

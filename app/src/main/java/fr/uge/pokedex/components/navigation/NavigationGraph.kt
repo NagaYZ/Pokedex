@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.room.Database
 import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.components.team.DisplayTeams
 import fr.uge.pokedex.components.search.FilterBar
@@ -41,9 +42,6 @@ fun NavigationGraph(
     var currentIconFavorite by remember {
         mutableStateOf(-1L)
     }
-    var fav by remember {
-        mutableStateOf(Favorite(0L, 0L))
-    }
     var resultList by remember {
         mutableStateOf(mutableListOf<Pokemon>())
     }
@@ -52,12 +50,6 @@ fun NavigationGraph(
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
-            var favorites by remember {
-                mutableStateOf(
-                    PokedexAppDatabaseConnection.connection.profileDao()
-                        .getProfileWithFavorites(profile.getId()).favorites
-                )
-            }
             Column() {
                 FilterBar(pokemonList = pokemonMap.values.toList())
                 {
@@ -72,26 +64,11 @@ fun NavigationGraph(
                     getPokemonFavoriteId = {
                         currentIconFavorite = it
                     },
-                    clickFavorite = {
-                        println(it)
-                        if (!it) {
-                            favorites.forEach { favorite ->
-                                if (favorite.getPokemonId() == currentIconFavorite) {
-                                    PokedexAppDatabaseConnection.connection.favoriteDao()
-                                        .deleteFavorite(favorite)
-                                    favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                        .getProfileWithFavorites(profile.getId()).favorites
-                                }
-                            }
-                        } else {
-                            fav = Favorite(currentIconFavorite, profile.getId())
-                            if (!favorites.contains(fav)) {
-                                PokedexAppDatabaseConnection.connection.favoriteDao()
-                                    .addFavorite(fav)
-                                favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                    .getProfileWithFavorites(profile.getId()).favorites
-                            }
-                        }
+                    clickFavorite = { pokemonId, favorite ->
+                        if(favorite != null)
+                            PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
+                        else
+                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
                     },
                     onClick = {
                         navController.navigate("card")
@@ -104,78 +81,47 @@ fun NavigationGraph(
             val pokemon by remember {
                 mutableStateOf(pokemonMap[currentPokemon]!!)
             }
-            var favorites by remember {
-                mutableStateOf(
-                    PokedexAppDatabaseConnection.connection.profileDao()
-                        .getProfileWithFavorites(profile.getId()).favorites.distinct()
-                )
-            }
+
             PokemonCardDisplay(
                 pokemon,
-                favoriteList = PokedexAppDatabaseConnection.connection.profileDao()
-                    .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() }
-                    .toList(),
-                onClickFavorite = {
-                    if (!it) {
-                        favorites.forEach { favorite ->
-                            if (favorite.getPokemonId() == pokemon.id) {
-                                PokedexAppDatabaseConnection.connection.favoriteDao()
-                                    .deleteFavorite(favorite)
-                                favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                    .getProfileWithFavorites(profile.getId()).favorites
-
-                            }
-                        }
-                    } else {
-                        fav = Favorite(pokemon.id, profile.getId())
-                        if (!favorites.contains(fav)) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(fav)
-                            favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                .getProfileWithFavorites(profile.getId()).favorites
-
-                        }
-                    }
+                favoriteList = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites,
+                onClickFavorite = { pokemonId, favorite ->
+                    if(favorite != null)
+                        PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
+                    else
+                        PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
 
                 }
             )
         }
         composable(route = Route.Favorite.path) {
             //Call favorite composable
-            val favorites by remember {
-                mutableStateOf(
-                    PokedexAppDatabaseConnection.connection.profileDao()
-                        .getProfileWithFavorites(profile.getId()).favorites
-                )
-            }
+            val favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
 
-            val favoritesPokemon by remember {
+            val favoritesPokemon = favorites.map { favorite -> pokemonMap.get(favorite.getPokemonId())!! }.toList()
+
+            var filteredPokemons by remember {
                 mutableStateOf(mutableListOf<Pokemon>())
-            }
-
-            favorites.forEach { favorite ->
-                favoritesPokemon.add(pokemonMap[favorite.getPokemonId()]!!)
             }
 
             Column() {
                 FilterBar(pokemonList = favoritesPokemon.distinct(), filterList = {
-                    resultList = it.toMutableList()
+                    filteredPokemons = it.toMutableList()
                 })
 
                 PokedexDisplay(
                     sizeGrid = 1,
-                    pokemonList = resultList,
+                    pokemonList = filteredPokemons,
                     profile = profile,
                     getPokemonId = {
                         currentPokemon = it
                     },
                     getPokemonFavoriteId = { currentIconFavorite = it },
-                    clickFavorite = {
-                        favorites.forEach { favorite ->
-                            if (favorite.getPokemonId() == currentIconFavorite) {
-                                PokedexAppDatabaseConnection.connection.favoriteDao()
-                                    .deleteFavorite(favorite)
-                            }
-                        }
+                    clickFavorite = { pokemonId, favorite ->
+                        if(favorite != null)
+                            PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
+                        else
+                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
                     },
                     onClick = {
                         navController.navigate("card")

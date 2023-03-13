@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.components.list.PokemonListDisplay
 import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.user.Favorite
 import fr.uge.pokedex.data.user.PokedexAppDatabaseConnection
 import fr.uge.pokedex.data.user.Profile
 
@@ -25,27 +26,22 @@ fun PokedexDisplay(
     profile: Profile,
     getPokemonId: (Long) -> Unit,
     getPokemonFavoriteId: (Long) -> Unit,
-    clickFavorite : (Boolean) -> Unit,
+    clickFavorite : (Long, Favorite?) -> Unit,
     onClick: () -> Unit
 )  {
 
-    val favoriteList by remember {
-        mutableStateOf(
-            PokedexAppDatabaseConnection.connection.profileDao()
-                .getProfileWithFavorites(profile.getId()).favorites.map { it.getPokemonId() })
-    }
+    val favoriteList = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(sizeGrid),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        items(pokemonList) { pokemon ->
+        items(items = pokemonList, key = {it.id}) { pokemon ->
             PokemonListDisplay(pokemon = pokemon, onClick = {
                 onClick()
                 getPokemonId(pokemon.id)
-            }, onClickFavorite = {
-                getPokemonFavoriteId(pokemon.id)
-                clickFavorite(it)
-            }, favoriteList = favoriteList)
+            }, onClickFavorite = clickFavorite,
+                favoriteList = favoriteList)
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()

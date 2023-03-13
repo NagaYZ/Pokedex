@@ -327,26 +327,11 @@ fun PokedexDisplay(
                 getPokemonFavoriteId = {
                     currentIconFavorite = it
                 },
-                clickFavorite = {
-                    println(it)
-                    if (!it) {
-                        favorites.forEach { favorite ->
-                            if (favorite.getPokemonId() == currentIconFavorite) {
-                                PokedexAppDatabaseConnection.connection.favoriteDao()
-                                    .deleteFavorite(favorite)
-                                favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                    .getProfileWithFavorites(profile.getId()).favorites
-                            }
-                        }
-                    } else {
-                        fav = Favorite(currentIconFavorite, profile.getId())
-                        if (!favorites.contains(fav)) {
-                            PokedexAppDatabaseConnection.connection.favoriteDao()
-                                .addFavorite(fav)
-                            favorites = PokedexAppDatabaseConnection.connection.profileDao()
-                                .getProfileWithFavorites(profile.getId()).favorites
-                        }
-                    }
+                clickFavorite = { pokemonId, favorite ->
+                    if(favorite != null)
+                        PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
+                    else
+                        PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
                 },
                 onClick = { onClick() })
         }

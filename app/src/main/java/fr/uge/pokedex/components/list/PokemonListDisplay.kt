@@ -12,14 +12,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.user.Favorite
 
 @Composable
 fun PokemonListDisplay(
     pokemon: Pokemon,
     onClick: () -> Unit,
-    onClickFavorite: (Boolean) -> Unit,
-    favoriteList: List<Long>
+    onClickFavorite: (Long, Favorite?) -> Unit,
+    favoriteList: List<Favorite>
 ) {
     Row(
         Modifier
@@ -55,7 +57,12 @@ fun PokemonListDisplay(
             modifier = Modifier.weight(1.0f),
             horizontalArrangement = Arrangement.End
         ) {
-            FavoriteButton(filled = favoriteList.contains(pokemon.id), onClick = onClickFavorite)
+
+            var favorite:Favorite? = null
+            for(f in favoriteList){
+                if(f.getPokemonId() == pokemon.id) favorite = f
+            }
+            FavoriteButton(pokemonId = pokemon.id, favorite = favorite, onClick = onClickFavorite)
             Spacer(modifier = Modifier.width(15.dp))
         }
     }

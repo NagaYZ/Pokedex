@@ -11,10 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import fr.uge.pokedex.data.user.Favorite
 
 @Composable
-fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
-    var isClicked by remember { mutableStateOf(filled) }
+fun FavoriteButton(pokemonId:Long, favorite: Favorite?, onClick: (Long, Favorite?) -> Unit) {
+    var isClicked by remember { mutableStateOf(favorite != null) }
 
     Icon(
         imageVector = if (isClicked) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
@@ -24,7 +25,11 @@ fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
             .scale(1.25f)
             .clickable(onClick = {
                 isClicked = !isClicked
-                onClick.invoke(isClicked)
+
+                if(isClicked)
+                    onClick.invoke(pokemonId, null)
+                else
+                    onClick.invoke(pokemonId, favorite)
             }
             ),
         tint = if (isClicked) Color(0xFFFF8686) else Color.LightGray,
