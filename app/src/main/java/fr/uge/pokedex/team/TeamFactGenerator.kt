@@ -1,9 +1,9 @@
 package fr.uge.pokedex.team
 
-import fr.uge.pokedex.data.*
-import fr.uge.pokedex.util.BaseStatHelper
-import fr.uge.pokedex.util.BaseStatHelper.Companion.getStandardDeviation
-import fr.uge.pokedex.util.BaseStatHelper.Companion.getTotal
+import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.utils.BaseStatHelper
+import fr.uge.pokedex.utils.BaseStatHelper.Companion.getStandardDeviation
+import fr.uge.pokedex.utils.BaseStatHelper.Companion.getTotal
 
 class TeamFactGenerator {
     fun getTeamFacts(team: List<Pokemon>) : List<TeamFact> {

@@ -13,19 +13,17 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import fr.uge.pokedex.components.BottomNavigationMenu
-import fr.uge.pokedex.components.NavigationGraph
-import fr.uge.pokedex.components.Route
-import fr.uge.pokedex.components.TopBar
-import fr.uge.pokedex.data.Pokemon
-import fr.uge.pokedex.data.PokemonRepository
-import fr.uge.pokedex.database.PokedexAppDatabaseConnection
-import fr.uge.pokedex.database.Profile
-import fr.uge.pokedex.ui.theme.PokedexTheme
+import fr.uge.pokedex.components.navigation.BottomNavigationMenu
+import fr.uge.pokedex.components.navigation.NavigationGraph
+import fr.uge.pokedex.components.navigation.Route
+import fr.uge.pokedex.components.profile.TopBar
+import fr.uge.pokedex.data.pokedex.PokemonRepository
+import fr.uge.pokedex.data.user.PokedexAppDatabaseConnection
+import fr.uge.pokedex.data.user.Profile
+import fr.uge.pokedex.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var pokemonRepository: PokemonRepository
@@ -41,14 +39,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             PokedexTheme {
                 val navController: NavHostController = rememberNavController()
-                val pokemonMap by remember {
-                    mutableStateOf(mutableMapOf<Long, Pokemon>())
-                }
-                val context = LocalContext.current
-                LaunchedEffect(pokemonMap) {
-                    PokemonRepository(context).data.forEach { t, u -> pokemonMap.put(t, u) }
-                }
-
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -75,8 +65,8 @@ class MainActivity : ComponentActivity() {
                         NavigationGraph(
                             navController = navController,
                             setCurrentProfile = { profile: Profile -> currentProfile = profile },
-                            currentProfile,
-                            pokemonMap = pokemonMap
+                            profile = currentProfile,
+                            pokemonMap = pokemonRepository.data
                         )
                     }
                 }

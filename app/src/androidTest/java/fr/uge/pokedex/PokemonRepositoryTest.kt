@@ -3,6 +3,7 @@ package fr.uge.pokedex
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.*
+import fr.uge.pokedex.data.pokedex.*
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

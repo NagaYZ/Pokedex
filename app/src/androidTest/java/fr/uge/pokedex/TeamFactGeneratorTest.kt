@@ -2,7 +2,7 @@ package fr.uge.pokedex
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import fr.uge.pokedex.data.PokemonRepository
+import fr.uge.pokedex.data.pokedex.PokemonRepository
 import fr.uge.pokedex.team.TeamFact
 import fr.uge.pokedex.team.TeamFactGenerator
 import org.junit.Assert.*

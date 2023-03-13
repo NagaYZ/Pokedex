@@ -2,7 +2,7 @@ package fr.uge.pokedex
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import fr.uge.pokedex.database.*
+import fr.uge.pokedex.data.user.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.Assert.*
@@ -156,7 +156,7 @@ class DatabaseTests {
         teamMemberDao.addTeamMember(TeamMember(5, teamId))
         teamMemberDao.addTeamMember(TeamMember(6, teamId))
 
-        val team:Team = teamDao.getTeam(teamId)
+        val team: Team = teamDao.getTeam(teamId)
         teamDao.deleteTeam(team)
 
         assertEquals(null, teamDao.getTeam(teamId))
