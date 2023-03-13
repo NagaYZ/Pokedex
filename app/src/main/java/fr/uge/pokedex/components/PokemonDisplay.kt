@@ -292,7 +292,7 @@ fun TeamDisplay(
     pokemons: Map<Long, Pokemon>,
     editOnClick: (Long) -> Unit,
     deleteOnClick: (Long) -> Unit,
-    showTeam: () -> Unit,
+    showTeam: (Long) -> Unit,
     onPokemonClick: (Long) -> Unit,
 ) {
     Column(
@@ -304,7 +304,7 @@ fun TeamDisplay(
             Modifier
                 .height(40.dp)
                 .fillMaxWidth()
-                .clickable { showTeam() },
+                .clickable { showTeam(pokemon_team.team.getTeamId()) },
             verticalAlignment = Alignment.CenterVertically
 
         ) {
@@ -312,8 +312,8 @@ fun TeamDisplay(
                 "Team $index",
                 Modifier
                     .weight(1f)
-                    .clickable { showTeam() },
-                style = TextStyle(fontSize = 24.sp)
+                    .clickable { showTeam(pokemon_team.team.getTeamId()) },
+                style = TextStyle(fontSize = 28.sp)
             )
             Button(onClick = { editOnClick(pokemon_team.team.getTeamId()) }) {
                 Icon(Icons.Rounded.Edit, "Edit Team")
@@ -349,7 +349,6 @@ fun PokemonTeamCard(
     pokemon: Pokemon,
     onClick: (Long) -> Unit
 ) {
-
     Column(
         Modifier
             .padding(2.dp)

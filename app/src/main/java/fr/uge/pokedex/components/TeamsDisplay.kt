@@ -18,6 +18,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,6 +26,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.database.*
+import fr.uge.pokedex.team.TeamFactGenerator
 import fr.uge.pokedex.ui.theme.Purple200
 import fr.uge.pokedex.ui.theme.Purple500
 
@@ -81,6 +83,7 @@ fun DisplayTeams(
     onPokemonClick: (Long) -> Unit
 ) {
     var showNewTeamDialog by remember { mutableStateOf(false) }
+    var showTeamCard by remember { mutableStateOf(false) }
     var delete by remember { mutableStateOf(false) }
     var edit by remember { mutableStateOf(false) }
     var teamId by remember { mutableStateOf(-1L) }
@@ -100,7 +103,7 @@ fun DisplayTeams(
                 pokemons,
                 { teamId = it; edit = true; showNewTeamDialog = true },
                 { teamId = it; delete = true },
-                {},
+                { teamId = it; showTeamCard = true },
                 onPokemonClick
             )
         }
@@ -134,6 +137,66 @@ fun DisplayTeams(
             teamId,
             edit,
         ) { showNewTeamDialog = false; edit = false }
+    }
+
+    if (showTeamCard) {
+        ShowTeamCard(pokemons, getPokemonsFromTeamId(teamId = teamId), onPokemonClick)
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ShowTeamCard(
+    pokemonList: Map<Long, Pokemon>,
+    poketeam: List<Long>,
+    onPokemonClick: (Long) -> Unit
+) {
+    val teamFactGenerator = TeamFactGenerator()
+    var pokemonsInTeam: MutableList<Pokemon> = mutableListOf()
+
+    Dialog(
+        onDismissRequest = {}, properties = DialogProperties(
+            dismissOnBackPress = true, usePlatformDefaultWidth = false
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize()
+        ) {
+            Column() {
+                for (i in 0..1) {
+                    Row(
+                        Modifier
+                            .height(IntrinsicSize.Max)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        for (j in 0..2) {
+                            val pokemon = pokemonList.get(poketeam[i * 3 + j])
+                            Box(Modifier.weight(1 / 3f)) {
+                                if (pokemon != null) {
+                                    pokemonsInTeam.add(i * 3 + j, pokemon)
+                                    PokemonTeamCard(pokemon = pokemon, onPokemonClick)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            val facts = teamFactGenerator.getTeamFacts(pokemonsInTeam.toList())
+            Column(
+                Modifier
+                    .padding(4.dp)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background)
+            ) {
+                facts.forEach { fact ->
+                    Text(fact.toString())
+                }
+            }
+        }
     }
 }
 
@@ -239,8 +302,9 @@ fun PickPokemon(
             .clickable {
                 showPokemonList = true
             },
+        contentAlignment = Alignment.Center
     ) {
-        Text("Choose Pokemon...", fontSize = 20.sp)
+        Text("Choose Pokemon...", fontSize = 20.sp, textAlign = TextAlign.Center)
         copyPokemons.get(currentPokemon)?.let {
             PokemonListTeamDisplay(it) { showPokemonList = true }
             getPokemonId(it.id)
@@ -346,7 +410,7 @@ fun Dialo_preview() {
 
     Dialog(
         onDismissRequest = { }, properties = DialogProperties(
-            dismissOnBackPress = true, usePlatformDefaultWidth = true
+            dismissOnBackPress = true, usePlatformDefaultWidth = false
         )
     ) {
         Column(
@@ -354,7 +418,7 @@ fun Dialo_preview() {
                 .background(Color.Red)
                 .fillMaxSize()
         ) {
-            Row(Modifier.weight(1 / 2f)) {
+            Column(Modifier.weight(1 / 2f)) {
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
@@ -364,7 +428,7 @@ fun Dialo_preview() {
 
                 }
             }
-            Row(Modifier.weight(1 / 2f)) {
+            Column(Modifier.weight(1 / 2f)) {
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
@@ -421,3 +485,5 @@ fun Dialog_preview() {
         }
     })
 }
+
+
