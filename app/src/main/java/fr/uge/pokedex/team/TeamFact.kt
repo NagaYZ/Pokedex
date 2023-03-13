@@ -18,6 +18,6 @@ enum class TeamFact(private val category: FactCategory) {
     }
 
     override fun toString(): String {
-        return super.toString() + "(${this.category}${ if (message.isNotEmpty()) ", $message" else ""})"
+        return super.toString() + "(${message.ifEmpty { "" }})"
     }
 }

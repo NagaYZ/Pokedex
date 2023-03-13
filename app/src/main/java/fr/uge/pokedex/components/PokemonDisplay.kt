@@ -6,13 +6,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +22,7 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
-
+import fr.uge.pokedex.database.TeamWithMembers
+import fr.uge.pokedex.ui.theme.Purple400
+import fr.uge.pokedex.ui.theme.Purple700
 
 @Composable
 fun PokemonBoxDisplay(
@@ -62,7 +64,6 @@ fun PokemonBoxDisplay(
         ) {
 
             PokemonBoxTitle(name = pokemon.name)
-
             Spacer(modifier = Modifier.width(3.dp))
             Text(
                 text = "#${pokemon.id.toString().padStart(3, '0')}",
@@ -98,7 +99,6 @@ fun PokemonListDisplay(
     onClick: () -> Unit,
     onClickFavorite: (Boolean) -> Unit,
     favoriteList: List<Long>
-
 ) {
     Row(
         Modifier
@@ -139,7 +139,6 @@ fun PokemonListDisplay(
         }
     }
 }
-
 
 @Composable
 private fun FavoriteButton(filled: Boolean, onClick: (Boolean) -> Unit) {
@@ -199,6 +198,16 @@ private fun PokemonTypeDisplay(type: Pair<Type, Type> = Pair(Type.ELECTRIC, Type
 
 @Preview
 @Composable
+private fun PokemonTypeTeamDisplay(type: Pair<Type, Type> = Pair(Type.ELECTRIC, Type.DRAGON)) {
+    Column() {
+        TypeDisplay(type.first)
+        Spacer(modifier = Modifier.height(3.dp))
+        TypeDisplay(type.second)
+    }
+}
+
+@Preview
+@Composable
 private fun TypeDisplay(type: Type = Type.NORMAL) {
     if (type == Type.NONE) {
         return
@@ -235,6 +244,130 @@ private fun TypeDisplay(type: Type = Type.NORMAL) {
         fontSize = 10.sp,
         fontWeight = FontWeight.Bold
     )
+}
+
+@Composable
+fun DisplaySelectedPokemon(
+    pokemon: Pokemon,
+    onClick: () -> Unit
+) {
+    Row(
+        Modifier
+            .clickable(onClick = onClick)
+            .background(MaterialTheme.colors.background)
+            .height(70.dp)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        PokemonIcon(pokemon.icon)
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                PokemonBoxTitle(name = pokemon.name)
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = "#${pokemon.id.toString().padStart(3, '0')}",
+                    color = Color.LightGray,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center
+                )
+            }
+            PokemonTypeDisplay(type = pokemon.type)
+        }
+        Spacer(modifier = Modifier.weight(1.0f))
+    }
+}
+
+@Composable
+fun TeamDisplay(
+    index: Int,
+    pokemon_team: TeamWithMembers,
+    pokemons: Map<Long, Pokemon>,
+    editOnClick: (Long) -> Unit,
+    deleteOnClick: (Long) -> Unit,
+    showTeam: (Long) -> Unit,
+    onPokemonClick: (Long) -> Unit,
+) {
+    Column(
+        Modifier
+            .background(Purple400, RoundedCornerShape(4.dp))
+            .padding(8.dp)
+    ) {
+        Row(
+            Modifier
+                .height(40.dp)
+                .padding(4.dp)
+                .fillMaxWidth()
+                .clickable { showTeam(pokemon_team.team.getTeamId()) },
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
+            Text(
+                "Team $index",
+                Modifier
+                    .weight(1f)
+                    .clickable { showTeam(pokemon_team.team.getTeamId()) },
+                style = TextStyle(fontSize = 28.sp)
+            )
+            Button(onClick = { editOnClick(pokemon_team.team.getTeamId()) }) {
+                Icon(Icons.Rounded.Edit, "Edit Team")
+            }
+            Spacer(modifier = Modifier.width(2.dp))
+            Button(onClick = { deleteOnClick(pokemon_team.team.getTeamId()) }) {
+                Icon(Icons.Rounded.Delete, "Delete Team")
+            }
+        }
+
+        for (i in 0..1) {
+            Row(
+                Modifier
+                    .height(IntrinsicSize.Max)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                for (j in 0..2) {
+                    val pokemon = pokemons.get(pokemon_team.teamMembers[i * 3 + j].getPokemonId())
+                    Box(Modifier.weight(1 / 3f)) {
+                        if (pokemon != null) {
+                            PokemonTeamCard(pokemon = pokemon, onPokemonClick)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PokemonTeamCard(
+    pokemon: Pokemon,
+    onClick: (Long) -> Unit
+) {
+    Column(
+        Modifier
+            .padding(4.dp)
+            .fillMaxHeight()
+            .background(Purple700, RoundedCornerShape(4.dp))
+    ) {
+        Column(
+            Modifier
+                .padding(4.dp)
+                .fillMaxHeight()
+                .background(Purple700, RoundedCornerShape(4.dp))
+                .clickable { onClick(pokemon.id) }
+        ) {
+            PokemonIcon(pokemon.icon)
+            PokemonBoxTitle(name = pokemon.name)
+            PokemonTypeTeamDisplay(type = pokemon.type)
+        }
+    }
 }
 
 private fun typeToColor(type: Type): Color {
