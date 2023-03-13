@@ -171,7 +171,7 @@ fun ShowTeamCard(
                     Row(
                         Modifier
                             .height(IntrinsicSize.Max)
-                            .padding(10.dp)
+                            .padding(2.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -180,7 +180,7 @@ fun ShowTeamCard(
                             Box(
                                 Modifier
                                     .weight(1 / 3f)
-                                    .padding(5.dp)
+                                    .padding(2.dp)
                             ) {
                                 if (pokemon != null) {
                                     pokemonsInTeam.add(i * 3 + j, pokemon)

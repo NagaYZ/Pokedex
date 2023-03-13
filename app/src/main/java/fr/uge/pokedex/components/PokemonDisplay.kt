@@ -33,7 +33,7 @@ import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
 import fr.uge.pokedex.database.TeamWithMembers
 import fr.uge.pokedex.ui.theme.Purple400
-import fr.uge.pokedex.ui.theme.Purple500
+import fr.uge.pokedex.ui.theme.Purple700
 
 @Composable
 fun PokemonBoxDisplay(
@@ -297,7 +297,7 @@ fun TeamDisplay(
 ) {
     Column(
         Modifier
-            .background(Purple500, RoundedCornerShape(4.dp))
+            .background(Purple400, RoundedCornerShape(4.dp))
             .padding(8.dp)
     ) {
         Row(
@@ -352,15 +352,15 @@ fun PokemonTeamCard(
 ) {
     Column(
         Modifier
-            .padding(2.dp)
+            .padding(4.dp)
             .fillMaxHeight()
-            .background(Purple400, RoundedCornerShape(4.dp))
+            .background(Purple700, RoundedCornerShape(4.dp))
     ) {
         Column(
             Modifier
-                .padding(2.dp)
+                .padding(4.dp)
                 .fillMaxHeight()
-                .background(Purple400, RoundedCornerShape(4.dp))
+                .background(Purple700, RoundedCornerShape(4.dp))
                 .clickable { onClick(pokemon.id) }
         ) {
             PokemonIcon(pokemon.icon)
