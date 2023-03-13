@@ -114,7 +114,7 @@ fun DisplayTeams(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.End
     ) {
-        Button(modifier = Modifier.padding(vertical = 60.dp, horizontal = 20.dp), onClick = {
+        Button(modifier = Modifier.padding(vertical = 70.dp, horizontal = 20.dp), onClick = {
             showNewTeamDialog = true
         }) {
             Icon(Icons.Rounded.Add, "Add Team")
@@ -127,7 +127,7 @@ fun DisplayTeams(
     }
 
     if (showNewTeamDialog) {
-        PopupWindow(
+        NewTeamDialog(
             pokemons,
             profile,
             teamId,
@@ -136,7 +136,12 @@ fun DisplayTeams(
     }
 
     if (showTeamCard) {
-        ShowTeamCard(pokemons, getPokemonsFromTeamId(teamId = teamId), onPokemonClick)
+        ShowTeamCard(
+            pokemons,
+            getPokemonsFromTeamId(teamId = teamId),
+            onPokemonClick
+        ) { showTeamCard = false }
+
     }
 }
 
@@ -145,13 +150,14 @@ fun DisplayTeams(
 fun ShowTeamCard(
     pokemonList: Map<Long, Pokemon>,
     poketeam: List<Long>,
-    onPokemonClick: (Long) -> Unit
+    onPokemonClick: (Long) -> Unit,
+    onClick: () -> Unit
 ) {
     val teamFactGenerator = TeamFactGenerator()
     var pokemonsInTeam: MutableList<Pokemon> = mutableListOf()
 
     Dialog(
-        onDismissRequest = {}, properties = DialogProperties(
+        onDismissRequest = { onClick() }, properties = DialogProperties(
             dismissOnBackPress = true, usePlatformDefaultWidth = false
         )
     ) {
@@ -165,12 +171,17 @@ fun ShowTeamCard(
                     Row(
                         Modifier
                             .height(IntrinsicSize.Max)
+                            .padding(10.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         for (j in 0..2) {
                             val pokemon = pokemonList.get(poketeam[i * 3 + j])
-                            Box(Modifier.weight(1 / 3f)) {
+                            Box(
+                                Modifier
+                                    .weight(1 / 3f)
+                                    .padding(5.dp)
+                            ) {
                                 if (pokemon != null) {
                                     pokemonsInTeam.add(i * 3 + j, pokemon)
                                     PokemonTeamCard(pokemon = pokemon, onPokemonClick)
@@ -184,7 +195,7 @@ fun ShowTeamCard(
             val facts = teamFactGenerator.getTeamFacts(pokemonsInTeam.toList())
             Column(
                 Modifier
-                    .padding(4.dp)
+                    .padding(15.dp)
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)
             ) {
@@ -198,7 +209,7 @@ fun ShowTeamCard(
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun PopupWindow(
+fun NewTeamDialog(
     pokemons: Map<Long, Pokemon>,
     profile: Profile,
     teamId: Long,
@@ -219,13 +230,7 @@ fun PopupWindow(
     }
     AlertDialog(
         onDismissRequest = { close() },
-        title = {
-            if (edit) {
-                Text("Team edition")
-            } else {
-                Text("Team creation")
-            }
-        },
+        title = { },
         backgroundColor = Purple500,
         text = {
             Column(
@@ -237,9 +242,14 @@ fun PopupWindow(
                     if (edit && once) {
                         pokemonIdInTeam = pokemonsInTeam[i - 1]
                     }
-                    PickPokemon(pokemons, profile, edit && once, pokemonIdInTeam, getPokemonId = {
-                        pickedPokemon = it
-                    })
+                    PokemonSelection(
+                        pokemons,
+                        profile,
+                        edit && once,
+                        pokemonIdInTeam,
+                        getPokemonId = {
+                            pickedPokemon = it
+                        })
                     enableButton = team.filterValues { id -> id != -1L }.size == 6
                     if (pickedPokemon != -1L) {
                         team.put(i, pickedPokemon)
@@ -252,7 +262,8 @@ fun PopupWindow(
             }
         }, confirmButton = {
             Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
                 Button(
                     enabled = enableButton,
@@ -274,7 +285,7 @@ fun PopupWindow(
 }
 
 @Composable
-fun PickPokemon(
+fun PokemonSelection(
     pokemons: Map<Long, Pokemon>,
     profile: Profile,
     edit: Boolean,
@@ -302,7 +313,7 @@ fun PickPokemon(
     ) {
         Text("Choose Pokemon...", fontSize = 20.sp, textAlign = TextAlign.Center)
         copyPokemons.get(currentPokemon)?.let {
-            PokemonListTeamDisplay(it) { showPokemonList = true }
+            DisplaySelectedPokemon(it) { showPokemonList = true }
             getPokemonId(it.id)
         }
     }

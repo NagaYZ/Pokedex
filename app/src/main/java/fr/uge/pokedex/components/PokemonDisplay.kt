@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.data.Pokemon
 import fr.uge.pokedex.data.Type
 import fr.uge.pokedex.database.TeamWithMembers
-import fr.uge.pokedex.ui.theme.Purple200
+import fr.uge.pokedex.ui.theme.Purple400
 import fr.uge.pokedex.ui.theme.Purple500
 
 @Composable
@@ -247,7 +247,7 @@ private fun TypeDisplay(type: Type = Type.NORMAL) {
 }
 
 @Composable
-fun PokemonListTeamDisplay(
+fun DisplaySelectedPokemon(
     pokemon: Pokemon,
     onClick: () -> Unit
 ) {
@@ -303,6 +303,7 @@ fun TeamDisplay(
         Row(
             Modifier
                 .height(40.dp)
+                .padding(4.dp)
                 .fillMaxWidth()
                 .clickable { showTeam(pokemon_team.team.getTeamId()) },
             verticalAlignment = Alignment.CenterVertically
@@ -353,13 +354,13 @@ fun PokemonTeamCard(
         Modifier
             .padding(2.dp)
             .fillMaxHeight()
-            .background(Purple200, RoundedCornerShape(4.dp))
+            .background(Purple400, RoundedCornerShape(4.dp))
     ) {
         Column(
             Modifier
                 .padding(2.dp)
                 .fillMaxHeight()
-                .background(Purple200, RoundedCornerShape(4.dp))
+                .background(Purple400, RoundedCornerShape(4.dp))
                 .clickable { onClick(pokemon.id) }
         ) {
             PokemonIcon(pokemon.icon)

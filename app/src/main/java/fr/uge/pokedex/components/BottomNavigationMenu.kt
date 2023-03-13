@@ -116,7 +116,6 @@ fun NavigationGraph(
             }
         }
 
-
         composable(route = Route.Card.path) {
             //Call a card pokemon composable
             var pokemon by remember {
@@ -215,7 +214,6 @@ fun NavigationGraph(
 
         composable(route = Route.Profiles.path){
             //Call profiles composable
-            // Text(text = "Profiles screen", style = MaterialTheme.typography.h1)
             ProfilesScreen(navController, setCurrentProfile)
         }
     }
