@@ -11,15 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -309,19 +305,8 @@ fun PickPokemon(
             PokemonListTeamDisplay(it) { showPokemonList = true }
             getPokemonId(it.id)
         }
-        Button(
-            onClick = { currentPokemon = -1L; getPokemonId(-1L) },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(40.dp)
-        ) {
-            Icon(
-                Icons.Rounded.Delete,
-                contentDescription = "Delete Selected Pokemon",
-                Modifier.scale(3f)
-            )
-        }
     }
+
     //show pokedex to select pokemon
     if (showPokemonList) {
         PokedexDisplay(pokemons, profile, getPokemonId = { currentPokemon = it }) {
@@ -402,88 +387,3 @@ fun PokedexDisplay(
         }
     }
 }
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Preview
-@Composable
-fun Dialo_preview() {
-
-    Dialog(
-        onDismissRequest = { }, properties = DialogProperties(
-            dismissOnBackPress = true, usePlatformDefaultWidth = false
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .background(Color.Red)
-                .fillMaxSize()
-        ) {
-            Column(Modifier.weight(1 / 2f)) {
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxSize()
-                        .background(Color.Cyan, RoundedCornerShape(8.dp))
-                ) {
-
-                }
-            }
-            Column(Modifier.weight(1 / 2f)) {
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxSize()
-                        .background(Color.Gray, RoundedCornerShape(8.dp))
-                ) {
-
-                }
-            }
-
-        }
-
-    }
-}
-
-@Preview
-@Composable
-fun Dialog_preview() {
-
-    AlertDialog(onDismissRequest = { }, title = { Text("Team creation") }, text = {
-        Column(
-            Modifier.fillMaxWidth()
-        ) {
-            repeat(6) {
-                Row {
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .height(70.dp)
-                            .fillMaxWidth()
-                            .background(Color.Gray, RoundedCornerShape(8.dp))
-                    ) {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .size(40.dp)
-                        ) {
-                            Icon(
-                                Icons.Rounded.Delete,
-                                contentDescription = "Delete Selected Pokemon",
-                                Modifier.scale(3f)
-                            )
-                        }
-                    }
-                }
-
-            }
-        }
-
-    }, confirmButton = {
-        Button(onClick = { }) {
-            Text("Done")
-        }
-    })
-}
-
-
