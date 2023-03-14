@@ -31,13 +31,11 @@ fun ProfileItem(
         .height(50.dp)
         .background(MaterialTheme.colors.secondary, Shapes.medium), verticalAlignment = Alignment.CenterVertically) {
 
-        Row(modifier = Modifier.weight(2.0f), horizontalArrangement = Arrangement.Start){
-            Text(text = profile.getProfileName(), style = MaterialTheme.typography.h6, modifier = Modifier.padding(start = 20.dp).clickable(
-                onClick = {
-                    setCurrentProfile.invoke(profile)
-                    navController.navigate(Route.Pokedex.path)
-                }
-            ))
+        Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.weight(2.0f).clickable(onClick = {
+            setCurrentProfile.invoke(profile)
+            navController.navigate(Route.Pokedex.path)
+        })){
+            Text(text = profile.getProfileName(), style = MaterialTheme.typography.h6, modifier = Modifier.padding(start = 20.dp))
         }
         
         Row(modifier = Modifier.weight(1.0f), horizontalArrangement = Arrangement.End) {
