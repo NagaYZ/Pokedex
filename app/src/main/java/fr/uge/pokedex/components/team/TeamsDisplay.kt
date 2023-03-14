@@ -16,33 +16,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.*
 import fr.uge.pokedex.team.TeamFactGenerator
 import fr.uge.pokedex.theme.Purple500
 
-@Composable
 private fun DeleteTeam(teamId: Long) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val team: Team = teamDao.getTeam(teamId)
     teamDao.deleteTeam(team)
 }
 
-@Composable
 private fun getTeamsFromProfile(profile: Profile): List<TeamWithMembers> {
     val profileDao: ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
     return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
 }
 
-@Composable
+
 private fun getPokemonListFromTeamId(teamId: Long): List<Long> {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamWithMembers = teamDao.getTeamWithMembers(teamId)
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
 }
 
-@Composable
 fun EditTeam(pokemonList: List<Long>, teamId: Long) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
@@ -57,7 +53,6 @@ fun EditTeam(pokemonList: List<Long>, teamId: Long) {
     }
 }
 
-@Composable
 fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
@@ -277,45 +272,5 @@ fun NewTeamDialog(
             AddTeamToDatabase(team.values.toList(), profile)
         }
         close()
-    }
-}
-
-@SuppressLint("MutableCollectionMutableState")
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun PokedexDisplay(
-    pokemonMap: Map<Long, Pokemon>,
-    profile: Profile,
-    onClick: () -> Unit
-) {
-
-    var resultList by remember {
-        mutableStateOf(mutableListOf<Pokemon>())
-    }
-    Dialog(
-        onDismissRequest = { onClick() }, properties = DialogProperties(
-            dismissOnBackPress = true, usePlatformDefaultWidth = false
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colors.background)
-                .fillMaxSize()
-        ) {
-            FilterBar(pokemonMap.values.toList()) {
-                resultList = it.toMutableList()
-            }
-
-            fr.uge.pokedex.components.pokedex.PokedexDisplay(
-                pokemonList = resultList,
-                profile = profile,
-                clickFavorite = { pokemonId, favorite ->
-                    if(favorite != null)
-                        PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
-                    else
-                        PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
-                },
-                onClick = { onClick() })
-        }
     }
 }

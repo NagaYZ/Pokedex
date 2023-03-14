@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.theme.Purple200
@@ -53,8 +54,10 @@ fun PokemonSelection(
 
     //show pokedex to select pokemon
     if (showPokemonList) {
-        PokedexDisplay(pokemonMap, profile) {
+        PokedexDisplay(pokemonList = pokemonMap.values.toList(), profile = profile, clickFavorite = { _, _ ->  },
+        onClick = { pokemonId ->
+            currentPokemon = pokemonId
             showPokemonList = false
-        }
+        })
     }
 }
