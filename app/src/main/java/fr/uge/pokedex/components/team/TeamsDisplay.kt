@@ -16,34 +16,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.*
 import fr.uge.pokedex.team.TeamFactGenerator
 import fr.uge.pokedex.theme.Purple500
 
-@Composable
 private fun DeleteTeam(teamId: Long) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val team: Team = teamDao.getTeam(teamId)
     teamDao.deleteTeam(team)
 }
 
-@Composable
 private fun getTeamsFromProfile(profile: Profile): List<TeamWithMembers> {
     val profileDao: ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
     return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
 }
 
-@Composable
 private fun getPokemonListFromTeamId(teamId: Long): List<Long> {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamWithMembers = teamDao.getTeamWithMembers(teamId)
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
 }
 
-@Composable
-fun EditTeam(pokemonList: List<Long>, teamId: Long) {
+private fun editTeam(pokemonList: List<Long>, teamId: Long) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
     val teamWithMembers = teamDao.getTeamWithMembers(teamId)
@@ -57,8 +54,7 @@ fun EditTeam(pokemonList: List<Long>, teamId: Long) {
     }
 }
 
-@Composable
-fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
+private fun addTeamToDatabase(team: List<Long>, profile: Profile) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
     val teamId: Long = teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))
@@ -162,7 +158,7 @@ fun ShowTeamCard(
                 .background(MaterialTheme.colors.background)
                 .fillMaxSize()
         ) {
-            Column() {
+            Column {
                 for (i in 0..1) {
                     Row(
                         Modifier
@@ -272,9 +268,9 @@ fun NewTeamDialog(
         })
     if (createTeam) {
         if (edit) {
-            EditTeam(team.values.toList(), teamId)
+            editTeam(team.values.toList(), teamId)
         } else {
-            AddTeamToDatabase(team.values.toList(), profile)
+            addTeamToDatabase(team.values.toList(), profile)
         }
         close()
     }
@@ -283,7 +279,7 @@ fun NewTeamDialog(
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun PokedexDisplay(
+fun DisplayPokedex(
     pokemonMap: Map<Long, Pokemon>,
     profile: Profile,
     onClick: () -> Unit
@@ -306,7 +302,7 @@ fun PokedexDisplay(
                 resultList = it.toMutableList()
             }
 
-            fr.uge.pokedex.components.pokedex.PokedexDisplay(
+            PokedexDisplay(
                 pokemonList = resultList,
                 profile = profile,
                 clickFavorite = { pokemonId, favorite ->

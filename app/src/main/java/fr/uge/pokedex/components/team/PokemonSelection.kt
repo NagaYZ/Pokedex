@@ -53,7 +53,7 @@ fun PokemonSelection(
 
     //show pokedex to select pokemon
     if (showPokemonList) {
-        PokedexDisplay(pokemonMap, profile) {
+        DisplayPokedex(pokemonMap, profile) {
             showPokemonList = false
         }
     }
