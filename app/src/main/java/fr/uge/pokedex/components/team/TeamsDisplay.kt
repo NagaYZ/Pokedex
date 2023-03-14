@@ -32,14 +32,13 @@ private fun getTeamsFromProfile(profile: Profile): List<TeamWithMembers> {
     return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
 }
 
-
 private fun getPokemonListFromTeamId(teamId: Long): List<Long> {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamWithMembers = teamDao.getTeamWithMembers(teamId)
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
 }
 
-fun EditTeam(pokemonList: List<Long>, teamId: Long) {
+private fun editTeam(pokemonList: List<Long>, teamId: Long) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
     val teamWithMembers = teamDao.getTeamWithMembers(teamId)
@@ -53,7 +52,7 @@ fun EditTeam(pokemonList: List<Long>, teamId: Long) {
     }
 }
 
-fun AddTeamToDatabase(team: List<Long>, profile: Profile) {
+private fun addTeamToDatabase(team: List<Long>, profile: Profile) {
     val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
     val teamId: Long = teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))
@@ -157,7 +156,7 @@ fun ShowTeamCard(
                 .background(MaterialTheme.colors.background)
                 .fillMaxSize()
         ) {
-            Column() {
+            Column {
                 for (i in 0..1) {
                     Row(
                         Modifier
@@ -267,9 +266,9 @@ fun NewTeamDialog(
         })
     if (createTeam) {
         if (edit) {
-            EditTeam(team.values.toList(), teamId)
+            editTeam(team.values.toList(), teamId)
         } else {
-            AddTeamToDatabase(team.values.toList(), profile)
+            addTeamToDatabase(team.values.toList(), profile)
         }
         close()
     }
