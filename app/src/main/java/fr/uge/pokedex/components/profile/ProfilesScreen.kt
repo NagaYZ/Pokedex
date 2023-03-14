@@ -1,6 +1,8 @@
 package fr.uge.pokedex.components.profile
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -11,6 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.data.user.PokedexAppDatabaseConnection
 import fr.uge.pokedex.data.user.Profile
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import fr.uge.pokedex.R
 
 
 @Composable
@@ -49,26 +57,73 @@ fun ProfilesScreen(
         }
     } else {
 
-        Text(text = "Profiles", style = MaterialTheme.typography.h3)
 
         //Profile list
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            profilesList.forEach { profile: Profile ->
-                ProfileItem(profile = profile, navController = navController,
-                    onDeleteProfile = { profileToDelete: Profile ->
-                        profileDao.deleteProfile(profileToDelete)
-                        profilesList = profileDao.getAllProfiles()
-                    }, onEditProfile = { profileToEdit: Profile ->
-                        profileByRememberToEdit = profileToEdit
-                        showEditProfileDialog = true
-                    }, setCurrentProfile
-                )
+            Column {
+                
+                Column(modifier = Modifier.fillMaxSize().weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+
+                    Row() {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_pkm_25),
+                            contentDescription = "Ball",
+                            modifier = Modifier.scale(5f).height(50.dp).padding(horizontal = 10.dp),
+                            tint = Color.Unspecified
+                        )
+                        Spacer(Modifier.padding(end = 10.dp))
+                        Text(text = "UGE Pokedex", style = MaterialTheme.typography.h3, color = MaterialTheme.colors.primary, fontWeight = FontWeight.ExtraBold)
+                        Spacer(Modifier.padding(start = 10.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_pkm_151),
+                            contentDescription = "Ball",
+                            modifier = Modifier.scale(5f).height(60.dp).padding(horizontal = 10.dp),
+                            tint = Color.Unspecified,
+                        )
+                    }
+
+                }
+                Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    Row() {
+                        Icon(
+                            painter = painterResource(id = R.drawable.pok),
+                            contentDescription = "Ball",
+                            modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
+                            tint = Color.Unspecified
+                        )
+                        Text(text = "Profiles", style = MaterialTheme.typography.h6)
+                        Icon(
+                            painter = painterResource(id = R.drawable.pok),
+                            contentDescription = "Ball",
+                            modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
+                            tint = Color.Unspecified
+                        )
+                    }
+
+                    Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
+
+                    LazyColumn(modifier = Modifier
+                        .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top){
+                        items(items = profilesList, key = {it.getId()}){profile ->
+
+                            ProfileItem(profile = profile, navController = navController,
+                                onDeleteProfile = { profileToDelete: Profile ->
+                                    profileDao.deleteProfile(profileToDelete)
+                                    profilesList = profileDao.getAllProfiles()
+                                }, onEditProfile = { profileToEdit: Profile ->
+                                    profileByRememberToEdit = profileToEdit
+                                    showEditProfileDialog = true
+                                }, setCurrentProfile
+                            )
+
+                            Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
+                        }
+                    }
+
+                }
             }
-        }
+
+
 
         //Add new profile button
         Column(
