@@ -24,10 +24,8 @@ fun PokedexDisplay(
     sizeGrid: Int = 1,
     pokemonList: List<Pokemon>,
     profile: Profile,
-    getPokemonId: (Long) -> Unit,
-    getPokemonFavoriteId: (Long) -> Unit,
     clickFavorite : (Long, Favorite?) -> Unit,
-    onClick: () -> Unit
+    onClick: (Long) -> Unit
 )  {
 
     val favoriteList = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
@@ -38,8 +36,8 @@ fun PokedexDisplay(
     ) {
         items(items = pokemonList, key = {it.id}) { pokemon ->
             PokemonListDisplay(pokemon = pokemon, onClick = {
-                onClick()
-                getPokemonId(pokemon.id)
+                onClick(pokemon.id)
+//                getPokemonId(pokemon.id)
             }, onClickFavorite = clickFavorite,
                 favoriteList = favoriteList)
             Divider(

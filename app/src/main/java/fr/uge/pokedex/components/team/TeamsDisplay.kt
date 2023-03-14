@@ -286,25 +286,11 @@ fun NewTeamDialog(
 fun PokedexDisplay(
     pokemonMap: Map<Long, Pokemon>,
     profile: Profile,
-    getPokemonId: (Long) -> Unit,
     onClick: () -> Unit
 ) {
 
     var resultList by remember {
         mutableStateOf(mutableListOf<Pokemon>())
-    }
-    var fav by remember {
-        mutableStateOf(Favorite(-1L, -1L))
-    }
-    var currentIconFavorite by remember {
-        mutableStateOf(-1L)
-    }
-
-    var favorites by remember {
-        mutableStateOf(
-            PokedexAppDatabaseConnection.connection.profileDao()
-                .getProfileWithFavorites(profile.getId()).favorites
-        )
     }
     Dialog(
         onDismissRequest = { onClick() }, properties = DialogProperties(
@@ -323,10 +309,6 @@ fun PokedexDisplay(
             fr.uge.pokedex.components.pokedex.PokedexDisplay(
                 pokemonList = resultList,
                 profile = profile,
-                getPokemonId = getPokemonId,
-                getPokemonFavoriteId = {
-                    currentIconFavorite = it
-                },
                 clickFavorite = { pokemonId, favorite ->
                     if(favorite != null)
                         PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)

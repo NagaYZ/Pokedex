@@ -5,9 +5,10 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.room.Database
+import androidx.navigation.navArgument
 import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.components.team.DisplayTeams
 import fr.uge.pokedex.components.search.FilterBar
@@ -25,7 +26,7 @@ sealed class Route(val title: String, val path: String) {
     object Teams : Route("Teams", "teams")
     object Profiles : Route("Profiles", "profiles")
 
-    object Card : Route("Card", "card")
+    object Card : Route("Card", "card/{pokemonId}")
 }
 
 @SuppressLint("MutableCollectionMutableState")
@@ -36,50 +37,41 @@ fun NavigationGraph(
     profile: Profile,
     pokemonMap: Map<Long, Pokemon>
 ) {
-    var currentPokemon by remember {
-        mutableStateOf(-1L)
-    }
-    var currentIconFavorite by remember {
-        mutableStateOf(-1L)
-    }
-    var resultList by remember {
-        mutableStateOf(mutableListOf<Pokemon>())
-    }
-
     NavHost(navController = navController, startDestination = Route.Profiles.path) {
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
+
+            var filteredPokemons by remember { mutableStateOf(mutableListOf<Pokemon>()) }
+
             Column() {
                 FilterBar(pokemonList = pokemonMap.values.toList())
                 {
-                    resultList = it.toMutableList()
+                    filteredPokemons = it.toMutableList()
                 }
 
-                PokedexDisplay(pokemonList = resultList,
+                PokedexDisplay(pokemonList = filteredPokemons,
                     profile = profile,
-                    getPokemonId = {
-                        currentPokemon = it
-                    },
-                    getPokemonFavoriteId = {
-                        currentIconFavorite = it
-                    },
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null)
                             PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
                         else
                             PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
                     },
-                    onClick = {
-                        navController.navigate("card")
+                    onClick = { pokemonId ->
+                        navController.navigate("card/$pokemonId")
                     })
             }
         }
 
-        composable(route = Route.Card.path) {
+        composable(route = Route.Card.path, arguments = listOf(
+            navArgument("pokemonId"){
+                type = NavType.LongType
+            }
+        )) {
             //Call a card pokemon composable
             val pokemon by remember {
-                mutableStateOf(pokemonMap[currentPokemon]!!)
+                mutableStateOf(pokemonMap[it.arguments?.getLong("pokemonId")]!!)
             }
 
             PokemonCardDisplay(
@@ -113,18 +105,14 @@ fun NavigationGraph(
                     sizeGrid = 1,
                     pokemonList = filteredPokemons,
                     profile = profile,
-                    getPokemonId = {
-                        currentPokemon = it
-                    },
-                    getPokemonFavoriteId = { currentIconFavorite = it },
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null)
                             PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
                         else
                             PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
                     },
-                    onClick = {
-                        navController.navigate("card")
+                    onClick = { pokemonId ->
+                        navController.navigate("card/$pokemonId")
                     })
 
             }
@@ -134,9 +122,8 @@ fun NavigationGraph(
             DisplayTeams(
                 pokemonMap,
                 profile,
-                onPokemonClick = {
-                    currentPokemon = it
-                    navController.navigate("card")
+                onPokemonClick = { pokemonId ->
+                    navController.navigate("card/$pokemonId")
                 }
             )
         }
