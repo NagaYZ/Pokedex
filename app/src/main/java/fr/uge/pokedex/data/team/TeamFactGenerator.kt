@@ -1,4 +1,4 @@
-package fr.uge.pokedex.team
+package fr.uge.pokedex.data.team
 
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.utils.BaseStatHelper

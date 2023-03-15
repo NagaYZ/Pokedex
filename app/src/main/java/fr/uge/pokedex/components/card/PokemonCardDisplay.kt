@@ -8,7 +8,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.R
 import fr.uge.pokedex.components.list.PokemonBoxDisplay
-import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.pokedex.*
 import fr.uge.pokedex.data.user.Favorite
 
@@ -40,41 +39,16 @@ fun PokemonCardDisplay(
                 flavorText = "Chlorophyll doubles the ability-bearer's Speed during bright sunshine."
             )
         ),
-        evolvesFrom = null,
-        evolvesInto = mutableSetOf(
-            Evolution(
-                species = Pokemon(
-                    1,
-                    "bulbasaur",
-                    icon = R.drawable.icon_pkm_1,
-                    sprite = R.drawable.pokemon_1
+        evolutionChain = EvolutionChain(
+            evolutions = mutableListOf(
+                Evolution(
+                    species = Pokemon(1, "bulbasaur", icon = R.drawable.icon_pkm_1, sprite = R.drawable.pokemon_1),
+                    evolvedSpecies = Pokemon(2, "ivysaur", icon = R.drawable.icon_pkm_2, sprite = R.drawable.pokemon_2),
                 ),
-                evolutionTrigger = EvolutionTrigger.LEVEL_UP,
-                minimumLevel = 16,
-                evolvedSpecies = Pokemon(
-                    2,
-                    "ivysaur",
-                    icon = R.drawable.icon_pkm_2,
-                    sprite = R.drawable.pokemon_2,
-                    evolvesInto = mutableSetOf(
-                        Evolution(
-                            species = Pokemon(
-                                2,
-                                "ivysaur",
-                                icon = R.drawable.icon_pkm_2,
-                                sprite = R.drawable.pokemon_2
-                            ),
-                            evolvedSpecies = Pokemon(
-                                3,
-                                "venusaur",
-                                icon = R.drawable.icon_pkm_3,
-                                sprite = R.drawable.pokemon_3
-                            ),
-                            evolutionTrigger = EvolutionTrigger.LEVEL_UP,
-                            minimumLevel = 32
-                        )
-                    )
-                ),
+                Evolution(
+                    species = Pokemon(2, "ivysaur", icon = R.drawable.icon_pkm_2, sprite = R.drawable.pokemon_2),
+                    evolvedSpecies = Pokemon(3, "venusaur", icon = R.drawable.icon_pkm_3, sprite = R.drawable.pokemon_3),
+                )
             )
         ),
         identifier = "bulbasaur",
@@ -86,7 +60,15 @@ fun PokemonCardDisplay(
             Version.GOLD to "The seed on its back is filled with nutrients. The seed grows steadily larger as its body grows."
         ),
         icon = R.drawable.icon_pkm_1,
-        sprite = R.drawable.pokemon_1
+        sprite = R.drawable.pokemon_1,
+        baseStats = BaseStats(
+            hp = 45,
+            attack = 49,
+            defense = 49,
+            specialAttack = 65,
+            specialDefense = 65,
+            speed = 45
+        )
     ),
     onClickFavorite: (Long, Favorite?) -> Unit = {pokemonId:Long, favorite:Favorite? ->},
     favoriteList: List<Favorite> = emptyList()
@@ -112,6 +94,9 @@ fun PokemonCardDisplay(
         }
         item {
             EvolutionChainDisplay(pokemon.evolutionChain)
+        }
+        item {
+            BaseStatsDisplay(pokemon.baseStats)
         }
         item {
             PokedexEntries(pokemon.pokedexEntries)
