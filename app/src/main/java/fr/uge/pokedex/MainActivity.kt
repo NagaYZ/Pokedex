@@ -3,7 +3,6 @@ package fr.uge.pokedex
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -61,7 +60,7 @@ class MainActivity : ComponentActivity() {
                                 currentProfile
                             )
                         }) {
-                        Log.d("Padding", it.toString())
+                        it
                         NavigationGraph(
                             navController = navController,
                             setCurrentProfile = { profile: Profile -> currentProfile = profile },

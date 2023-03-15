@@ -23,7 +23,6 @@ fun PokedexEntries(pokedexEntries: MutableMap<Version, String>) {
             fontWeight = FontWeight.Bold
         )
         Divider()
-        println(pokedexEntries)
         for (pokedexEntry in pokedexEntries.map { it.value to it.key }
             .groupBy({ it.first }, { it.second }).entries.sortedBy { it.value.first().ordinal }) {
             TextDisplay(

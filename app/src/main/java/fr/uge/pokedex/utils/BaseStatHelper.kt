@@ -18,27 +18,27 @@ class BaseStatHelper {
             return sqrt(standardDeviation / values.size)
         }
 
-        private fun BaseStats.getAsList(): List<Int> {
+        fun BaseStats.getAsList(): List<Pair<String, Int>> {
             return listOf(
-                hp,
-                attack,
-                defense,
-                specialAttack,
-                specialDefense,
-                speed
+                Pair("HP", hp),
+                Pair("Attack", attack),
+                Pair("Defense", defense),
+                Pair("Sp.Atk", specialAttack),
+                Pair("Sp.Def", specialDefense),
+                Pair("Speed", speed)
             )
         }
 
         fun BaseStats.getTotal(): Int {
-            return getAsList().sum()
+            return getAsList().sumOf { it.second }
         }
 
         fun BaseStats.getAverage(): Double {
-            return getAsList().average()
+            return getAsList().map { it.second }.average()
         }
 
         fun BaseStats.getStandardDeviation(): Double {
-            return calculateStandardDeviation(getAsList())
+            return calculateStandardDeviation(getAsList().map { it.second })
         }
 
         fun getAverageBaseStats(memberBaseStats: List<BaseStats>): BaseStats {

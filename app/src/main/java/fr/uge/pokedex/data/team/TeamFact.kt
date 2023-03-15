@@ -1,4 +1,4 @@
-package fr.uge.pokedex.team
+package fr.uge.pokedex.data.team
 
 enum class TeamFact(private val category: FactCategory) {
     WEAKNESS_TO_TYPES(FactCategory.WEAKNESS),

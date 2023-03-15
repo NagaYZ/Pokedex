@@ -18,7 +18,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.*
-import fr.uge.pokedex.team.TeamFactGenerator
+import fr.uge.pokedex.data.team.TeamFactGenerator
 import fr.uge.pokedex.theme.Purple500
 
 private fun DeleteTeam(teamId: Long) {

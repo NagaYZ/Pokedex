@@ -23,4 +23,8 @@ data class Evolution(
 
         return true
     }
+
+    override fun toString(): String {
+        return "Evolution={species=" + species.id + ", evolvedSpecies=" + evolvedSpecies.id + "}"
+    }
 }
