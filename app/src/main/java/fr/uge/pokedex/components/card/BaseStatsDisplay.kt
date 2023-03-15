@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.data.pokedex.BaseStats
@@ -47,8 +48,10 @@ fun BaseStatsDisplay(
                     modifier = Modifier.width(70.dp)
                 )
                 Text(
-                    text = "${baseStat.second.toString().padStart(3, ' ')}",
-                    style = MaterialTheme.typography.body1
+                    text = "${baseStat.second}",
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.width(30.dp),
+                    textAlign = TextAlign.End
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 LinearProgressIndicator(
@@ -69,7 +72,9 @@ fun BaseStatsDisplay(
             )
             Text(
                 text = "${baseStats.getTotal()}", style = MaterialTheme.typography.body1,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.width(30.dp),
+                textAlign = TextAlign.End
             )
         }
         Divider()
