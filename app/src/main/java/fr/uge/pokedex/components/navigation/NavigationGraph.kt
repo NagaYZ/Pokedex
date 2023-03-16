@@ -2,6 +2,7 @@ package fr.uge.pokedex.components.navigation
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
@@ -32,6 +33,7 @@ sealed class Route(val title: String, val path: String) {
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun NavigationGraph(
+    applicationContext: Context,
     navController: NavHostController,
     setCurrentProfile: (profile: Profile) -> Unit,
     profile: Profile,
@@ -45,7 +47,7 @@ fun NavigationGraph(
             var filteredPokemons by remember { mutableStateOf(mutableListOf<Pokemon>()) }
 
             Column() {
-                FilterBar(pokemonList = pokemonMap.values.toList())
+                FilterBar(pokemonList = pokemonMap.values.toList(), applicationContext = applicationContext)
                 {
                     filteredPokemons = it.toMutableList()
                 }
@@ -99,7 +101,7 @@ fun NavigationGraph(
             Column() {
                 FilterBar(pokemonList = favoritesPokemon.distinct(), filterList = {
                     filteredPokemons = it.toMutableList()
-                })
+                }, applicationContext = applicationContext)
 
                 PokedexDisplay(
                     sizeGrid = 1,
