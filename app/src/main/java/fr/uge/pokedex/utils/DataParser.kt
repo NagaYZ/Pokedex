@@ -5,6 +5,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import fr.uge.pokedex.data.pokedex.*
 
 class DataParser(private val context: Context) {
+    private val maxPokemonId: Int = 650
 
     // Custom operator to allow destructuring of list containing n elements
     operator fun List<String>.component6() = this[5]
@@ -20,7 +21,7 @@ class DataParser(private val context: Context) {
         setPokemonFlavorText(pokemon)
         setPokemonAbilities(pokemon)
 //        setPokemonMoves(pokemon)
-        return pokemon.filterKeys { it < 650L } // Remove pokemon alt form and limit data to fifth generation
+        return pokemon.filterKeys { it <= maxPokemonId } // Remove pokemon alt form and limit data to fifth generation
     }
 
     private fun parseLines(filename: String, action: (Map<String, String>) -> Unit) {
@@ -140,23 +141,25 @@ class DataParser(private val context: Context) {
             val hatchCounter = row["hatch_counter"]!!
             val growthRateId = row["growth_rate_id"]!!
 
-            if (evolvesFromSpeciesId.isNotBlank()) {
-                val evolvedSpecies = pokemon[id.toLong()]!!
-                val species = pokemon[evolvesFromSpeciesId.toLong()]!!
-                val evolution = Evolution(species = species, evolvedSpecies = evolvedSpecies)
-                pokemon[id.toLong()]?.evolvesFrom = evolution
-                pokemon[evolvesFromSpeciesId.toLong()]?.evolvesInto?.add(evolution)
-                evolvesFrom[id.toLong()] = evolution
+            if(id.toInt() <= maxPokemonId) {
+                if (evolvesFromSpeciesId.isNotBlank()) {
+                    val evolvedSpecies = pokemon[id.toLong()]!!
+                    val species = pokemon[evolvesFromSpeciesId.toLong()]!!
+                    val evolution = Evolution(species = species, evolvedSpecies = evolvedSpecies)
+                    pokemon[id.toLong()]?.evolvesFrom = evolution
+                    pokemon[evolvesFromSpeciesId.toLong()]?.evolvesInto?.add(evolution)
+                    evolvesFrom[id.toLong()] = evolution
 
-                pokemon[id.toLong()]?.evolutionChain =
-                    pokemon[evolvesFromSpeciesId.toLong()]?.evolutionChain!!
-                pokemon[id.toLong()]?.evolutionChain?.evolutions?.add(evolution)
+                    pokemon[id.toLong()]?.evolutionChain =
+                        pokemon[evolvesFromSpeciesId.toLong()]?.evolutionChain!!
+                    pokemon[id.toLong()]?.evolutionChain?.evolutions?.add(evolution)
+                }
+
+                pokemon[id.toLong()]?.captureRate = captureRate.toInt()
+                pokemon[id.toLong()]?.baseHappiness = baseHappiness.toIntOrNull() ?: 0
+                pokemon[id.toLong()]?.hatchCounter = hatchCounter.toIntOrNull() ?: 0
+                pokemon[id.toLong()]?.growRate = GrowRate.values()[growthRateId.toInt() - 1]
             }
-
-            pokemon[id.toLong()]?.captureRate = captureRate.toInt()
-            pokemon[id.toLong()]?.baseHappiness = baseHappiness.toIntOrNull() ?: 0
-            pokemon[id.toLong()]?.hatchCounter = hatchCounter.toIntOrNull() ?: 0
-            pokemon[id.toLong()]?.growRate = GrowRate.values()[growthRateId.toInt() - 1]
         }
 
         // Then add the evolution triggers
