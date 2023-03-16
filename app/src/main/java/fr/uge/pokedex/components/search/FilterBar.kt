@@ -1,5 +1,6 @@
 package fr.uge.pokedex.components.search
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -10,7 +11,7 @@ import fr.uge.pokedex.data.pokedex.Pokemon
 
 
 @Composable
-fun FilterBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit) {
+fun FilterBar(applicationContext: Context, pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit) {
 
     var type1 by remember {
         mutableStateOf("")
@@ -37,7 +38,7 @@ fun FilterBar(pokemonList: List<Pokemon>, filterList: (List<Pokemon>) -> Unit) {
     ) {
         SearchBar(pokemonSearch = {
             search = it
-        })
+        }, applicationContext = applicationContext)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(20.dp)

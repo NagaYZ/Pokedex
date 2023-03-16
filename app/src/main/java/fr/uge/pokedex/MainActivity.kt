@@ -62,6 +62,7 @@ class MainActivity : ComponentActivity() {
                         }) {
                         it
                         NavigationGraph(
+                            applicationContext = applicationContext,
                             navController = navController,
                             setCurrentProfile = { profile: Profile -> currentProfile = profile },
                             profile = currentProfile,
