@@ -47,6 +47,7 @@ fun ProfilesScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
+                UgePokedexLogo()
                 Text(text = "Create a new profile", style = MaterialTheme.typography.h5)
                 Button(onClick = {
                     showNewProfileDialog = !showNewProfileDialog
@@ -57,71 +58,51 @@ fun ProfilesScreen(
         }
     } else {
 
+        Column {
 
-        //Profile list
-            Column {
-                
-                Column(modifier = Modifier.fillMaxSize().weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-
-                    Row() {
-                        Icon(
-                            painter = painterResource(id = R.drawable.icon_pkm_25),
-                            contentDescription = "Ball",
-                            modifier = Modifier.scale(5f).height(50.dp).padding(horizontal = 10.dp),
-                            tint = Color.Unspecified
-                        )
-                        Spacer(Modifier.padding(end = 10.dp))
-                        Text(text = "UGE Pokedex", style = MaterialTheme.typography.h3, color = MaterialTheme.colors.primary, fontWeight = FontWeight.ExtraBold)
-                        Spacer(Modifier.padding(start = 10.dp))
-                        Icon(
-                            painter = painterResource(id = R.drawable.icon_pkm_151),
-                            contentDescription = "Ball",
-                            modifier = Modifier.scale(5f).height(60.dp).padding(horizontal = 10.dp),
-                            tint = Color.Unspecified,
-                        )
-                    }
-
-                }
-                Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
-
-                    Row() {
-                        Icon(
-                            painter = painterResource(id = R.drawable.pok),
-                            contentDescription = "Ball",
-                            modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
-                            tint = Color.Unspecified
-                        )
-                        Text(text = "Profiles", style = MaterialTheme.typography.h6)
-                        Icon(
-                            painter = painterResource(id = R.drawable.pok),
-                            contentDescription = "Ball",
-                            modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
-                            tint = Color.Unspecified
-                        )
-                    }
-
-                    Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
-
-                    LazyColumn(modifier = Modifier
-                        .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top){
-                        items(items = profilesList, key = {it.getId()}){profile ->
-
-                            ProfileItem(profile = profile, navController = navController,
-                                onDeleteProfile = { profileToDelete: Profile ->
-                                    profileDao.deleteProfile(profileToDelete)
-                                    profilesList = profileDao.getAllProfiles()
-                                }, onEditProfile = { profileToEdit: Profile ->
-                                    profileByRememberToEdit = profileToEdit
-                                    showEditProfileDialog = true
-                                }, setCurrentProfile
-                            )
-
-                            Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
-                        }
-                    }
-
-                }
+            Column(modifier = Modifier.fillMaxSize().weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                UgePokedexLogo()
             }
+            Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Row() {
+                    Icon(
+                        painter = painterResource(id = R.drawable.pok),
+                        contentDescription = "Ball",
+                        modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
+                        tint = Color.Unspecified
+                    )
+                    Text(text = "Profiles", style = MaterialTheme.typography.h6)
+                    Icon(
+                        painter = painterResource(id = R.drawable.pok),
+                        contentDescription = "Ball",
+                        modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
+                        tint = Color.Unspecified
+                    )
+                }
+
+                Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
+
+                LazyColumn(modifier = Modifier
+                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top){
+                    items(items = profilesList, key = {it.getId()}){profile ->
+
+                        ProfileItem(profile = profile, navController = navController,
+                            onDeleteProfile = { profileToDelete: Profile ->
+                                profileDao.deleteProfile(profileToDelete)
+                                profilesList = profileDao.getAllProfiles()
+                            }, onEditProfile = { profileToEdit: Profile ->
+                                profileByRememberToEdit = profileToEdit
+                                showEditProfileDialog = true
+                            }, setCurrentProfile
+                        )
+
+                        Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
+                    }
+                }
+
+            }
+        }
 
 
 
@@ -158,5 +139,27 @@ fun ProfilesScreen(
             profilesList = profileDao.getAllProfiles()
         })
 
+}
+
+
+@Composable
+fun UgePokedexLogo(){
+    Row() {
+        Icon(
+            painter = painterResource(id = R.drawable.icon_pkm_25),
+            contentDescription = "Ball",
+            modifier = Modifier.scale(5f).height(50.dp).padding(horizontal = 10.dp),
+            tint = Color.Unspecified
+        )
+        Spacer(Modifier.padding(end = 10.dp))
+        Text(text = "UGE Pokedex", style = MaterialTheme.typography.h3, color = MaterialTheme.colors.primary, fontWeight = FontWeight.ExtraBold)
+        Spacer(Modifier.padding(start = 10.dp))
+        Icon(
+            painter = painterResource(id = R.drawable.icon_pkm_151),
+            contentDescription = "Ball",
+            modifier = Modifier.scale(5f).height(60.dp).padding(horizontal = 10.dp),
+            tint = Color.Unspecified,
+        )
+    }
 }
 
