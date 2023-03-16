@@ -3,6 +3,7 @@ package fr.uge.pokedex.components.team
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -183,14 +184,14 @@ fun ShowTeamCard(
             }
 
             val facts = teamFactGenerator.getTeamFacts(pokemonInTeam.toList())
-            Column(
-                Modifier
-                    .padding(15.dp)
+            LazyColumn(
+                modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colors.background)
+                    .background(MaterialTheme.colors.background),
+                contentPadding = PaddingValues(10.dp)
             ) {
-                facts.forEach { fact ->
-                    Text(fact.toString())
+                item {
+                    TeamFactListDisplay(facts)
                 }
             }
         }
