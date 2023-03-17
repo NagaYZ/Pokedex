@@ -11,6 +11,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -128,14 +129,14 @@ fun SearchBar(applicationContext: Context, pokemonSearch: (String) -> Unit = {})
                         }
                     }
                 ),
-            tint = Color.White
+            tint = if(isSystemInDarkTheme()) Color.White else Color.Black
         )
 
         pokemonSearch(search)
     }
 
     if(showListeningDialog){
-        Dialog(onDismissRequest = { showListeningDialog = false }){
+        Dialog(onDismissRequest = {}){
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colors.secondary, Shapes.medium)
@@ -151,7 +152,7 @@ fun SearchBar(applicationContext: Context, pokemonSearch: (String) -> Unit = {})
                     modifier = Modifier
                         .scale(2f)
                         .padding(horizontal = 10.dp),
-                    tint = Color.White
+                    tint = if(isSystemInDarkTheme()) Color.White else Color.Black
                 )
             }
         }
@@ -172,10 +173,10 @@ fun SearchBar(applicationContext: Context, pokemonSearch: (String) -> Unit = {})
                     modifier = Modifier
                         .scale(2f)
                         .padding(horizontal = 10.dp),
-                    tint = Color.White
+                    tint = if(isSystemInDarkTheme()) Color.White else Color.Black
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                Text(text = "You disabled the access to the microphone, please go to app settings and enable it.", style = MaterialTheme.typography.h6)
+                Text(text = "We need the access to the microphone if you want to use that feature.", style = MaterialTheme.typography.h6)
             }
         }
     }
