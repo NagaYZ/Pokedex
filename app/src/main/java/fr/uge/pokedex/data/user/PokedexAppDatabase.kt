@@ -11,14 +11,22 @@ abstract class PokedexAppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun teamDao(): TeamDao
     abstract fun teamMemberDao(): TeamMemberDao
-}
 
-object PokedexAppDatabaseConnection{
+    companion object {
 
-    lateinit var connection: PokedexAppDatabase
+        @Volatile
+        private var connection: PokedexAppDatabase? = null
 
-    fun initialise(context: Context){
-        connection = Room.databaseBuilder(context, PokedexAppDatabase::class.java, "PokedexAppDatabase.db").allowMainThreadQueries().fallbackToDestructiveMigration().build()
+        fun getConnection(context: Context): PokedexAppDatabase {
+            synchronized(this) {
+                if (this.connection == null) {
+                    this.connection = Room.databaseBuilder(context, PokedexAppDatabase::class.java, "PokedexAppDatabase.db").fallbackToDestructiveMigration().build()
+                    return this.connection!!
+                } else {
+                    return this.connection!!
+                }
+            }
+        }
     }
-
 }
+

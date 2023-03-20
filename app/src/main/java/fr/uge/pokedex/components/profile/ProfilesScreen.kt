@@ -11,27 +11,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import fr.uge.pokedex.data.user.PokedexAppDatabaseConnection
 import fr.uge.pokedex.data.user.Profile
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import fr.uge.pokedex.R
+import fr.uge.pokedex.data.user.PokedexAppDatabase
+import kotlinx.coroutines.runBlocking
 
 
 @Composable
 fun ProfilesScreen(
     navController: NavHostController,
-    setCurrentProfile: (profile: Profile) -> Unit
+    setCurrentProfile: (profileId: Long) -> Unit
 ) {
 
-    val profileDao = PokedexAppDatabaseConnection.connection.profileDao()
+    val profileDao = PokedexAppDatabase.getConnection(LocalContext.current).profileDao()
 
     var showNewProfileDialog by remember { mutableStateOf(false) }
     var showEditProfileDialog by remember { mutableStateOf(false) }
-    var profilesList by remember { mutableStateOf(profileDao.getAllProfiles()) }
+    var profilesList by remember { mutableStateOf(runBlocking {profileDao.getAllProfiles()}) }
 
     var profileByRememberToEdit: Profile by remember { mutableStateOf(Profile("")) }
 
@@ -89,8 +91,8 @@ fun ProfilesScreen(
 
                         ProfileItem(profile = profile, navController = navController,
                             onDeleteProfile = { profileToDelete: Profile ->
-                                profileDao.deleteProfile(profileToDelete)
-                                profilesList = profileDao.getAllProfiles()
+                                runBlocking {profileDao.deleteProfile(profileToDelete)}
+                                profilesList = runBlocking {profileDao.getAllProfiles()}
                             }, onEditProfile = { profileToEdit: Profile ->
                                 profileByRememberToEdit = profileToEdit
                                 showEditProfileDialog = true
@@ -125,8 +127,8 @@ fun ProfilesScreen(
         show = showNewProfileDialog,
         close = { showNewProfileDialog = false },
         onProfileNameAccept = { profileName ->
-            profileDao.addProfile(Profile(profileName))
-            profilesList = profileDao.getAllProfiles()
+            runBlocking {profileDao.addProfile(Profile(profileName))}
+            profilesList = runBlocking {profileDao.getAllProfiles()}
         })
 
     //Dialog when the user needs to edit a profile
@@ -135,8 +137,8 @@ fun ProfilesScreen(
         close = { showEditProfileDialog = false },
         onProfileNameAccept = { profileName ->
             profileByRememberToEdit.setProfileName(profileName)
-            profileDao.updateProfile(profileByRememberToEdit)
-            profilesList = profileDao.getAllProfiles()
+            runBlocking {profileDao.updateProfile(profileByRememberToEdit)}
+            profilesList = runBlocking {profileDao.getAllProfiles()}
         })
 
 }

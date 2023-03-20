@@ -6,11 +6,11 @@ import androidx.room.*
 interface TeamMemberDao {
 
     @Insert
-    fun addTeamMember(teamMember: TeamMember): Long
+    suspend fun addTeamMember(teamMember: TeamMember): Long
 
     @Delete
-    fun deleteTeamMember(teamMember: TeamMember)
+    suspend fun deleteTeamMember(teamMember: TeamMember)
 
     @Query("SELECT * FROM teammember WHERE team_member_id = :teamMemberId")
-    fun getTeamMember(teamMemberId :Long): TeamMember
+    suspend fun getTeamMember(teamMemberId :Long): TeamMember
 }

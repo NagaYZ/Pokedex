@@ -6,8 +6,8 @@ import androidx.room.*
 interface FavoriteDao {
 
     @Insert
-    fun addFavorite(favorite: Favorite) : Long
+    suspend fun addFavorite(favorite: Favorite) : Long
 
     @Delete
-    fun deleteFavorite(favorite: Favorite)
+    suspend fun deleteFavorite(favorite: Favorite)
 }

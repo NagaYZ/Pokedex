@@ -12,13 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.components.navigation.Route
+import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.data.user.Profile
+import kotlinx.coroutines.runBlocking
 
 @Composable
-fun TopBar(navController: NavHostController, currentProfile: Profile) {
+fun TopBar(navController: NavHostController, currentProfileId: Long) {
+    val context = LocalContext.current
+    val profile = runBlocking {PokedexAppDatabase.getConnection(context).profileDao().getProfile(currentProfileId)}
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,7 +48,7 @@ fun TopBar(navController: NavHostController, currentProfile: Profile) {
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                text = currentProfile.getProfileName(),
+                text = if(profile != null) profile.getProfileName() else "",
                 style = MaterialTheme.typography.button,
                 modifier = Modifier.padding(12.dp),
                 color = Color.White

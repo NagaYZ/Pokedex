@@ -11,6 +11,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -20,7 +21,6 @@ import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.components.profile.TopBar
 import fr.uge.pokedex.data.pokedex.PokemonRepository
-import fr.uge.pokedex.data.user.PokedexAppDatabaseConnection
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.theme.PokedexTheme
 
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        PokedexAppDatabaseConnection.initialise(applicationContext)
+//        PokedexAppDatabase.getConnection(applicationContext)
         pokemonRepository = PokemonRepository(applicationContext)
 
         setContent {
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = currentBackStackEntry?.destination?.route
 
-                    var currentProfile by remember { mutableStateOf(Profile("")) }
+                    var currentProfileId by rememberSaveable { mutableStateOf(-1L) }
 
                     Scaffold(bottomBar = {
                         if (currentRoute != Route.Profiles.path) BottomNavigationMenu(
@@ -57,15 +57,15 @@ class MainActivity : ComponentActivity() {
                         topBar = {
                             if (currentRoute != Route.Profiles.path) TopBar(
                                 navController,
-                                currentProfile
+                                currentProfileId
                             )
                         }) {
                         it
                         NavigationGraph(
                             applicationContext = applicationContext,
                             navController = navController,
-                            setCurrentProfile = { profile: Profile -> currentProfile = profile },
-                            profile = currentProfile,
+                            setCurrentProfile = { profileId: Long -> currentProfileId = profileId },
+                            profileId = currentProfileId,
                             pokemonMap = pokemonRepository.data
                         )
                     }

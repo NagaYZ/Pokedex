@@ -1,22 +1,24 @@
 package fr.uge.pokedex.components.pokedex
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Divider
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.components.list.PokemonListDisplay
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.Favorite
-import fr.uge.pokedex.data.user.PokedexAppDatabaseConnection
+import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.data.user.Profile
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.runBlocking
 
 
 @Composable
@@ -27,8 +29,8 @@ fun PokedexDisplay(
     clickFavorite : (Long, Favorite?) -> Unit,
     onClick: (Long) -> Unit
 )  {
-
-    val favoriteList = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+    val context = LocalContext.current
+    var favoriteList = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profile.getId()).favorites }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(sizeGrid),

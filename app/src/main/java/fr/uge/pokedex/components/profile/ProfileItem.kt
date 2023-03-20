@@ -24,7 +24,7 @@ fun ProfileItem(
     navController: NavHostController,
     onDeleteProfile: (profile: Profile) -> Unit,
     onEditProfile: (profile: Profile) -> Unit,
-    setCurrentProfile: (profile: Profile) -> Unit
+    setCurrentProfile: (profileId: Long) -> Unit
 ) {
     Row(modifier = Modifier
         .width(300.dp)
@@ -32,7 +32,7 @@ fun ProfileItem(
         .background(MaterialTheme.colors.secondary, Shapes.medium), verticalAlignment = Alignment.CenterVertically) {
 
         Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.weight(2.0f).clickable(onClick = {
-            setCurrentProfile.invoke(profile)
+            setCurrentProfile.invoke(profile.getId())
             navController.navigate(Route.Pokedex.path)
         })){
             Text(text = profile.getProfileName(), style = MaterialTheme.typography.h6, modifier = Modifier.padding(start = 20.dp))

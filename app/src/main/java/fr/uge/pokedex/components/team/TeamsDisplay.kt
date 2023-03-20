@@ -1,6 +1,7 @@
 package fr.uge.pokedex.components.team
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -21,45 +23,46 @@ import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.*
 import fr.uge.pokedex.data.team.TeamFactGenerator
 import fr.uge.pokedex.theme.Purple500
+import kotlinx.coroutines.runBlocking
 
-private fun DeleteTeam(teamId: Long) {
-    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-    val team: Team = teamDao.getTeam(teamId)
-    teamDao.deleteTeam(team)
+private fun DeleteTeam(teamId: Long, context: Context) {
+    val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
+    val team: Team = runBlocking {teamDao.getTeam(teamId)}
+    runBlocking {teamDao.deleteTeam(team)}
 }
 
-private fun getTeamsFromProfile(profile: Profile): List<TeamWithMembers> {
-    val profileDao: ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-    return profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers
+private fun getTeamsFromProfile(profile: Profile, context: Context): List<TeamWithMembers> {
+    val profileDao: ProfileDao = PokedexAppDatabase.getConnection(context).profileDao()
+    return runBlocking {profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers}
 }
 
-private fun getPokemonListFromTeamId(teamId: Long): List<Long> {
-    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-    val teamWithMembers = teamDao.getTeamWithMembers(teamId)
+private fun getPokemonListFromTeamId(teamId: Long, context: Context): List<Long> {
+    val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
+    val teamWithMembers = runBlocking {teamDao.getTeamWithMembers(teamId)}
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
 }
 
-private fun editTeam(pokemonList: List<Long>, teamId: Long) {
-    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-    val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
-    val teamWithMembers = teamDao.getTeamWithMembers(teamId)
+private fun editTeam(pokemonList: List<Long>, teamId: Long, context: Context) {
+    val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
+    val teamMemberDao: TeamMemberDao = PokedexAppDatabase.getConnection(context).teamMemberDao()
+    val teamWithMembers = runBlocking {teamDao.getTeamWithMembers(teamId)}
 
     for (i in 0..5) {
-        teamMemberDao.deleteTeamMember(teamWithMembers.teamMembers[i])
+        runBlocking {teamMemberDao.deleteTeamMember(teamWithMembers.teamMembers[i])}
     }
 
     pokemonList.forEach { pokemon ->
-        teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))
+        runBlocking {teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))}
     }
 }
 
-private fun addTeamToDatabase(team: List<Long>, profile: Profile) {
-    val teamDao: TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-    val teamMemberDao: TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
-    val teamId: Long = teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))
+private fun addTeamToDatabase(team: List<Long>, profile: Profile, context: Context) {
+    val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
+    val teamMemberDao: TeamMemberDao = PokedexAppDatabase.getConnection(context).teamMemberDao()
+    val teamId: Long = runBlocking {teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))}
 
     team.forEach { pokemon ->
-        teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))
+        runBlocking {teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))}
     }
 }
 
@@ -69,12 +72,13 @@ fun DisplayTeams(
     profile: Profile,
     onPokemonClick: (Long) -> Unit
 ) {
+    val context = LocalContext.current
     var showNewTeamDialog by remember { mutableStateOf(false) }
     var showTeamCard by remember { mutableStateOf(false) }
     var delete by remember { mutableStateOf(false) }
     var edit by remember { mutableStateOf(false) }
     var teamId by remember { mutableStateOf(-1L) }
-    val teams = getTeamsFromProfile(profile = profile)
+    val teams = getTeamsFromProfile(profile = profile, context)
 
     //display list of team
     LazyVerticalGrid(
@@ -113,7 +117,7 @@ fun DisplayTeams(
     }
 
     if (delete) {
-        DeleteTeam(teamId)
+        DeleteTeam(teamId, context)
         delete = false
     }
 
@@ -129,7 +133,7 @@ fun DisplayTeams(
     if (showTeamCard) {
         ShowTeamCard(
             pokemonMap,
-            getPokemonListFromTeamId(teamId = teamId),
+            getPokemonListFromTeamId(teamId = teamId, context),
             onPokemonClick
         ) { showTeamCard = false }
 
@@ -207,6 +211,7 @@ fun NewTeamDialog(
     edit: Boolean,
     close: () -> Unit
 ) {
+    val context = LocalContext.current
     var createTeam by remember { mutableStateOf(false) }
     val team by remember { mutableStateOf(mutableMapOf<Int, Long>()) }
     var pickedPokemon by remember { mutableStateOf(-1L) }
@@ -217,7 +222,7 @@ fun NewTeamDialog(
 
     if (edit) {
         once = true
-        pokemonInTeam = getPokemonListFromTeamId(teamId)
+        pokemonInTeam = getPokemonListFromTeamId(teamId, context)
     }
     AlertDialog(
         onDismissRequest = { close() },
@@ -267,9 +272,9 @@ fun NewTeamDialog(
         })
     if (createTeam) {
         if (edit) {
-            editTeam(team.values.toList(), teamId)
+            editTeam(team.values.toList(), teamId, context)
         } else {
-            addTeamToDatabase(team.values.toList(), profile)
+            addTeamToDatabase(team.values.toList(), profile, context)
         }
         close()
     }

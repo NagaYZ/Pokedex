@@ -3,8 +3,10 @@ package fr.uge.pokedex.components.navigation
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,8 +19,9 @@ import fr.uge.pokedex.components.card.PokemonCardDisplay
 import fr.uge.pokedex.components.profile.ProfilesScreen
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.Favorite
-import fr.uge.pokedex.data.user.PokedexAppDatabaseConnection
+import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.data.user.Profile
+import kotlinx.coroutines.runBlocking
 
 
 sealed class Route(val title: String, val path: String) {
@@ -35,10 +38,12 @@ sealed class Route(val title: String, val path: String) {
 fun NavigationGraph(
     applicationContext: Context,
     navController: NavHostController,
-    setCurrentProfile: (profile: Profile) -> Unit,
-    profile: Profile,
+    setCurrentProfile: (profileId: Long) -> Unit,
+    profileId: Long,
     pokemonMap: Map<Long, Pokemon>
 ) {
+    val context = LocalContext.current
+    val profile = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfile(profileId) }
     NavHost(navController = navController, startDestination = Route.Profiles.path) {
 
         composable(route = Route.Pokedex.path) {
@@ -56,9 +61,9 @@ fun NavigationGraph(
                     profile = profile,
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null)
-                            PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
+                            runBlocking { PokedexAppDatabase.getConnection(context).favoriteDao().deleteFavorite(favorite) }
                         else
-                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
+                            runBlocking { PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(Favorite(pokemonId, profile.getId())) }
                     },
                     onClick = { pokemonId ->
                         navController.navigate("card/$pokemonId")
@@ -76,21 +81,24 @@ fun NavigationGraph(
                 mutableStateOf(pokemonMap[it.arguments?.getLong("pokemonId")]!!)
             }
 
+            var favoriteList = runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }
+
             PokemonCardDisplay(
                 pokemon,
-                favoriteList = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites,
+                favoriteList = favoriteList,
                 onClickFavorite = { pokemonId, favorite ->
                     if(favorite != null)
-                        PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
+                        runBlocking {PokedexAppDatabase.getConnection(context).favoriteDao().deleteFavorite(favorite)}
                     else
-                        PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
+                        runBlocking {PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))}
 
                 }
             )
         }
         composable(route = Route.Favorite.path) {
             //Call favorite composable
-            val favorites = PokedexAppDatabaseConnection.connection.profileDao().getProfileWithFavorites(profile.getId()).favorites
+            var favoriteList = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profile.getId()).favorites }
+            val favorites = favoriteList
 
             val favoritesPokemon = favorites.map { favorite -> pokemonMap.get(favorite.getPokemonId())!! }.toList()
 
@@ -109,9 +117,9 @@ fun NavigationGraph(
                     profile = profile,
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null)
-                            PokedexAppDatabaseConnection.connection.favoriteDao().deleteFavorite(favorite)
+                            runBlocking {PokedexAppDatabase.getConnection(context).favoriteDao().deleteFavorite(favorite)}
                         else
-                            PokedexAppDatabaseConnection.connection.favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
+                            runBlocking {PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))}
                     },
                     onClick = { pokemonId ->
                         navController.navigate("card/$pokemonId")

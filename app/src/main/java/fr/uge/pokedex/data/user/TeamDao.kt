@@ -6,18 +6,18 @@ import androidx.room.*
 interface TeamDao {
 
     @Insert
-    fun addTeam(team: Team): Long
+    suspend fun addTeam(team: Team): Long
 
     @Delete
-    fun deleteTeam(team: Team)
+    suspend fun deleteTeam(team: Team)
 
     @Update
-    fun updateTeam(team: Team)
+    suspend fun updateTeam(team: Team)
 
     @Query("SELECT * FROM team WHERE team_id = :teamId")
-    fun getTeam(teamId :Long): Team
+    suspend fun getTeam(teamId :Long): Team
 
     @Transaction
     @Query("SELECT * FROM team WHERE team_id = :teamId")
-    fun getTeamWithMembers(teamId :Long): TeamWithMembers
+    suspend fun getTeamWithMembers(teamId :Long): TeamWithMembers
 }
