@@ -2,6 +2,7 @@ package fr.uge.pokedex.components.team
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.data.pokedex.Pokemon
-import fr.uge.pokedex.data.user.*
 import fr.uge.pokedex.data.team.TeamFactGenerator
+import fr.uge.pokedex.data.user.*
 import fr.uge.pokedex.theme.Purple500
 import kotlinx.coroutines.runBlocking
 
@@ -119,6 +120,7 @@ fun DisplayTeams(
     if (delete) {
         DeleteTeam(teamId, context)
         delete = false
+        Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
     }
 
     if (showNewTeamDialog) {
@@ -273,8 +275,10 @@ fun NewTeamDialog(
     if (createTeam) {
         if (edit) {
             editTeam(team.values.toList(), teamId, context)
+            Toast.makeText(context, "Team edited successfully", Toast.LENGTH_SHORT).show()
         } else {
             addTeamToDatabase(team.values.toList(), profile, context)
+            Toast.makeText(context, "Team created successfully", Toast.LENGTH_SHORT).show()
         }
         close()
     }
