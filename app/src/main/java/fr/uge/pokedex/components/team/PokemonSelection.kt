@@ -2,19 +2,22 @@ package fr.uge.pokedex.components.team
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.components.pokedex.PokedexDisplay
+import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.theme.Purple200
@@ -52,12 +55,33 @@ fun PokemonSelection(
         }
     }
 
-    //show pokedex to select pokemon
     if (showPokemonList) {
-        PokedexDisplay(pokemonList = pokemonMap.values.toList(), profile = profile, clickFavorite = { _, _ ->  },
-        onClick = { pokemonId ->
+        PokemonSelectionDialog(pokemonList = pokemonMap.values.toList(), profile = profile, dismiss = { showPokemonList = false}, onClick = { pokemonId ->
             currentPokemon = pokemonId
             showPokemonList = false
         })
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun PokemonSelectionDialog(pokemonList:List<Pokemon>, profile:Profile, dismiss:() -> Unit, onClick:(Long) -> Unit){
+    val context = LocalContext.current
+    Dialog(onDismissRequest = {dismiss.invoke()}, properties = DialogProperties(dismissOnBackPress = true, usePlatformDefaultWidth = false)) {
+        Column(
+            Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize()) {
+
+            var filteredPokemons by remember {
+                mutableStateOf(mutableListOf<Pokemon>())
+            }
+            FilterBar(pokemonList = pokemonList, filterList = {
+                filteredPokemons = it.toMutableList()
+            }, applicationContext = context)
+
+            PokedexDisplay(pokemonList = filteredPokemons, profile = profile, clickFavorite = { _, _ ->  },
+                onClick = {pokemonId -> onClick.invoke(pokemonId)})
+        }
     }
 }
