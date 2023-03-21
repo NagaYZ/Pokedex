@@ -40,7 +40,12 @@ fun TopBar(navController: NavHostController, currentProfileId: Long) {
             modifier = Modifier.clickable {
                 navController.navigate(route = Route.Profiles.path)
             }) {
-            Icon(Icons.Rounded.ArrowBack, "Back to profiles", modifier = Modifier.padding(12.dp))
+            Icon(
+                Icons.Rounded.ArrowBack,
+                "Back to profiles",
+                modifier = Modifier.padding(12.dp),
+                tint = Color.White
+            )
         }
 
         Column(

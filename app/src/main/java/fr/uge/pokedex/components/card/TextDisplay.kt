@@ -23,8 +23,8 @@ fun TextDisplay(title: String, content: String, iconResource: Int? = null) {
                     .padding(5.dp),
                 tint = Color.LightGray
             )
+            Spacer(modifier = Modifier.width(17.dp))
         }
-        Spacer(modifier = Modifier.width(17.dp))
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = title, style = MaterialTheme.typography.body1,
