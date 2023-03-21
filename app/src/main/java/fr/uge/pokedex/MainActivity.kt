@@ -20,20 +20,16 @@ import fr.uge.pokedex.components.navigation.BottomNavigationMenu
 import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.components.profile.TopBar
+import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.pokedex.PokemonRepository
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
-    private lateinit var pokemonRepository: PokemonRepository
-
-
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        PokedexAppDatabase.getConnection(applicationContext)
-        pokemonRepository = PokemonRepository(applicationContext)
 
         setContent {
             PokedexTheme {
@@ -43,6 +39,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    var pokemonMap by rememberSaveable { mutableStateOf(mapOf<Long, Pokemon>()) }
+                    var dataLoaded by rememberSaveable { mutableStateOf(false) }
+
+                    if(!dataLoaded){
+                        LaunchedEffect(true) {
+                            val pokemonRepository = PokemonRepository(applicationContext)
+                            pokemonMap = pokemonRepository.data
+                            dataLoaded = true
+                        }
+                    }
 
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = currentBackStackEntry?.destination?.route
@@ -66,7 +72,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             setCurrentProfile = { profileId: Long -> currentProfileId = profileId },
                             profileId = currentProfileId,
-                            pokemonMap = pokemonRepository.data
+                            pokemonMap = pokemonMap
                         )
                     }
                 }
