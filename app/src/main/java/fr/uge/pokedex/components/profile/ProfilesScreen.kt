@@ -18,10 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import fr.uge.pokedex.R
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import kotlinx.coroutines.runBlocking
-
 
 @Composable
 fun ProfilesScreen(
@@ -49,7 +49,6 @@ fun ProfilesScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                UgePokedexLogo()
                 Text(text = "Create a new profile", style = MaterialTheme.typography.h5)
                 Button(onClick = {
                     showNewProfileDialog = !showNewProfileDialog
@@ -59,34 +58,25 @@ fun ProfilesScreen(
             }
         }
     } else {
-
         Column {
-
-            Column(modifier = Modifier.fillMaxSize().weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                UgePokedexLogo()
-            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Choose your profile",
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 40.dp),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
             Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
-
-                Row() {
-                    Icon(
-                        painter = painterResource(id = R.drawable.pok),
-                        contentDescription = "Ball",
-                        modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
-                        tint = Color.Unspecified
-                    )
-                    Text(text = "Profiles", style = MaterialTheme.typography.h6)
-                    Icon(
-                        painter = painterResource(id = R.drawable.pok),
-                        contentDescription = "Ball",
-                        modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
-                        tint = Color.Unspecified
-                    )
-                }
-
                 Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
-
-                LazyColumn(modifier = Modifier
-                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top){
+                LazyColumn(
+                    modifier = Modifier
+                    .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ){
                     items(items = profilesList, key = {it.getId()}){profile ->
 
                         ProfileItem(profile = profile, navController = navController,
@@ -98,14 +88,12 @@ fun ProfilesScreen(
                                 showEditProfileDialog = true
                             }, setCurrentProfile
                         )
-
-                        Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
+                        Spacer(Modifier.height(20.dp))
                     }
                 }
 
             }
         }
-
 
 
         //Add new profile button
@@ -145,12 +133,15 @@ fun ProfilesScreen(
 
 
 @Composable
-fun UgePokedexLogo(){
+fun UgePokedexLogo() {
     Row() {
         Icon(
             painter = painterResource(id = R.drawable.icon_pkm_25),
             contentDescription = "Ball",
-            modifier = Modifier.scale(5f).height(50.dp).padding(horizontal = 10.dp),
+            modifier = Modifier
+                .scale(5f)
+                .height(50.dp)
+                .padding(horizontal = 10.dp),
             tint = Color.Unspecified
         )
         Spacer(Modifier.padding(end = 10.dp))
@@ -159,7 +150,10 @@ fun UgePokedexLogo(){
         Icon(
             painter = painterResource(id = R.drawable.icon_pkm_151),
             contentDescription = "Ball",
-            modifier = Modifier.scale(5f).height(60.dp).padding(horizontal = 10.dp),
+            modifier = Modifier
+                .scale(5f)
+                .height(60.dp)
+                .padding(horizontal = 10.dp),
             tint = Color.Unspecified,
         )
     }
