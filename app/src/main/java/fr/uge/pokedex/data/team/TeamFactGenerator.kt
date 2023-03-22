@@ -1,6 +1,6 @@
 package fr.uge.pokedex.data.team
 
-import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.utils.BaseStatHelper
 import fr.uge.pokedex.utils.BaseStatHelper.Companion.getStandardDeviation
 import fr.uge.pokedex.utils.BaseStatHelper.Companion.getTotal

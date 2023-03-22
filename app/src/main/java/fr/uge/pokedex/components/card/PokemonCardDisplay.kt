@@ -8,7 +8,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.R
 import fr.uge.pokedex.components.list.PokemonBoxDisplay
-import fr.uge.pokedex.data.pokedex.*
+import fr.uge.pokedex.data.pokedex.PokedexStorageService
+import fr.uge.pokedex.data.pokedex.pokemon.*
 import fr.uge.pokedex.data.user.Favorite
 
 @Preview
@@ -26,31 +27,10 @@ fun PokemonCardDisplay(
         captureRate = 45,
         hatchCounter = 20,
         abilities = Abilities(
-            first = Ability(
-                id = 1,
-                name = "Overgrow",
-                flavorText = "Overgrow increases the power of Grass-type moves by 50% (1.5×) when " +
-                        "the ability-bearer's HP falls below a third of its maximum (known " +
-                        "in-game as in a pinch)."
-            ),
-            hidden = Ability(
-                id = 2,
-                name = "Chlorophyll",
-                flavorText = "Chlorophyll doubles the ability-bearer's Speed during bright sunshine."
-            )
+            idFirst = 1,
+            hiddenId = 2
         ),
-        evolutionChain = EvolutionChain(
-            evolutions = mutableListOf(
-                Evolution(
-                    species = Pokemon(1, "bulbasaur", icon = R.drawable.icon_pkm_1, sprite = R.drawable.pokemon_1),
-                    evolvedSpecies = Pokemon(2, "ivysaur", icon = R.drawable.icon_pkm_2, sprite = R.drawable.pokemon_2),
-                ),
-                Evolution(
-                    species = Pokemon(2, "ivysaur", icon = R.drawable.icon_pkm_2, sprite = R.drawable.pokemon_2),
-                    evolvedSpecies = Pokemon(3, "venusaur", icon = R.drawable.icon_pkm_3, sprite = R.drawable.pokemon_3),
-                )
-            )
-        ),
+        evolutionChainId = 1,
         identifier = "bulbasaur",
         name = "Bulbasaur",
         pokedexEntries = hashMapOf(
@@ -92,8 +72,11 @@ fun PokemonCardDisplay(
         item {
             PokemonAbilities(pokemon.abilities)
         }
-        item {
-            EvolutionChainDisplay(pokemon.evolutionChain)
+        if(pokemon.evolutionChainId != null) {
+            item {
+                EvolutionChainDisplay(PokedexStorageService
+                    .getEvolutionChain(pokemon.evolutionChainId!!)!!)
+            }
         }
         item {
             BaseStatsDisplay(pokemon.baseStats)

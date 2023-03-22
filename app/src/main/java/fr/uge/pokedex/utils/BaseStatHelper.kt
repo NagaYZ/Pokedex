@@ -1,7 +1,7 @@
 package fr.uge.pokedex.utils
 
-import fr.uge.pokedex.data.pokedex.BaseStats
-import fr.uge.pokedex.data.pokedex.Stat
+import fr.uge.pokedex.data.pokedex.pokemon.BaseStats
+import fr.uge.pokedex.data.pokedex.pokemon.Stat
 import kotlin.math.pow
 import kotlin.math.sqrt
 

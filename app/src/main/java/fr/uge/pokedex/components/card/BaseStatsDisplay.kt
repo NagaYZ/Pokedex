@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import fr.uge.pokedex.data.pokedex.BaseStats
+import fr.uge.pokedex.data.pokedex.pokemon.BaseStats
 import fr.uge.pokedex.utils.BaseStatHelper.Companion.getAsList
 import fr.uge.pokedex.utils.BaseStatHelper.Companion.getTotal
 

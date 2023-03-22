@@ -16,10 +16,9 @@ import fr.uge.pokedex.components.team.DisplayTeams
 import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.components.card.PokemonCardDisplay
 import fr.uge.pokedex.components.profile.ProfilesScreen
-import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.user.Favorite
 import fr.uge.pokedex.data.user.PokedexAppDatabase
-import fr.uge.pokedex.data.user.Profile
 import kotlinx.coroutines.runBlocking
 
 
@@ -86,7 +85,7 @@ fun NavigationGraph(
                 mutableStateOf(pokemonMap[it.arguments?.getLong("pokemonId")]!!)
             }
 
-            var favoriteList = runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }
+            val favoriteList = runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }
 
             PokemonCardDisplay(
                 pokemon,

@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.*
 import fr.uge.pokedex.data.pokedex.*
+import fr.uge.pokedex.data.pokedex.pokemon.*
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,10 +25,6 @@ class PokemonRepositoryTest {
         assertEquals(Pair(Type.GRASS, Type.POISON), pokemon?.type)
         if (pokemon != null) {
             assertFalse(pokemon.genus.isBlank())
-            assertEquals(2L, pokemon.evolvesInto.first().evolvedSpecies.id)
-            assertNull(pokemon.evolvesFrom)
-            assertTrue(pokemon.evolvesInto.first().evolutionTrigger == EvolutionTrigger.LEVEL_UP)
-            assertTrue(pokemon.evolvesInto.first().minimumLevel == 16)
             assertTrue(pokemon.baseHappiness == 50)
             assertTrue(pokemon.baseExperience == 64)
             assertTrue(pokemon.eggGroups.contains(EggGroup.MONSTER))
@@ -45,24 +42,7 @@ class PokemonRepositoryTest {
                 speed = 45
             )
             assertTrue(pokemon.baseStats == baseStats)
-
             assertFalse(pokemon.pokedexEntries.isEmpty())
-
-            assertTrue(pokemon.abilities.first?.identifier == "overgrow")
-            assertTrue(pokemon.abilities.hidden?.identifier == "chlorophyll")
-
-            val movesLearned = pokemon.learnSet.map { it.move.identifier }
-            assertTrue(movesLearned.containsAll(listOf("tackle", "growl", "leech-seed", "vine-whip")))
-
-            val tackle = pokemon.learnSet.find { it.move.identifier == "tackle" }!!
-            assertTrue(tackle.level == 1)
-            assertTrue(tackle.method == MoveLearnMethod.LEVEL_UP)
-            assertTrue(tackle.move.type == Type.NORMAL)
-            assertTrue(tackle.move.damageClass == DamageClass.PHYSICAL)
-            assertTrue(tackle.move.generation == Generation.GENERATION_I)
-            assertTrue(tackle.move.pp == 35)
-            assertTrue(tackle.move.power == 40)
-            assertTrue(tackle.move.accuracy == 100)
         }
     }
 

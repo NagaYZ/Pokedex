@@ -13,8 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.components.list.PokemonIcon
-import fr.uge.pokedex.data.pokedex.Evolution
-import fr.uge.pokedex.data.pokedex.EvolutionTrigger
+import fr.uge.pokedex.data.pokedex.PokedexStorageService
+import fr.uge.pokedex.data.pokedex.evolution.Evolution
+import fr.uge.pokedex.data.pokedex.evolution.EvolutionTrigger
 
 @Composable
 fun EvolutionDisplay(evolution: Evolution) {
@@ -39,7 +40,8 @@ fun EvolutionDisplay(evolution: Evolution) {
                 .fillMaxWidth()
         ) {
             PokemonIcon(
-                iconResource = evolution.species.icon,
+                iconResource = PokedexStorageService
+                    .getPokemon(evolution.speciesId)?.icon!!,
                 modifier = Modifier.size(60.dp)
             )
             Icon(
@@ -48,7 +50,8 @@ fun EvolutionDisplay(evolution: Evolution) {
                 tint = Color.LightGray
             )
             PokemonIcon(
-                iconResource = evolution.evolvedSpecies.icon,
+                iconResource = PokedexStorageService
+                    .getPokemon(evolution.evolvesFromSpeciesId)?.icon!!,
                 modifier = Modifier.size(60.dp)
             )
         }

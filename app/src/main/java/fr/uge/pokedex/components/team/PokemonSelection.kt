@@ -18,7 +18,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.components.search.FilterBar
-import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.theme.Purple200
 
