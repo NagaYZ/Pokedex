@@ -14,17 +14,17 @@ import fr.uge.pokedex.data.pokedex.pokemon.PokemonRepository
 
 object PokedexStorageService {
     private lateinit var pokemonRepository: PokemonRepository
-    private lateinit var moveRepository: MoveRepository
     private lateinit var abilityRepository: AbilityRepository
-    private lateinit var locationRepository: LocationRepository
     private lateinit var evolutionChainRepository: EvolutionChainRepository
+    private lateinit var locationRepository: LocationRepository
+    private lateinit var moveRepository: MoveRepository
 
     fun load(context: Context) {
         this.pokemonRepository = PokemonRepository(context)
-        this.moveRepository = MoveRepository(context)
         this.abilityRepository = AbilityRepository(context)
-        this.locationRepository = LocationRepository(context)
         this.evolutionChainRepository = EvolutionChainRepository(context)
+//        this.moveRepository = MoveRepository(context)
+//        this.locationRepository = LocationRepository(context)
     }
 
     fun getPokemon(id: Long): Pokemon? {
