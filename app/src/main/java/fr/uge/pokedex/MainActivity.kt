@@ -9,6 +9,9 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -51,16 +54,30 @@ class MainActivity : ComponentActivity() {
                     val currentRoute = currentBackStackEntry?.destination?.route
                     var currentProfileId by rememberSaveable { mutableStateOf(-1L) }
 
+                    var showBars by rememberSaveable { mutableStateOf(false) }
+
+                    LaunchedEffect(key1 = currentRoute){
+                        showBars = currentRoute != Route.Profiles.path
+                    }
+
                     Scaffold(bottomBar = {
-                        if (currentRoute != Route.Profiles.path) BottomNavigationMenu(
-                            navController
-                        )
+                        AnimatedVisibility(
+                            enter = slideInVertically(initialOffsetY = { it }),
+                            exit = slideOutVertically(targetOffsetY = { it }),
+                            visible = showBars,
+                        ){
+                            BottomNavigationMenu(navController)
+                        }
                     },
                         topBar = {
-                            if (currentRoute != Route.Profiles.path) TopBar(
-                                navController,
-                                currentProfileId
-                            )
+                            AnimatedVisibility(
+                                enter = slideInVertically(initialOffsetY = { -it }),
+                                exit = slideOutVertically(targetOffsetY = { -it }),
+                                visible = showBars,
+                            ){
+                                TopBar(navController, currentProfileId)
+                            }
+
                         }) {
                         it
                         NavigationGraph(
