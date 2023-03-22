@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.IBinder
+import fr.uge.pokedex.R
 
 class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener {
     private lateinit var mediaPlayer: MediaPlayer
@@ -14,7 +15,7 @@ class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener {
 
     override fun onCreate() {
         super.onCreate()
-        mediaPlayer = MediaPlayer.create(this, 0)
+        mediaPlayer = MediaPlayer.create(this, R.raw.music_pokemon_lobby)
         mediaPlayer.setOnPreparedListener(this)
         mediaPlayer.prepareAsync()
     }
