@@ -11,17 +11,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import fr.uge.pokedex.components.pokedex.PokedexDisplay
-import fr.uge.pokedex.components.team.DisplayTeams
-import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.components.card.PokemonCardDisplay
+import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.components.profile.ProfilesScreen
+import fr.uge.pokedex.components.search.FilterBar
+import fr.uge.pokedex.components.team.DisplayTeams
 import fr.uge.pokedex.data.pokedex.PokedexStorageService
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.user.Favorite
 import fr.uge.pokedex.data.user.PokedexAppDatabase
+import fr.uge.pokedex.service.PokemonMusicService
 import kotlinx.coroutines.runBlocking
-
 
 sealed class Route(val title: String, val path: String) {
     object Pokedex : Route("Pokedex", "pokedex")
@@ -39,6 +39,7 @@ fun NavigationGraph(
     navController: NavHostController,
     setCurrentProfile: (profileId: Long) -> Unit,
     profileId: Long,
+    pokemonMusicService: PokemonMusicService,
     pokemonMap: Map<Long, Pokemon> = PokedexStorageService.getPokemonData()
 ) {
     val context = LocalContext.current
@@ -151,7 +152,7 @@ fun NavigationGraph(
 
         composable(route = Route.Profiles.path){
             //Call profiles composable
-            ProfilesScreen(navController, setCurrentProfile)
+            ProfilesScreen(navController, setCurrentProfile, pokemonMusicService)
         }
     }
 }

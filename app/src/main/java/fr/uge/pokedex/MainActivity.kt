@@ -8,8 +8,6 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -39,13 +37,51 @@ class MainActivity : ComponentActivity() {
     private lateinit var pokemonMusicService: PokemonMusicService
     private var serviceBound: Boolean = false
 
+    override fun onStart() {
+        super.onStart()
+        // Bind to the service.
+        Intent(this, PokemonMusicService::class.java).also { intent ->
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PokedexStorageService.load(applicationContext)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val binder: PokemonMusicService.LocalBinder = service as PokemonMusicService.LocalBinder
+            pokemonMusicService = binder.getService()
+            serviceBound = true
+            setContent {
+                PokedexTheme {
+                    PokedexApp(pokemonMusicService)
+                }
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            serviceBound = false
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Unbind from the service.
+        if (serviceBound) {
+            unbindService(serviceConnection)
+            serviceBound = false
+        }
+    }
+
+    @Composable
+    fun PokedexApp(pokemonMusicService: PokemonMusicService) {
 
         val receiver = PokedexReceiver()
-        val intentFilter=
+        val intentFilter =
             IntentFilter()
 
         intentFilter.apply {
@@ -57,80 +93,48 @@ class MainActivity : ComponentActivity() {
         }
 
         registerReceiver(receiver, intentFilter)
-        // Start the Pokemon music service
-        val intent = Intent(this, PokemonMusicService::class.java)
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        Toast.makeText(this, "music start", LENGTH_SHORT).show()
+        val navController: NavHostController = rememberNavController()
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            val currentBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = currentBackStackEntry?.destination?.route
+            var currentProfileId by rememberSaveable { mutableStateOf(-1L) }
 
-        setContent {
-            PokedexTheme {
-                val navController: NavHostController = rememberNavController()
+            var showBars by rememberSaveable { mutableStateOf(false) }
 
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+            LaunchedEffect(key1 = currentRoute) {
+                showBars = currentRoute != Route.Profiles.path
+            }
+
+            Scaffold(bottomBar = {
+                AnimatedVisibility(
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it }),
+                    visible = showBars,
                 ) {
-                    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = currentBackStackEntry?.destination?.route
-                    var currentProfileId by rememberSaveable { mutableStateOf(-1L) }
-
-                    var showBars by rememberSaveable { mutableStateOf(false) }
-
-                    LaunchedEffect(key1 = currentRoute){
-                        showBars = currentRoute != Route.Profiles.path
-                    }
-
-                    Scaffold(bottomBar = {
-                        AnimatedVisibility(
-                            enter = slideInVertically(initialOffsetY = { it }),
-                            exit = slideOutVertically(targetOffsetY = { it }),
-                            visible = showBars,
-                        ){
-                            BottomNavigationMenu(navController)
-                        }
-                    },
-                        topBar = {
-                            AnimatedVisibility(
-                                enter = slideInVertically(initialOffsetY = { -it }),
-                                exit = slideOutVertically(targetOffsetY = { -it }),
-                                visible = showBars,
-                            ){
-                                TopBar(navController, currentProfileId)
-                            }
-
-                        }) {
-                        it
-                        NavigationGraph(
-                            applicationContext = applicationContext,
-                            navController = navController,
-                            setCurrentProfile = { profileId: Long -> currentProfileId = profileId },
-                            profileId = currentProfileId,
-                        )
-                    }
+                    BottomNavigationMenu(navController)
                 }
+            },
+                topBar = {
+                    AnimatedVisibility(
+                        enter = slideInVertically(initialOffsetY = { -it }),
+                        exit = slideOutVertically(targetOffsetY = { -it }),
+                        visible = showBars,
+                    ) {
+                        TopBar(navController, currentProfileId)
+                    }
+
+                }) {
+                it
+                NavigationGraph(
+                    applicationContext = applicationContext,
+                    navController = navController,
+                    setCurrentProfile = { profileId: Long -> currentProfileId = profileId },
+                    profileId = currentProfileId
+                )
             }
         }
     }
-
-    //Binding this Client to the AudioPlayer Service
-    private val serviceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            val binder: PokemonMusicService.LocalBinder = service as PokemonMusicService.LocalBinder
-            pokemonMusicService = binder.getService()
-            serviceBound = true
-            Toast.makeText(this@MainActivity, "Service Bound", LENGTH_SHORT).show()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            serviceBound = false
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(serviceConnection)
-        serviceBound = false
-    }
-
 }
