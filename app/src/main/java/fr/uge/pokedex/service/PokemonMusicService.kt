@@ -26,13 +26,6 @@ class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val action = intent.action
-        if (action.equals("resume")) {
-            mediaPlayer.start()
-        }
-        if (action.equals("pause")) {
-            mediaPlayer.pause()
-        }
         return START_STICKY
     }
 

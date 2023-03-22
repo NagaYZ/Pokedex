@@ -1,7 +1,7 @@
 package fr.uge.pokedex
 
-
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.IntentFilter
@@ -58,10 +58,9 @@ class MainActivity : ComponentActivity() {
 
         registerReceiver(receiver, intentFilter)
         // Start the Pokemon music service
-        Intent(this, PokemonMusicService::class.java).also { intent ->
-            startService(intent)
-            Toast.makeText(this, "music start", LENGTH_SHORT).show()
-        }
+        val intent = Intent(this, PokemonMusicService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        Toast.makeText(this, "music start", LENGTH_SHORT).show()
 
         setContent {
             PokedexTheme {
@@ -109,7 +108,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-
             }
         }
     }
@@ -127,6 +125,12 @@ class MainActivity : ComponentActivity() {
         override fun onServiceDisconnected(name: ComponentName) {
             serviceBound = false
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(serviceConnection)
+        serviceBound = false
     }
 
 }

@@ -1,6 +1,5 @@
 package fr.uge.pokedex.components.profile
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,10 +18,15 @@ import androidx.navigation.NavHostController
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.service.MusicButton
+import fr.uge.pokedex.service.PokemonMusicService
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun TopBar(navController: NavHostController, currentProfileId: Long, intent: Intent) {
+fun TopBar(
+    navController: NavHostController,
+    currentProfileId: Long,
+    pokemonMusicService: PokemonMusicService
+) {
     val context = LocalContext.current
     val profile = runBlocking {
         PokedexAppDatabase.getConnection(context).profileDao().getProfile(currentProfileId)
@@ -66,7 +70,7 @@ fun TopBar(navController: NavHostController, currentProfileId: Long, intent: Int
             horizontalAlignment = Alignment.End,
             modifier = Modifier.weight(1f)
         ) {
-            MusicButton(context = context, intent = intent)
+            MusicButton(pokemonMusicService)
         }
     }
 }
