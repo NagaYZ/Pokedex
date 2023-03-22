@@ -26,11 +26,12 @@ fun PokedexDisplay(
     sizeGrid: Int = 1,
     pokemonList: List<Pokemon>,
     profile: Profile,
+    favoriteList: List<Favorite>,
     clickFavorite : (Long, Favorite?) -> Unit,
     onClick: (Long) -> Unit
 )  {
-    val context = LocalContext.current
-    var favoriteList = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profile.getId()).favorites }
+//    val context = LocalContext.current
+//    var favoriteList = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profile.getId()).favorites }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(sizeGrid),

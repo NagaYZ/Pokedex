@@ -3,7 +3,6 @@ package fr.uge.pokedex.components.navigation
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +47,7 @@ fun NavigationGraph(
 
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
-
+            var favoriteList by remember{ mutableStateOf(runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }) }
             var filteredPokemons by remember { mutableStateOf(mutableListOf<Pokemon>()) }
 
             Column() {
@@ -59,11 +58,17 @@ fun NavigationGraph(
 
                 PokedexDisplay(pokemonList = filteredPokemons,
                     profile = profile,
+                    favoriteList = favoriteList,
                     clickFavorite = { pokemonId, favorite ->
-                        if(favorite != null)
+                        if(favorite != null){
                             runBlocking { PokedexAppDatabase.getConnection(context).favoriteDao().deleteFavorite(favorite) }
-                        else
-                            runBlocking { PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(Favorite(pokemonId, profile.getId())) }
+                        }
+                        else{
+                            runBlocking {
+                                PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
+                                favoriteList = runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }
+                            }
+                        }
                     },
                     onClick = { pokemonId ->
                         navController.navigate("card/$pokemonId")
@@ -97,10 +102,10 @@ fun NavigationGraph(
         }
         composable(route = Route.Favorite.path) {
             //Call favorite composable
-            var favoriteList = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profile.getId()).favorites }
-            val favorites = favoriteList
+            var favoriteList by remember{ mutableStateOf(runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }) }
+//            val favorites = favoriteList
 
-            val favoritesPokemon = favorites.map { favorite -> pokemonMap.get(favorite.getPokemonId())!! }.toList()
+            val favoritesPokemon = favoriteList.map { favorite -> pokemonMap.get(favorite.getPokemonId())!! }.toList()
 
             var filteredPokemons by remember {
                 mutableStateOf(mutableListOf<Pokemon>())
@@ -115,11 +120,17 @@ fun NavigationGraph(
                     sizeGrid = 1,
                     pokemonList = filteredPokemons,
                     profile = profile,
+                    favoriteList = favoriteList,
                     clickFavorite = { pokemonId, favorite ->
-                        if(favorite != null)
+                        if(favorite != null){
                             runBlocking {PokedexAppDatabase.getConnection(context).favoriteDao().deleteFavorite(favorite)}
-                        else
-                            runBlocking {PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))}
+                        }
+                        else{
+                            runBlocking {
+                                PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(Favorite(pokemonId, profile.getId()))
+                                favoriteList = runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }
+                            }
+                        }
                     },
                     onClick = { pokemonId ->
                         navController.navigate("card/$pokemonId")
