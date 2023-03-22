@@ -8,7 +8,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import fr.uge.pokedex.data.pokedex.Abilities
+import fr.uge.pokedex.data.pokedex.PokedexStorageService
+import fr.uge.pokedex.data.pokedex.pokemon.Abilities
 
 @Composable
 fun PokemonAbilities(abilities: Abilities) {
@@ -17,14 +18,26 @@ fun PokemonAbilities(abilities: Abilities) {
     ) {
         Text(text = "Abilities", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold)
         Divider()
-        TextDisplay(title = abilities.first!!.name, content = abilities.first!!.flavorText)
+        val firstAbility = PokedexStorageService.getAbility(abilities.idFirst!!)!!
+        TextDisplay(
+            title = firstAbility.name,
+            content = firstAbility.flavorText
+        )
         Divider()
-        if (abilities.second != null) {
-            TextDisplay(title = abilities.second!!.name, content = abilities.second!!.flavorText)
+        if (abilities.idSecond != null) {
+            val secondAbility = PokedexStorageService.getAbility(abilities.idFirst!!)!!
+            TextDisplay(
+                title = secondAbility.name,
+                content = secondAbility.flavorText
+            )
             Divider()
         }
-        if (abilities.hidden != null) {
-            TextDisplay(title = abilities.hidden!!.name, content = abilities.hidden!!.flavorText)
+        if (abilities.hiddenId != null) {
+            val hiddenAbility = PokedexStorageService.getAbility(abilities.hiddenId!!)!!
+            TextDisplay(
+                title = hiddenAbility.name,
+                content = hiddenAbility.flavorText
+            )
             Divider()
         }
     }

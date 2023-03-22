@@ -11,9 +11,10 @@ import org.junit.Assert.*
 class DatabaseTests {
 
     @Test
-    fun addProfile(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
+    suspend fun addProfile(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        var connection = PokedexAppDatabase.getConnection(context)
+        val profileDao : ProfileDao = connection.profileDao()
         profileDao.deleteAllProfiles()
 
         profileDao.addProfile(Profile("Mat"))
@@ -21,9 +22,10 @@ class DatabaseTests {
     }
 
     @Test
-    fun deleteProfile(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
+    suspend fun deleteProfile(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val profileDao : ProfileDao = connection.profileDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -32,9 +34,11 @@ class DatabaseTests {
     }
 
     @Test
-    fun updateProfile(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
+    suspend fun updateProfile(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+
+        val profileDao : ProfileDao = connection.profileDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -47,10 +51,11 @@ class DatabaseTests {
     }
 
     @Test
-    fun addFavoriteToProfile(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-        val favoriteDao : FavoriteDao = PokedexAppDatabaseConnection.connection.favoriteDao()
+    suspend fun addFavoriteToProfile(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val profileDao : ProfileDao = connection.profileDao()
+        val favoriteDao : FavoriteDao = connection.favoriteDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -63,10 +68,11 @@ class DatabaseTests {
     }
 
     @Test
-    fun removeFavoriteFromProfile(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-        val favoriteDao : FavoriteDao = PokedexAppDatabaseConnection.connection.favoriteDao()
+    suspend fun removeFavoriteFromProfile(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val profileDao : ProfileDao = connection.profileDao()
+        val favoriteDao : FavoriteDao = connection.favoriteDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -83,10 +89,11 @@ class DatabaseTests {
     }
 
     @Test
-    fun addTeam(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val teamDao : TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
+    suspend fun addTeam(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val teamDao : TeamDao = connection.teamDao()
+        val profileDao : ProfileDao = connection.profileDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -96,11 +103,12 @@ class DatabaseTests {
     }
 
     @Test
-    fun addMembersToTeam(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val teamDao : TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-        val teamMemberDao : TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
+    suspend fun addMembersToTeam(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val teamDao : TeamDao = connection.teamDao()
+        val profileDao : ProfileDao = connection.profileDao()
+        val teamMemberDao : TeamMemberDao = connection.teamMemberDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -116,11 +124,12 @@ class DatabaseTests {
     }
 
     @Test
-    fun removeMembersFromTeam(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val teamDao : TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-        val teamMemberDao : TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
+    suspend fun removeMembersFromTeam(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val teamDao : TeamDao = connection.teamDao()
+        val profileDao : ProfileDao = connection.profileDao()
+        val teamMemberDao : TeamMemberDao = connection.teamMemberDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -140,11 +149,12 @@ class DatabaseTests {
     }
 
     @Test
-    fun deleteTeamWithMembers(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val teamDao : TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-        val teamMemberDao : TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
+    suspend fun deleteTeamWithMembers(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val teamDao : TeamDao = connection.teamDao()
+        val profileDao : ProfileDao = connection.profileDao()
+        val teamMemberDao : TeamMemberDao = connection.teamMemberDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))
@@ -164,11 +174,12 @@ class DatabaseTests {
     }
 
     @Test
-    fun getProfileWithTeam(){
-        PokedexAppDatabaseConnection.initialise(InstrumentationRegistry.getInstrumentation().targetContext)
-        val teamDao : TeamDao = PokedexAppDatabaseConnection.connection.teamDao()
-        val profileDao : ProfileDao = PokedexAppDatabaseConnection.connection.profileDao()
-        val teamMemberDao : TeamMemberDao = PokedexAppDatabaseConnection.connection.teamMemberDao()
+    suspend fun getProfileWithTeam() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val connection = PokedexAppDatabase.getConnection(context)
+        val teamDao : TeamDao = connection.teamDao()
+        val profileDao : ProfileDao = connection.profileDao()
+        val teamMemberDao : TeamMemberDao = connection.teamMemberDao()
         profileDao.deleteAllProfiles()
 
         val profileMatId:Long = profileDao.addProfile(Profile("Mat"))

@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.components.list.PokemonBoxTitle
 import fr.uge.pokedex.components.list.PokemonIcon
 import fr.uge.pokedex.components.list.PokemonTypeDisplay
-import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 
 @Composable
 fun DisplaySelectedPokemon(

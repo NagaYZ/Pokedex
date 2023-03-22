@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.R
-import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 
 @Composable
 fun PokemonCharacteristics(pokemon: Pokemon) {
