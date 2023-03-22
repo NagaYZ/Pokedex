@@ -17,10 +17,19 @@ class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener {
         super.onCreate()
         mediaPlayer = MediaPlayer.create(this, R.raw.music_pokemon_lobby)
         mediaPlayer.setOnPreparedListener(this)
-        mediaPlayer.prepareAsync()
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
         mediaPlayer.start()
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.stop()
+        mediaPlayer.release()
     }
 }
