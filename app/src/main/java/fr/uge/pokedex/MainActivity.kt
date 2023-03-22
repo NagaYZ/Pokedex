@@ -17,7 +17,6 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -26,8 +25,6 @@ import fr.uge.pokedex.components.navigation.BottomNavigationMenu
 import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.components.profile.TopBar
-import fr.uge.pokedex.data.pokedex.Pokemon
-import fr.uge.pokedex.data.pokedex.PokemonRepository
 import fr.uge.pokedex.data.pokedex.PokedexStorageService
 import fr.uge.pokedex.service.PokemonMusicService
 import fr.uge.pokedex.theme.PokedexTheme
