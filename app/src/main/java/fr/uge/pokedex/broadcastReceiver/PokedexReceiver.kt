@@ -1,4 +1,4 @@
-package fr.uge.pokedex.bluetooth
+package fr.uge.pokedex.broadcastReceiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
