@@ -31,8 +31,9 @@ fun FavoriteButton(pokemonId:Long, favorite: Favorite?, onClick: (Long, Favorite
 
                 if(isClicked) {
                     onClick.invoke(pokemonId, null)
-
-
+                    val intent = Intent("favoriteAdded")
+                    intent.putExtra("message", "favorite add")
+                    context.sendBroadcast(intent)
                 }
                 else {
                     onClick.invoke(pokemonId, favorite)

@@ -15,8 +15,6 @@ class PokedexReceiver : BroadcastReceiver() {
 
     fun PokedexReceiver() {}
 
-
-
     override fun onReceive(context: Context?, intent: Intent?) {
 
             val message: String? = intent?.getStringExtra("message")
@@ -25,26 +23,4 @@ class PokedexReceiver : BroadcastReceiver() {
                 Log.d("TAG", message)
             }
     }
-
-
-
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    val recepteur = PokedexReceiver()
-    val intentFilter= IntentFilter()
-
-    intentFilter.addAction("teamCreated")
-    intentFilter.addAction("teamDeleted")
-    intentFilter.addAction("favoriteAdded")
-    intentFilter.addAction("favoriteDeleted")
-    val intent = Intent("teamCreated")
-    intent.putExtra("message", "equipe faites")
-    LocalContext.current.sendBroadcast(intent)
-    LocalContext.current.registerReceiver(recepteur, intentFilter)
-
-    recepteur.onReceive(context = LocalContext.current, intent = intent)
 }
