@@ -1,8 +1,11 @@
 package fr.uge.pokedex
 
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -21,6 +24,7 @@ import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.components.profile.TopBar
 import fr.uge.pokedex.data.pokedex.PokedexStorageService
+import fr.uge.pokedex.service.PokemonMusicService
 import fr.uge.pokedex.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,6 +32,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PokedexStorageService.load(applicationContext)
+
+        // Start the Pokemon music service
+        Intent(this, PokemonMusicService::class.java).also { intent ->
+            startService(intent)
+            Toast.makeText(this, "music start", LENGTH_SHORT).show()
+        }
 
         setContent {
             PokedexTheme {
@@ -65,4 +75,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }

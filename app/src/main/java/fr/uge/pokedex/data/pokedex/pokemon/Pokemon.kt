@@ -24,6 +24,7 @@ data class Pokemon(
     val abilities: Abilities = Abilities(),
     val learnSet: MutableSet<LearnableMove> = mutableSetOf()
 ) {
+
     fun getWeaknesses(): Set<Type> {
         val weaknessFirst = type.first.isVulnerableTo.subtract(type.second.isResistantTo)
         val weaknessSecond = type.second.isVulnerableTo.subtract(type.first.isResistantTo)
