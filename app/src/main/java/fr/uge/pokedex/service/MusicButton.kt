@@ -7,15 +7,15 @@ import androidx.compose.ui.res.painterResource
 import fr.uge.pokedex.R
 
 @Composable
-fun MusicButton(musicService: PokemonMusicService?) {
+fun MusicButton(musicService: PokemonMusicService) {
     var isPlaying by remember { mutableStateOf(true) }
 
     Button(
         onClick = {
             if (isPlaying) {
-                musicService!!.getMediaPlayer().pause()
+                musicService.getMediaPlayer().pause()
             } else {
-                musicService!!.getMediaPlayer().start()
+                musicService.getMediaPlayer().start()
             }
             isPlaying = !isPlaying
         }

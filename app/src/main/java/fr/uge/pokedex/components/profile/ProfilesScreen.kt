@@ -37,7 +37,7 @@ fun ProfilesScreen(
 
     var showNewProfileDialog by remember { mutableStateOf(false) }
     var showEditProfileDialog by remember { mutableStateOf(false) }
-    var profilesList by remember { mutableStateOf(runBlocking {profileDao.getAllProfiles()}) }
+    var profilesList by remember { mutableStateOf(runBlocking { profileDao.getAllProfiles() }) }
 
     var profileByRememberToEdit: Profile by remember { mutableStateOf(Profile("")) }
 
@@ -101,14 +101,18 @@ fun ProfilesScreen(
 
                 Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
 
-                LazyColumn(modifier = Modifier
-                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top){
-                    items(items = profilesList, key = {it.getId()}){profile ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    items(items = profilesList, key = { it.getId() }) { profile ->
 
                         ProfileItem(profile = profile, navController = navController,
                             onDeleteProfile = { profileToDelete: Profile ->
-                                runBlocking {profileDao.deleteProfile(profileToDelete)}
-                                profilesList = runBlocking {profileDao.getAllProfiles()}
+                                runBlocking { profileDao.deleteProfile(profileToDelete) }
+                                profilesList = runBlocking { profileDao.getAllProfiles() }
                             }, onEditProfile = { profileToEdit: Profile ->
                                 profileByRememberToEdit = profileToEdit
                                 showEditProfileDialog = true
@@ -141,7 +145,9 @@ fun ProfilesScreen(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.Start
         ) {
-            MusicButton(musicService = pokemonMusicService)
+            Box(modifier = Modifier.padding(20.dp)) {
+                MusicButton(musicService = pokemonMusicService)
+            }
         }
     }
 
@@ -150,8 +156,8 @@ fun ProfilesScreen(
         show = showNewProfileDialog,
         close = { showNewProfileDialog = false },
         onProfileNameAccept = { profileName ->
-            runBlocking {profileDao.addProfile(Profile(profileName))}
-            profilesList = runBlocking {profileDao.getAllProfiles()}
+            runBlocking { profileDao.addProfile(Profile(profileName)) }
+            profilesList = runBlocking { profileDao.getAllProfiles() }
         })
 
     //Dialog when the user needs to edit a profile
@@ -160,15 +166,14 @@ fun ProfilesScreen(
         close = { showEditProfileDialog = false },
         onProfileNameAccept = { profileName ->
             profileByRememberToEdit.setProfileName(profileName)
-            runBlocking {profileDao.updateProfile(profileByRememberToEdit)}
-            profilesList = runBlocking {profileDao.getAllProfiles()}
+            runBlocking { profileDao.updateProfile(profileByRememberToEdit) }
+            profilesList = runBlocking { profileDao.getAllProfiles() }
         })
 
 }
 
-
 @Composable
-fun UgePokedexLogo(){
+fun UgePokedexLogo() {
     Row() {
         Icon(
             painter = painterResource(id = R.drawable.icon_pkm_25),
@@ -180,7 +185,12 @@ fun UgePokedexLogo(){
             tint = Color.Unspecified
         )
         Spacer(Modifier.padding(end = 10.dp))
-        Text(text = "UGE Pokedex", style = MaterialTheme.typography.h3, color = MaterialTheme.colors.primary, fontWeight = FontWeight.ExtraBold)
+        Text(
+            text = "UGE Pokedex",
+            style = MaterialTheme.typography.h3,
+            color = MaterialTheme.colors.primary,
+            fontWeight = FontWeight.ExtraBold
+        )
         Spacer(Modifier.padding(start = 10.dp))
         Icon(
             painter = painterResource(id = R.drawable.icon_pkm_151),
