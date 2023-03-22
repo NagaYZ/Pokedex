@@ -1,6 +1,5 @@
 package fr.uge.pokedex.components.profile
 
-import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import fr.uge.pokedex.R
+import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import kotlinx.coroutines.runBlocking
 
@@ -95,9 +95,8 @@ fun ProfilesScreen(
                             onDeleteProfile = { profileToDelete: Profile ->
                                 runBlocking {profileDao.deleteProfile(profileToDelete)}
                                 profilesList = runBlocking {profileDao.getAllProfiles()}
-                                val intent = Intent("profileDeleted")
-                                intent.putExtra("message", "Profile Deleted")
-                                context.sendBroadcast(intent)
+                                PokedexReceiver.newIntent(context,"profileDeleted", "Profile Deleted")
+
                             }, onEditProfile = { profileToEdit: Profile ->
                                 profileByRememberToEdit = profileToEdit
                                 showEditProfileDialog = true
@@ -134,9 +133,7 @@ fun ProfilesScreen(
         onProfileNameAccept = { profileName ->
             runBlocking {profileDao.addProfile(Profile(profileName))}
             profilesList = runBlocking {profileDao.getAllProfiles()}
-            val intent = Intent("profileCreated")
-            intent.putExtra("message", "Profile Created")
-            context.sendBroadcast(intent)
+            PokedexReceiver.newIntent(context,"profileCreated", "Profile Created")
         })
 
     //Dialog when the user needs to edit a profile
@@ -147,9 +144,7 @@ fun ProfilesScreen(
             profileByRememberToEdit.setProfileName(profileName)
             runBlocking {profileDao.updateProfile(profileByRememberToEdit)}
             profilesList = runBlocking {profileDao.getAllProfiles()}
-            val intent = Intent("profileEdited")
-            intent.putExtra("message", "Profile Edited")
-            context.sendBroadcast(intent)
+            PokedexReceiver.newIntent(context,"profileEdited", "Profile Edited")
         })
 
 }
