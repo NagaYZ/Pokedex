@@ -95,43 +95,40 @@ fun SearchBar(applicationContext: Context, pokemonSearch: (String) -> Unit = {})
             .padding(5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.pok),
-            contentDescription = "Search",
-            modifier = Modifier
-                .scale(1f)
-                .height(30.dp)
-                .padding(horizontal = 10.dp),
-            tint = Color.Unspecified
-        )
-
         OutlinedTextField(
             modifier = Modifier
-                .padding(5.dp)
-                .width(280.dp),
+                .fillMaxWidth()
+                .padding(5.dp),
             value = search,
             onValueChange = { search = it },
-            placeholder = { Text("Search by name") }
+            placeholder = { Text("Search by name") },
+            leadingIcon = {
+                Icon( painter = painterResource(id = R.drawable.pok),
+                    contentDescription = "Search",
+                    modifier = Modifier
+                        .scale(1f)
+                        .height(30.dp)
+                        .padding(horizontal = 10.dp),
+                    tint = Color.Unspecified
+                )},
+            trailingIcon = {
+                Icon(painter = painterResource(id = R.drawable.mic),
+                    contentDescription = "Voice search",
+                    modifier = Modifier
+                        .scale(1f)
+                        .padding(horizontal = 10.dp)
+                        .clickable(
+                            onClick = {
+                                if(ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
+                                    textToSpeech.startListening(Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH))
+                                }else{
+                                    permissionDialog.launch(android.Manifest.permission.RECORD_AUDIO)
+                                }
+                            }
+                        ),
+                    tint = if(isSystemInDarkTheme()) Color.White else Color.Black
+                )}
         )
-
-        Icon(
-            painter = painterResource(id = R.drawable.mic),
-            contentDescription = "Voice search",
-            modifier = Modifier
-                .scale(2f)
-                .padding(horizontal = 10.dp)
-                .clickable(
-                    onClick = {
-                        if(ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
-                            textToSpeech.startListening(Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH))
-                        }else{
-                            permissionDialog.launch(android.Manifest.permission.RECORD_AUDIO)
-                        }
-                    }
-                ),
-            tint = if(isSystemInDarkTheme()) Color.White else Color.Black
-        )
-
         pokemonSearch(search)
     }
 

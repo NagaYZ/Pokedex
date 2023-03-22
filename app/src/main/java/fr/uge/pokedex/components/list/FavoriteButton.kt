@@ -1,6 +1,5 @@
 package fr.uge.pokedex.components.list
 
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ButtonDefaults
@@ -13,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.data.user.Favorite
 
 @Composable
@@ -30,15 +30,11 @@ fun FavoriteButton(pokemonId:Long, favorite: Favorite?, onClick: (Long, Favorite
 
                 if(isClicked) {
                     onClick.invoke(pokemonId, null)
-                    val intent = Intent("favoriteAdded")
-                    intent.putExtra("message", "Favorite Added")
-                    context.sendBroadcast(intent)
+                    PokedexReceiver.newIntent(context,"favoriteAdded", "Favorite Added")
                 }
                 else {
                     onClick.invoke(pokemonId, favorite)
-                    val intent = Intent("favoriteDeleted")
-                    intent.putExtra("message", "Favorite Deleted")
-                    context.sendBroadcast(intent)
+                    PokedexReceiver.newIntent(context,"favoriteDeleted", "Favorite Deleted")
                 }
             }
             ),

@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import fr.uge.pokedex.bluetooth.PokedexReceiver
+import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.components.navigation.BottomNavigationMenu
 import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
@@ -84,6 +84,9 @@ class MainActivity : ComponentActivity() {
             IntentFilter()
 
         intentFilter.apply {
+            addAction("profileCreated")
+            addAction("profileEdited")
+            addAction("profileDeleted")
             addAction("teamCreated")
             addAction("teamEdited")
             addAction("teamDeleted")

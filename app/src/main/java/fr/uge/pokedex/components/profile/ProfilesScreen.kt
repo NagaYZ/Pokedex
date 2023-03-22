@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.R
+import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.service.MusicButton
@@ -33,7 +34,8 @@ fun ProfilesScreen(
     audioState: Boolean
 ) {
 
-    val profileDao = PokedexAppDatabase.getConnection(LocalContext.current).profileDao()
+    val context = LocalContext.current
+    val profileDao = PokedexAppDatabase.getConnection(context).profileDao()
 
     var showNewProfileDialog by remember { mutableStateOf(false) }
     var showEditProfileDialog by remember { mutableStateOf(false) }
@@ -111,8 +113,10 @@ fun ProfilesScreen(
 
                         ProfileItem(profile = profile, navController = navController,
                             onDeleteProfile = { profileToDelete: Profile ->
-                                runBlocking { profileDao.deleteProfile(profileToDelete) }
-                                profilesList = runBlocking { profileDao.getAllProfiles() }
+                                runBlocking {profileDao.deleteProfile(profileToDelete)}
+                                profilesList = runBlocking {profileDao.getAllProfiles()}
+                                PokedexReceiver.newIntent(context,"profileDeleted", "Profile Deleted")
+
                             }, onEditProfile = { profileToEdit: Profile ->
                                 profileByRememberToEdit = profileToEdit
                                 showEditProfileDialog = true
@@ -156,8 +160,9 @@ fun ProfilesScreen(
         show = showNewProfileDialog,
         close = { showNewProfileDialog = false },
         onProfileNameAccept = { profileName ->
-            runBlocking { profileDao.addProfile(Profile(profileName)) }
-            profilesList = runBlocking { profileDao.getAllProfiles() }
+            runBlocking {profileDao.addProfile(Profile(profileName))}
+            profilesList = runBlocking {profileDao.getAllProfiles()}
+            PokedexReceiver.newIntent(context,"profileCreated", "Profile Created")
         })
 
     //Dialog when the user needs to edit a profile
@@ -166,8 +171,9 @@ fun ProfilesScreen(
         close = { showEditProfileDialog = false },
         onProfileNameAccept = { profileName ->
             profileByRememberToEdit.setProfileName(profileName)
-            runBlocking { profileDao.updateProfile(profileByRememberToEdit) }
-            profilesList = runBlocking { profileDao.getAllProfiles() }
+            runBlocking {profileDao.updateProfile(profileByRememberToEdit)}
+            profilesList = runBlocking {profileDao.getAllProfiles()}
+            PokedexReceiver.newIntent(context,"profileEdited", "Profile Edited")
         })
 
 }
