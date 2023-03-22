@@ -58,7 +58,6 @@ fun NavigationGraph(
                 }
 
                 PokedexDisplay(pokemonList = filteredPokemon,
-                    profile = profile,
                     favoriteList = favoriteList,
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null){
@@ -104,10 +103,7 @@ fun NavigationGraph(
         composable(route = Route.Favorite.path) {
             //Call favorite composable
             var favoriteList by remember{ mutableStateOf(runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }) }
-//            val favorites = favoriteList
-
             val favoritesPokemon = favoriteList.map { favorite -> pokemonMap.get(favorite.getPokemonId())!! }.toList()
-
             var filteredPokemons by remember {
                 mutableStateOf(mutableListOf<Pokemon>())
             }
@@ -120,7 +116,6 @@ fun NavigationGraph(
                 PokedexDisplay(
                     sizeGrid = 1,
                     pokemonList = filteredPokemons,
-                    profile = profile,
                     favoriteList = favoriteList,
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null){

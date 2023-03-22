@@ -19,8 +19,11 @@ import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
+import fr.uge.pokedex.data.user.Favorite
+import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.theme.Purple200
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun PokemonSelection(
@@ -65,13 +68,23 @@ fun PokemonSelection(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun PokemonSelectionDialog(pokemonList:List<Pokemon>, profile:Profile, dismiss:() -> Unit, onClick:(Long) -> Unit){
+fun PokemonSelectionDialog(pokemonList:List<Pokemon>, profile:Profile, dismiss:() -> Unit, onClick:(Long) -> Unit) {
     val context = LocalContext.current
-    Dialog(onDismissRequest = {dismiss.invoke()}, properties = DialogProperties(dismissOnBackPress = true, usePlatformDefaultWidth = false)) {
+    val run = runBlocking {
+        PokedexAppDatabase.getConnection(context).profileDao()
+            .getProfileWithFavorites(profile.getId()).favorites
+    }
+    var favoriteList by remember { mutableStateOf(run) }
+
+    Dialog(
+        onDismissRequest = { dismiss.invoke() },
+        properties = DialogProperties(dismissOnBackPress = true, usePlatformDefaultWidth = false)
+    ) {
         Column(
             Modifier
                 .background(MaterialTheme.colors.background)
-                .fillMaxSize()) {
+                .fillMaxSize()
+        ) {
 
             var filteredPokemons by remember {
                 mutableStateOf(mutableListOf<Pokemon>())
@@ -81,10 +94,23 @@ fun PokemonSelectionDialog(pokemonList:List<Pokemon>, profile:Profile, dismiss:(
             }, applicationContext = context)
 
             PokedexDisplay(pokemonList = filteredPokemons,
-                profile = profile,
-                favoriteList = listOf(),
-                clickFavorite = { _, _ ->  },
-                onClick = {pokemonId -> onClick.invoke(pokemonId)})
+                favoriteList = favoriteList,
+                clickFavorite = { pokemonId, favorite ->
+                    if (favorite != null) {
+                        runBlocking {
+                            PokedexAppDatabase.getConnection(context).favoriteDao()
+                                .deleteFavorite(favorite)
+                        }
+                    } else {
+                        runBlocking {
+                            PokedexAppDatabase.getConnection(context).favoriteDao().addFavorite(
+                                Favorite(pokemonId, profile.getId())
+                            )
+                            favoriteList = runBlocking { run }
+                        }
+                    }
+                },
+                onClick = { pokemonId -> onClick.invoke(pokemonId) })
         }
     }
 }

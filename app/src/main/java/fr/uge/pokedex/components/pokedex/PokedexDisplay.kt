@@ -6,27 +6,21 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Divider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fr.uge.pokedex.components.list.PokemonListDisplay
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.user.Favorite
-import fr.uge.pokedex.data.user.Profile
-
 
 @Composable
 fun PokedexDisplay(
     sizeGrid: Int = 1,
     pokemonList: List<Pokemon>,
-    profile: Profile,
     favoriteList: List<Favorite>,
     clickFavorite : (Long, Favorite?) -> Unit,
     onClick: (Long) -> Unit
 )  {
-//    val context = LocalContext.current
-//    var favoriteList = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profile.getId()).favorites }
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(sizeGrid),
         verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -34,7 +28,6 @@ fun PokedexDisplay(
         items(items = pokemonList, key = {it.id}) { pokemon ->
             PokemonListDisplay(pokemon = pokemon, onClick = {
                 onClick(pokemon.id)
-//                getPokemonId(pokemon.id)
             }, onClickFavorite = clickFavorite,
                 favoriteList = favoriteList)
             Divider(
