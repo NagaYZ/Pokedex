@@ -7,7 +7,8 @@ import android.os.Binder
 import android.os.IBinder
 import fr.uge.pokedex.R
 
-class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener {
+class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener,
+    MediaPlayer.OnCompletionListener {
     private lateinit var mediaPlayer: MediaPlayer
     private val binder: IBinder = LocalBinder()
 
@@ -19,6 +20,7 @@ class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener {
         super.onCreate()
         mediaPlayer = MediaPlayer.create(this, R.raw.music_pokemon_lobby)
         mediaPlayer.setOnPreparedListener(this)
+        mediaPlayer.setOnCompletionListener(this)
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
@@ -41,6 +43,10 @@ class PokemonMusicService : Service(), MediaPlayer.OnPreparedListener {
 
     inner class LocalBinder : Binder() {
         fun getService(): PokemonMusicService = this@PokemonMusicService
+    }
+
+    override fun onCompletion(p0: MediaPlayer?) {
+        mediaPlayer.start()
     }
 
 }
