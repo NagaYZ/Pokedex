@@ -19,16 +19,16 @@ class EvolutionChainParser(override val context: Context) : Parser<EvolutionChai
             val evolutionChainId = row["evolution_chain_id"]!!
 
             if(id.toInt() <= maxPokemonId) {
-                if (evolvesFromSpeciesId.isNotBlank()) {
-                    val evolution = Evolution(
-                        speciesId = id,
-                        evolvesFromSpeciesId = evolvesFromSpeciesId.toLong()
-                    )
-                    evolvesFrom[id] = evolution
-                    if(evolutionChainId.isNotBlank()) {
-                        val chainId = evolutionChainId.toLong()
-                        val evolutionChain = evolutionChains
-                            .getOrPut(evolutionChainId.toLong()) { EvolutionChain(chainId) }
+                if(evolutionChainId.isNotBlank()) {
+                    val evolutionChain = evolutionChains
+                        .getOrPut(evolutionChainId.toLong()) { EvolutionChain(evolutionChainId.toLong()) }
+
+                    if (evolvesFromSpeciesId.isNotBlank()) {
+                        val evolution = Evolution(
+                            speciesId = id,
+                            evolvesFromSpeciesId = evolvesFromSpeciesId.toLong()
+                        )
+                        evolvesFrom[id] = evolution
                         evolutionChain.evolutions.add(evolution)
                     }
                 }

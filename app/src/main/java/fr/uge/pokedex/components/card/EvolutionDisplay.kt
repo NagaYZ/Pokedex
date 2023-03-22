@@ -41,7 +41,7 @@ fun EvolutionDisplay(evolution: Evolution) {
         ) {
             PokemonIcon(
                 iconResource = PokedexStorageService
-                    .getPokemon(evolution.speciesId)?.icon!!,
+                    .getPokemon(evolution.evolvesFromSpeciesId)?.icon!!,
                 modifier = Modifier.size(60.dp)
             )
             Icon(
@@ -51,7 +51,7 @@ fun EvolutionDisplay(evolution: Evolution) {
             )
             PokemonIcon(
                 iconResource = PokedexStorageService
-                    .getPokemon(evolution.evolvesFromSpeciesId)?.icon!!,
+                    .getPokemon(evolution.speciesId)?.icon!!,
                 modifier = Modifier.size(60.dp)
             )
         }

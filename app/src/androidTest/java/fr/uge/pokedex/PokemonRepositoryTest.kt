@@ -47,6 +47,16 @@ class PokemonRepositoryTest {
     }
 
     @Test
+    fun testGetPokemon2() {
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val pokemonRepository =
+            PokemonRepository(appContext)
+
+        val pokemon = pokemonRepository.get(359)
+        println(pokemon?.evolutionChainId ?: "well")
+    }
+
+    @Test
     fun testGetAll() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         val pokemonRepository =
