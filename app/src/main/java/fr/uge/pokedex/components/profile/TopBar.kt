@@ -59,7 +59,7 @@ fun TopBar(
 
             ) {
             Text(
-                text = profile.getProfileName(),
+                text = if (profile != null) profile.getProfileName() else "",
                 style = MaterialTheme.typography.button,
                 modifier = Modifier.padding(12.dp),
                 color = Color.White

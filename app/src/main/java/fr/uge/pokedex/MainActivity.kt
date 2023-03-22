@@ -1,10 +1,6 @@
 package fr.uge.pokedex
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.content.IntentFilter
+import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
