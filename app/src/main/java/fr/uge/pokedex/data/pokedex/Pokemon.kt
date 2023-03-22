@@ -1,8 +1,5 @@
 package fr.uge.pokedex.data.pokedex
 
-import kotlin.collections.HashSet
-
-
 data class Pokemon(
     val id: Long,
     val identifier: String,
@@ -28,7 +25,7 @@ data class Pokemon(
     val baseStats: BaseStats = BaseStats(),
     val abilities: Abilities = Abilities(),
     val learnSet: MutableSet<LearnableMove> = HashSet()
-) {
+) : java.io.Serializable {
 
     fun getWeaknesses(): Set<Type> {
         val weaknessFirst = type.first.isVulnerableTo.subtract(type.second.isResistantTo)
