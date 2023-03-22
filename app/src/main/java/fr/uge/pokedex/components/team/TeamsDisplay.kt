@@ -123,7 +123,7 @@ fun DisplayTeams(
         delete = false
         //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
         val intent = Intent("teamDeleted")
-        intent.putExtra("message", "team delete")
+        intent.putExtra("message", "Team deleted")
         context.sendBroadcast(intent)
     }
 
@@ -134,9 +134,6 @@ fun DisplayTeams(
             teamId,
             edit,
         ) { showNewTeamDialog = false; edit = false }
-        val intent = Intent("teamAdded")
-        intent.putExtra("message", "team add")
-        context.sendBroadcast(intent)
     }
 
     if (showTeamCard) {
@@ -282,10 +279,16 @@ fun NewTeamDialog(
     if (createTeam) {
         if (edit) {
             editTeam(team.values.toList(), teamId, context)
-            Toast.makeText(context, "Team edited successfully", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Team edited successfully", Toast.LENGTH_SHORT).show()
+            val intent = Intent("teamEdited")
+            intent.putExtra("message", "Team Edited")
+            context.sendBroadcast(intent)
         } else {
             addTeamToDatabase(team.values.toList(), profile, context)
-            Toast.makeText(context, "Team created successfully", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Team created successfully", Toast.LENGTH_SHORT).show()
+            val intent = Intent("teamCreated")
+            intent.putExtra("message", "Team Created")
+            context.sendBroadcast(intent)
         }
         close()
     }

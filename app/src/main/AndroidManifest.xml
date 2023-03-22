@@ -20,6 +20,7 @@
                 <action android:name="favoriteAdded"></action>
                 <action android:name="favoriteDeleted"></action>
                 <action android:name="teamCreated"></action>
+                <action android:name="teamEdited"></action>
                 <action android:name="teamDeleted"></action>
             </intent-filter>
         </receiver>

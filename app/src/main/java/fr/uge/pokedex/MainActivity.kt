@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
 
         intentFilter.apply {
             addAction("teamCreated")
+            addAction("teamEdited")
             addAction("teamDeleted")
             addAction("favoriteAdded")
             addAction("favoriteDeleted")
