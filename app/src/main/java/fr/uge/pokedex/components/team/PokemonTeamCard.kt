@@ -2,10 +2,7 @@ package fr.uge.pokedex.components.team
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -27,6 +24,7 @@ fun PokemonTeamCard(
         Modifier
             .padding(4.dp)
             .fillMaxHeight()
+            .fillMaxWidth()
             .background(Color(0x85FFFFFF), RoundedCornerShape(4.dp))
     ) {
         Column(
@@ -34,6 +32,7 @@ fun PokemonTeamCard(
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxHeight()
+                .fillMaxWidth()
                 .weight(1f)
                 .background(MaterialTheme.colors.background, RoundedCornerShape(4.dp))
                 .padding(10.dp)
