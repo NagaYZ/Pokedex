@@ -23,14 +23,14 @@ import fr.uge.pokedex.R
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.data.user.Profile
 import fr.uge.pokedex.service.MusicButton
-import fr.uge.pokedex.service.PokemonMusicService
 import kotlinx.coroutines.runBlocking
 
 @Composable
 fun ProfilesScreen(
     navController: NavHostController,
     setCurrentProfile: (profileId: Long) -> Unit,
-    pokemonMusicService: PokemonMusicService
+    onClick: () -> Unit,
+    audioState: Boolean
 ) {
 
     val profileDao = PokedexAppDatabase.getConnection(LocalContext.current).profileDao()
@@ -146,7 +146,7 @@ fun ProfilesScreen(
             horizontalAlignment = Alignment.Start
         ) {
             Box(modifier = Modifier.padding(20.dp)) {
-                MusicButton(musicService = pokemonMusicService)
+                MusicButton(audioState, onClick)
             }
         }
     }

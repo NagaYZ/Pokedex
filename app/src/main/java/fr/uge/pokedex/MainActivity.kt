@@ -79,6 +79,9 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun PokedexApp(pokemonMusicService: PokemonMusicService) {
+        var audioState by remember {
+            mutableStateOf(true)
+        }
 
         val receiver = PokedexReceiver()
         val intentFilter =
@@ -123,16 +126,38 @@ class MainActivity : ComponentActivity() {
                         exit = slideOutVertically(targetOffsetY = { -it }),
                         visible = showBars,
                     ) {
-                        TopBar(navController, currentProfileId)
+                        TopBar(
+                            navController,
+                            currentProfileId,
+                            {
+                                if (audioState) {
+                                    pokemonMusicService.getMediaPlayer().pause()
+                                } else {
+                                    pokemonMusicService.getMediaPlayer().start()
+                                }
+                                audioState = !audioState
+                            },
+                            audioState
+                        )
                     }
-
                 }) {
                 it
                 NavigationGraph(
                     applicationContext = applicationContext,
                     navController = navController,
-                    setCurrentProfile = { profileId: Long -> currentProfileId = profileId },
-                    profileId = currentProfileId
+                    setCurrentProfile = { profileId: Long ->
+                        currentProfileId = profileId
+                    },
+                    profileId = currentProfileId,
+                    {
+                        if (audioState) {
+                            pokemonMusicService.getMediaPlayer().pause()
+                        } else {
+                            pokemonMusicService.getMediaPlayer().start()
+                        }
+                        audioState = !audioState
+                    },
+                    audioState
                 )
             }
         }

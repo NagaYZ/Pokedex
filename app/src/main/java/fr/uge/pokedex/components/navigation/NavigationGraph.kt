@@ -20,7 +20,6 @@ import fr.uge.pokedex.data.pokedex.PokedexStorageService
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.user.Favorite
 import fr.uge.pokedex.data.user.PokedexAppDatabase
-import fr.uge.pokedex.service.PokemonMusicService
 import kotlinx.coroutines.runBlocking
 
 sealed class Route(val title: String, val path: String) {
@@ -39,7 +38,8 @@ fun NavigationGraph(
     navController: NavHostController,
     setCurrentProfile: (profileId: Long) -> Unit,
     profileId: Long,
-    pokemonMusicService: PokemonMusicService,
+    onClick: () -> Unit,
+    audioState: Boolean,
     pokemonMap: Map<Long, Pokemon> = PokedexStorageService.getPokemonData()
 ) {
     val context = LocalContext.current
@@ -147,7 +147,7 @@ fun NavigationGraph(
 
         composable(route = Route.Profiles.path){
             //Call profiles composable
-            ProfilesScreen(navController, setCurrentProfile, pokemonMusicService)
+            ProfilesScreen(navController, setCurrentProfile, onClick, audioState)
         }
     }
 }

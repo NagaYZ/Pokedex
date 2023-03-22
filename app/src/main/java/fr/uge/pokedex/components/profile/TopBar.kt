@@ -18,14 +18,14 @@ import androidx.navigation.NavHostController
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.service.MusicButton
-import fr.uge.pokedex.service.PokemonMusicService
 import kotlinx.coroutines.runBlocking
 
 @Composable
 fun TopBar(
     navController: NavHostController,
     currentProfileId: Long,
-    pokemonMusicService: PokemonMusicService
+    onClick: () -> Unit,
+    audioState: Boolean
 ) {
     val context = LocalContext.current
     val profile = runBlocking {
@@ -70,7 +70,7 @@ fun TopBar(
             horizontalAlignment = Alignment.End,
             modifier = Modifier.weight(1f)
         ) {
-            MusicButton(pokemonMusicService)
+            MusicButton(audioState, onClick)
         }
     }
 }
