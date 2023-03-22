@@ -21,7 +21,6 @@ import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.components.profile.TopBar
 import fr.uge.pokedex.data.pokedex.PokedexStorageService
-import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,19 +37,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    var pokemonMap by rememberSaveable { mutableStateOf(mapOf<Long, Pokemon>()) }
-                    var dataLoaded by rememberSaveable { mutableStateOf(false) }
-
-                    if(!dataLoaded){
-                        LaunchedEffect(true) {
-                            pokemonMap = PokedexStorageService.getPokemonData()
-                            dataLoaded = true
-                        }
-                    }
-
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = currentBackStackEntry?.destination?.route
-
                     var currentProfileId by rememberSaveable { mutableStateOf(-1L) }
 
                     Scaffold(bottomBar = {
@@ -70,7 +58,6 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             setCurrentProfile = { profileId: Long -> currentProfileId = profileId },
                             profileId = currentProfileId,
-                            pokemonMap = pokemonMap
                         )
                     }
                 }
