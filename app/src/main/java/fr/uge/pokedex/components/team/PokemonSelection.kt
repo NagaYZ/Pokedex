@@ -80,7 +80,10 @@ fun PokemonSelectionDialog(pokemonList:List<Pokemon>, profile:Profile, dismiss:(
                 filteredPokemons = it.toMutableList()
             }, applicationContext = context)
 
-            PokedexDisplay(pokemonList = filteredPokemons, profile = profile, clickFavorite = { _, _ ->  },
+            PokedexDisplay(pokemonList = filteredPokemons,
+                profile = profile,
+                favoriteList = listOf(),
+                clickFavorite = { _, _ ->  },
                 onClick = {pokemonId -> onClick.invoke(pokemonId)})
         }
     }

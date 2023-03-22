@@ -5,18 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
@@ -28,10 +24,6 @@ import androidx.navigation.NavHostController
 import fr.uge.pokedex.R
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.user.Profile
-import fr.uge.pokedex.theme.Purple200
-import fr.uge.pokedex.theme.Purple400
-import fr.uge.pokedex.theme.Purple500
-import fr.uge.pokedex.theme.Shapes
 
 val profilePics = listOf(
     R.drawable.pikachu,
@@ -63,7 +55,7 @@ fun ProfileItem(
         modifier = Modifier
             .width(300.dp)
             .background(
-                color = Purple400, shape = MaterialTheme.shapes.medium
+                color = MaterialTheme.colors.secondary, shape = MaterialTheme.shapes.medium
             )
             .clickable(onClick = {
                 setCurrentProfile.invoke(profile.getId())
@@ -114,7 +106,10 @@ fun ProfileItem(
                 onClick = { onDeleteProfile.invoke(profile) },
                 // Uses ButtonDefaults.ContentPadding by default
                 contentPadding = PaddingValues(12.dp),
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.secondaryVariant
+                )
             ) {
                 // Inner content including an icon and a text label
                 Icon(
@@ -128,7 +123,10 @@ fun ProfileItem(
                 onClick = { onEditProfile.invoke(profile) },
                 // Uses ButtonDefaults.ContentPadding by default
                 contentPadding = PaddingValues(12.dp),
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.secondaryVariant
+                )
             ) {
                 // Inner content including an icon and a text label
                 Icon(
