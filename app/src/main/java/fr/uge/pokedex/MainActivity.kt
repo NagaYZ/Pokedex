@@ -2,6 +2,7 @@ package fr.uge.pokedex
 
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import fr.uge.pokedex.bluetooth.PokedexReceiver
 import fr.uge.pokedex.components.navigation.BottomNavigationMenu
 import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
@@ -30,12 +32,26 @@ import fr.uge.pokedex.data.pokedex.PokedexStorageService
 import fr.uge.pokedex.service.PokemonMusicService
 import fr.uge.pokedex.theme.PokedexTheme
 
+
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PokedexStorageService.load(applicationContext)
 
+        val receiver = PokedexReceiver()
+        val intentFilter=
+            IntentFilter()
+
+        intentFilter.apply {
+            addAction("teamCreated")
+            addAction("teamEdited")
+            addAction("teamDeleted")
+            addAction("favoriteAdded")
+            addAction("favoriteDeleted")
+        }
+
+        registerReceiver(receiver, intentFilter)
         // Start the Pokemon music service
         Intent(this, PokemonMusicService::class.java).also { intent ->
             startService(intent)
@@ -92,5 +108,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }

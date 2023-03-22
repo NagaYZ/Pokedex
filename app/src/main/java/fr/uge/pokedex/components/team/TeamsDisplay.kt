@@ -2,6 +2,7 @@ package fr.uge.pokedex.components.team
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -120,7 +121,10 @@ fun DisplayTeams(
     if (delete) {
         DeleteTeam(teamId, context)
         delete = false
-        Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
+        val intent = Intent("teamDeleted")
+        intent.putExtra("message", "Team deleted")
+        context.sendBroadcast(intent)
     }
 
     if (showNewTeamDialog) {
@@ -275,10 +279,16 @@ fun NewTeamDialog(
     if (createTeam) {
         if (edit) {
             editTeam(team.values.toList(), teamId, context)
-            Toast.makeText(context, "Team edited successfully", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Team edited successfully", Toast.LENGTH_SHORT).show()
+            val intent = Intent("teamEdited")
+            intent.putExtra("message", "Team Edited")
+            context.sendBroadcast(intent)
         } else {
             addTeamToDatabase(team.values.toList(), profile, context)
-            Toast.makeText(context, "Team created successfully", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Team created successfully", Toast.LENGTH_SHORT).show()
+            val intent = Intent("teamCreated")
+            intent.putExtra("message", "Team Created")
+            context.sendBroadcast(intent)
         }
         close()
     }
