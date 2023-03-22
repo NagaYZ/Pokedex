@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import fr.uge.pokedex.data.pokedex.Version
+import fr.uge.pokedex.data.pokedex.pokemon.Version
 
 @Composable
 fun PokedexEntries(pokedexEntries: MutableMap<Version, String>) {

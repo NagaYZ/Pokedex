@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -26,6 +28,8 @@ import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.components.profile.TopBar
 import fr.uge.pokedex.data.pokedex.Pokemon
 import fr.uge.pokedex.data.pokedex.PokemonRepository
+import fr.uge.pokedex.data.pokedex.PokedexStorageService
+import fr.uge.pokedex.service.PokemonMusicService
 import fr.uge.pokedex.theme.PokedexTheme
 
 
@@ -33,6 +37,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PokedexStorageService.load(applicationContext)
 
         val receiver = PokedexReceiver()
         val intentFilter=
@@ -47,6 +52,11 @@ class MainActivity : ComponentActivity() {
         }
 
         registerReceiver(receiver, intentFilter)
+        // Start the Pokemon music service
+        Intent(this, PokemonMusicService::class.java).also { intent ->
+            startService(intent)
+            Toast.makeText(this, "music start", LENGTH_SHORT).show()
+        }
 
         setContent {
             PokedexTheme {
@@ -56,20 +66,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    var pokemonMap by rememberSaveable { mutableStateOf(mapOf<Long, Pokemon>()) }
-                    var dataLoaded by rememberSaveable { mutableStateOf(false) }
-
-                    if(!dataLoaded){
-                        LaunchedEffect(true) {
-                            val pokemonRepository = PokemonRepository(applicationContext)
-                            pokemonMap = pokemonRepository.data
-                            dataLoaded = true
-                        }
-                    }
-
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = currentBackStackEntry?.destination?.route
-
                     var currentProfileId by rememberSaveable { mutableStateOf(-1L) }
 
                     Scaffold(bottomBar = {
@@ -89,7 +87,6 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             setCurrentProfile = { profileId: Long -> currentProfileId = profileId },
                             profileId = currentProfileId,
-                            pokemonMap = pokemonMap
                         )
                     }
                 }

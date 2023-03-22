@@ -9,7 +9,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import fr.uge.pokedex.data.pokedex.Type
+import fr.uge.pokedex.data.pokedex.pokemon.Type
 
 @Composable
 fun DropDownType(name: String, typeNum: (String) -> Unit) {

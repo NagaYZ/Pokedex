@@ -16,10 +16,10 @@ import fr.uge.pokedex.components.team.DisplayTeams
 import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.components.card.PokemonCardDisplay
 import fr.uge.pokedex.components.profile.ProfilesScreen
-import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.pokedex.PokedexStorageService
+import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.user.Favorite
 import fr.uge.pokedex.data.user.PokedexAppDatabase
-import fr.uge.pokedex.data.user.Profile
 import kotlinx.coroutines.runBlocking
 
 
@@ -39,7 +39,7 @@ fun NavigationGraph(
     navController: NavHostController,
     setCurrentProfile: (profileId: Long) -> Unit,
     profileId: Long,
-    pokemonMap: Map<Long, Pokemon>
+    pokemonMap: Map<Long, Pokemon> = PokedexStorageService.getPokemonData()
 ) {
     val context = LocalContext.current
     val profile = runBlocking { PokedexAppDatabase.getConnection(context).profileDao().getProfile(profileId) }
@@ -48,15 +48,15 @@ fun NavigationGraph(
         composable(route = Route.Pokedex.path) {
             //Call pokedex composable
             var favoriteList by remember{ mutableStateOf(runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }) }
-            var filteredPokemons by remember { mutableStateOf(mutableListOf<Pokemon>()) }
+            var filteredPokemon by remember { mutableStateOf(mutableListOf<Pokemon>()) }
 
             Column() {
                 FilterBar(pokemonList = pokemonMap.values.toList(), applicationContext = applicationContext)
                 {
-                    filteredPokemons = it.toMutableList()
+                    filteredPokemon = it.toMutableList()
                 }
 
-                PokedexDisplay(pokemonList = filteredPokemons,
+                PokedexDisplay(pokemonList = filteredPokemon,
                     profile = profile,
                     favoriteList = favoriteList,
                     clickFavorite = { pokemonId, favorite ->
@@ -86,7 +86,7 @@ fun NavigationGraph(
                 mutableStateOf(pokemonMap[it.arguments?.getLong("pokemonId")]!!)
             }
 
-            var favoriteList = runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }
+            val favoriteList = runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }
 
             PokemonCardDisplay(
                 pokemon,

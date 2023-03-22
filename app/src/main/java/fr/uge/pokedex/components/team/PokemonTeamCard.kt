@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.pokedex.components.list.PokemonIcon
-import fr.uge.pokedex.data.pokedex.Pokemon
+import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 
 @Composable
 fun PokemonTeamCard(
