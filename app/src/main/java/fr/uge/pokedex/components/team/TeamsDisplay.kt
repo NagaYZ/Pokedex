@@ -2,7 +2,6 @@ package fr.uge.pokedex.components.team
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -314,10 +313,7 @@ fun NewTeamDialog(
 
     }
     if (createTeam) {
-        if (name == "") {
-            name = "Team de " + profile.getProfileName()
-        }
-        Toast.makeText(context, name, Toast.LENGTH_SHORT).show()
+
         if (edit) {
 
             editTeam(team.values.toList(), teamId, context, name)
