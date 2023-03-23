@@ -134,7 +134,7 @@ fun DisplayTeams(
         DeleteTeam(teamId, context)
         delete = false
         //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
-        PokedexReceiver.newIntent(context, "teamDeleted", "Team Deleted")
+        PokedexReceiver.newIntent(context, "teamDeleted", "Team " + teamName + " Deleted")
     }
 
     if (showNewTeamDialog) {
@@ -317,10 +317,10 @@ fun NewTeamDialog(
         if (edit) {
 
             editTeam(team.values.toList(), teamId, context, name)
-            PokedexReceiver.newIntent(context, "teamEdited", "Team Edited")
+            PokedexReceiver.newIntent(context, "teamEdited", "Team " + name + " Edited")
         } else {
             addTeamToDatabase(team.values.toList(), profile, context, name)
-            PokedexReceiver.newIntent(context, "teamCreated", "Team Created")
+            PokedexReceiver.newIntent(context, "teamCreated", "Team " + name + " Created")
         }
         close()
     }
