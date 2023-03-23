@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ fun TeamDisplay(
     pokemonMap: Map<Long, Pokemon>,
     editOnClick: (Long) -> Unit,
     deleteOnClick: (Long) -> Unit,
+    shareOnClick: (Long) -> Unit,
     showTeam: (Long) -> Unit,
     onPokemonClick: (Long) -> Unit,
 ) {
@@ -59,6 +61,9 @@ fun TeamDisplay(
             Spacer(modifier = Modifier.width(2.dp))
             Button(onClick = { deleteOnClick(pokemon_team.team.getTeamId()) }) {
                 Icon(Icons.Rounded.Delete, "Delete Team")
+            }
+            Button(onClick = { shareOnClick(pokemon_team.team.getTeamId()) }) {
+                Icon(Icons.Rounded.Share, "Share Team")
             }
         }
 

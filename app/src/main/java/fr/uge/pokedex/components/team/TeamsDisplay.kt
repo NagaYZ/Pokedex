@@ -1,6 +1,7 @@
 package fr.uge.pokedex.components.team
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import fr.uge.pokedex.bluetooth.BluetoothDevice
 import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.team.TeamFactGenerator
@@ -77,8 +79,11 @@ private fun addTeamToDatabase(
     }
 }
 
+
+
 @Composable
 fun DisplayTeams(
+    activity: Activity,
     pokemonMap: Map<Long, Pokemon>,
     profile: Profile,
     onPokemonClick: (Long) -> Unit
@@ -87,6 +92,7 @@ fun DisplayTeams(
     var showNewTeamDialog by remember { mutableStateOf(false) }
     var showTeamCard by remember { mutableStateOf(false) }
     var delete by remember { mutableStateOf(false) }
+    var share by remember { mutableStateOf(false) }
     var edit by remember { mutableStateOf(false) }
     var teamId by remember { mutableStateOf(-1L) }
     val teams = getTeamsFromProfile(profile = profile, context)
@@ -103,14 +109,16 @@ fun DisplayTeams(
             TeamDisplay(
                 i + 1,
                 pokemon_team = poketeam,
-                pokemonMap,
-                {
+                pokemonMap = pokemonMap,
+                editOnClick = {
                     teamId = it; edit = true; showNewTeamDialog = true; teamName =
                     poketeam.team.getTeamName()
                 },
-                { teamId = it; delete = true; teamName = poketeam.team.getTeamName() },
-                { teamId = it; showTeamCard = true; teamName = poketeam.team.getTeamName() },
-                onPokemonClick
+                deleteOnClick = { teamId = it; delete = true; teamName = poketeam.team.getTeamName() },
+                shareOnClick = { teamId = it; share = true; teamName = poketeam.team.getTeamName() },
+                showTeam = { teamId = it; showTeamCard = true; teamName = poketeam.team.getTeamName() },
+
+                onPokemonClick = onPokemonClick
             )
         }
         item {
@@ -136,6 +144,13 @@ fun DisplayTeams(
         delete = false
         //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
         PokedexReceiver.newIntent(context, "teamDeleted", "Team Deleted")
+    }
+
+    if (share) {
+        BluetoothDevice().enableBluetooth(activity = activity)
+        share = false
+        //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
+        PokedexReceiver.newIntent(context, "teamShared", "Team Shared")
     }
 
     if (showNewTeamDialog) {

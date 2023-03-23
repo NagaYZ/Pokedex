@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <application
         android:allowBackup="true"
@@ -25,6 +29,7 @@
                 <action android:name="teamCreated"></action>
                 <action android:name="teamEdited"></action>
                 <action android:name="teamDeleted"></action>
+                <action android:name="teamShared"></action>
             </intent-filter>
         </receiver>
 

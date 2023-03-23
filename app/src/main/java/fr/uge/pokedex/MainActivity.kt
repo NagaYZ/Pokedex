@@ -1,9 +1,7 @@
 package fr.uge.pokedex
 
 import android.content.*
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
+import android.os.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -11,9 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -28,10 +24,12 @@ import fr.uge.pokedex.components.profile.TopBar
 import fr.uge.pokedex.data.pokedex.PokedexStorageService
 import fr.uge.pokedex.service.PokemonMusicService
 import fr.uge.pokedex.theme.PokedexTheme
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     private lateinit var pokemonMusicService: PokemonMusicService
     private var serviceBound: Boolean = false
+
 
     override fun onStart() {
         super.onStart()
@@ -48,6 +46,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val serviceConnection = object : ServiceConnection {
+        @RequiresApi(Build.VERSION_CODES.M)
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder: PokemonMusicService.LocalBinder = service as PokemonMusicService.LocalBinder
             pokemonMusicService = binder.getService()
@@ -73,8 +72,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.M)
     @Composable
     fun PokedexApp(pokemonMusicService: PokemonMusicService) {
+
         var audioState by remember {
             mutableStateOf(true)
         }
@@ -90,6 +92,7 @@ class MainActivity : ComponentActivity() {
             addAction("teamCreated")
             addAction("teamEdited")
             addAction("teamDeleted")
+            addAction("teamShared")
             addAction("favoriteAdded")
             addAction("favoriteDeleted")
         }
@@ -142,6 +145,7 @@ class MainActivity : ComponentActivity() {
                 }) {
                 it
                 NavigationGraph(
+                    activity = this,
                     applicationContext = applicationContext,
                     navController = navController,
                     setCurrentProfile = { profileId: Long ->

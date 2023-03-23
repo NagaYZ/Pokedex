@@ -2,7 +2,10 @@ package fr.uge.pokedex.components.navigation
 
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -31,9 +34,11 @@ sealed class Route(val title: String, val path: String) {
     object Card : Route("Card", "card/{pokemonId}")
 }
 
+@RequiresApi(Build.VERSION_CODES.M)
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun NavigationGraph(
+    activity: Activity,
     applicationContext: Context,
     navController: NavHostController,
     setCurrentProfile: (profileId: Long) -> Unit,
@@ -137,6 +142,7 @@ fun NavigationGraph(
         composable(route = Route.Teams.path) {
             //Call teams composable
             DisplayTeams(
+                activity,
                 pokemonMap,
                 profile,
                 onPokemonClick = { pokemonId ->
