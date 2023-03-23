@@ -1,7 +1,6 @@
 package fr.uge.pokedex.data.user
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProfileDao {
