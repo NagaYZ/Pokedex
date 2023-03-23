@@ -2,6 +2,7 @@ package fr.uge.pokedex.components.team
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -28,42 +31,49 @@ import kotlinx.coroutines.runBlocking
 
 private fun DeleteTeam(teamId: Long, context: Context) {
     val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
-    val team: Team = runBlocking {teamDao.getTeam(teamId)}
-    runBlocking {teamDao.deleteTeam(team)}
+    val team: Team = runBlocking { teamDao.getTeam(teamId) }
+    runBlocking { teamDao.deleteTeam(team) }
 }
 
 private fun getTeamsFromProfile(profile: Profile, context: Context): List<TeamWithMembers> {
     val profileDao: ProfileDao = PokedexAppDatabase.getConnection(context).profileDao()
-    return runBlocking {profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers}
+    return runBlocking { profileDao.getProfileWithTeam(profile.getId()).teamsWithMembers }
 }
 
 private fun getPokemonListFromTeamId(teamId: Long, context: Context): List<Long> {
     val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
-    val teamWithMembers = runBlocking {teamDao.getTeamWithMembers(teamId)}
+    val teamWithMembers = runBlocking { teamDao.getTeamWithMembers(teamId) }
     return teamWithMembers.teamMembers.map { member -> member.getPokemonId() }
 }
 
-private fun editTeam(pokemonList: List<Long>, teamId: Long, context: Context) {
+private fun editTeam(pokemonList: List<Long>, teamId: Long, context: Context, name: String) {
     val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabase.getConnection(context).teamMemberDao()
-    val teamWithMembers = runBlocking {teamDao.getTeamWithMembers(teamId)}
+    val teamWithMembers = runBlocking { teamDao.getTeamWithMembers(teamId) }
 
+    runBlocking { teamWithMembers.team.setTeamName(name) }
+    runBlocking { teamDao.updateTeam(teamWithMembers.team) }
     for (i in 0..5) {
-        runBlocking {teamMemberDao.deleteTeamMember(teamWithMembers.teamMembers[i])}
+        runBlocking { teamMemberDao.deleteTeamMember(teamWithMembers.teamMembers[i]) }
     }
 
     pokemonList.forEach { pokemon ->
-        runBlocking {teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))}
+        runBlocking { teamMemberDao.addTeamMember(TeamMember(pokemon, teamId)) }
     }
 }
 
-private fun addTeamToDatabase(team: List<Long>, profile: Profile, context: Context) {
+private fun addTeamToDatabase(
+    team: List<Long>,
+    profile: Profile,
+    context: Context,
+    teamName: String
+) {
     val teamDao: TeamDao = PokedexAppDatabase.getConnection(context).teamDao()
     val teamMemberDao: TeamMemberDao = PokedexAppDatabase.getConnection(context).teamMemberDao()
-    val teamId: Long = runBlocking {teamDao.addTeam(Team("Team de " + profile.getProfileName(), profile.getId()))}
+    val teamId: Long = runBlocking { teamDao.addTeam(Team(teamName, profile.getId())) }
 
     team.forEach { pokemon ->
-        runBlocking {teamMemberDao.addTeamMember(TeamMember(pokemon, teamId))}
+        runBlocking { teamMemberDao.addTeamMember(TeamMember(pokemon, teamId)) }
     }
 }
 
@@ -80,6 +90,7 @@ fun DisplayTeams(
     var edit by remember { mutableStateOf(false) }
     var teamId by remember { mutableStateOf(-1L) }
     val teams = getTeamsFromProfile(profile = profile, context)
+    var teamName by remember { mutableStateOf("") }
 
     //display list of team
     LazyVerticalGrid(
@@ -93,9 +104,12 @@ fun DisplayTeams(
                 i + 1,
                 pokemon_team = poketeam,
                 pokemonMap,
-                { teamId = it; edit = true; showNewTeamDialog = true },
-                { teamId = it; delete = true },
-                { teamId = it; showTeamCard = true },
+                {
+                    teamId = it; edit = true; showNewTeamDialog = true; teamName =
+                    poketeam.team.getTeamName()
+                },
+                { teamId = it; delete = true; teamName = poketeam.team.getTeamName() },
+                { teamId = it; showTeamCard = true; teamName = poketeam.team.getTeamName() },
                 onPokemonClick
             )
         }
@@ -121,7 +135,7 @@ fun DisplayTeams(
         DeleteTeam(teamId, context)
         delete = false
         //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
-        PokedexReceiver.newIntent(context,"teamDeleted", "Team Deleted")
+        PokedexReceiver.newIntent(context, "teamDeleted", "Team Deleted")
     }
 
     if (showNewTeamDialog) {
@@ -129,8 +143,9 @@ fun DisplayTeams(
             pokemonMap,
             profile,
             teamId,
+            teamName,
             edit,
-        ) { showNewTeamDialog = false; edit = false }
+        ) { showNewTeamDialog = false; edit = false; teamName = "" }
     }
 
     if (showTeamCard) {
@@ -211,6 +226,7 @@ fun NewTeamDialog(
     pokemonMap: Map<Long, Pokemon>,
     profile: Profile,
     teamId: Long,
+    teamName: String,
     edit: Boolean,
     close: () -> Unit
 ) {
@@ -222,21 +238,45 @@ fun NewTeamDialog(
     var pokemonIdInTeam by remember { mutableStateOf(-1L) }
     var enableButton by remember { mutableStateOf(false) }
     var once by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf(teamName) }
 
     if (edit) {
         once = true
         pokemonInTeam = getPokemonListFromTeamId(teamId, context)
     }
-    AlertDialog(
-        onDismissRequest = { close() },
-        title = { },
-        backgroundColor = Purple500,
-        text = {
+
+    Dialog(
+        onDismissRequest = { close() }, properties = DialogProperties(
+            dismissOnBackPress = true
+        )
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .background(Purple500)
+        ) {
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 4.dp)
+                    .padding(25.dp)
+                    .background(Purple500)
             ) {
+                TextField(
+                    value = name,
+                    placeholder = { Text("Enter Team Name") },
+                    onValueChange = {
+                        name = it
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color.White,
+                        disabledTextColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                Spacer(Modifier.padding(10.dp))
                 for (i in 1..6) {
                     if (edit && once) {
                         pokemonIdInTeam = pokemonInTeam[i - 1]
@@ -258,30 +298,33 @@ fun NewTeamDialog(
                     }
                 }
                 once = false
-            }
-        }, confirmButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
+                Spacer(Modifier.padding(10.dp))
                 Button(
                     enabled = enableButton,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .scale(1.2f),
                     onClick = {
                         createTeam = true
                     }) {
                     Text("Done")
                 }
             }
-        })
+        }
+
+    }
     if (createTeam) {
+        if (name == "") {
+            name = "Team de " + profile.getProfileName()
+        }
+        Toast.makeText(context, name, Toast.LENGTH_SHORT).show()
         if (edit) {
-            editTeam(team.values.toList(), teamId, context)
-            //Toast.makeText(context, "Team edited successfully", Toast.LENGTH_SHORT).show()
-            PokedexReceiver.newIntent(context,"teamEdited", "Team Edited")
+
+            editTeam(team.values.toList(), teamId, context, name)
+            PokedexReceiver.newIntent(context, "teamEdited", "Team Edited")
         } else {
-            addTeamToDatabase(team.values.toList(), profile, context)
-            //Toast.makeText(context, "Team created successfully", Toast.LENGTH_SHORT).show()
-            PokedexReceiver.newIntent(context,"teamCreated", "Team Created")
+            addTeamToDatabase(team.values.toList(), profile, context, name)
+            PokedexReceiver.newIntent(context, "teamCreated", "Team Created")
         }
         close()
     }

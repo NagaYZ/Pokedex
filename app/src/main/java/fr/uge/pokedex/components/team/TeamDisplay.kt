@@ -46,7 +46,7 @@ fun TeamDisplay(
 
         ) {
             Text(
-                "Team $index",
+                pokemon_team.team.getTeamName(),
                 Modifier
                     .weight(1f)
                     .clickable { showTeam(pokemon_team.team.getTeamId()) },
