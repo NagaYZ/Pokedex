@@ -3,7 +3,7 @@ package fr.uge.pokedex.components.team
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import fr.uge.pokedex.components.card.TextDisplay
-import fr.uge.pokedex.data.team.TeamFact
+import fr.uge.pokedex.service.team.TeamFact
 
 @Preview
 @Composable

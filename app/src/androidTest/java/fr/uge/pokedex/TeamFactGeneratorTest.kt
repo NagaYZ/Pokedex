@@ -3,8 +3,8 @@ package fr.uge.pokedex
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import fr.uge.pokedex.data.pokedex.pokemon.PokemonRepository
-import fr.uge.pokedex.data.team.TeamFact
-import fr.uge.pokedex.data.team.TeamFactGenerator
+import fr.uge.pokedex.service.team.TeamFact
+import fr.uge.pokedex.service.team.TeamFactGenerator
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

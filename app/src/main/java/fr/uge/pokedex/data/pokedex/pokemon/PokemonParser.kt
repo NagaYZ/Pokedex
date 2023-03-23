@@ -1,8 +1,8 @@
-package fr.uge.pokedex.utils.parser
+package fr.uge.pokedex.data.pokedex.pokemon
 
 import android.content.Context
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import fr.uge.pokedex.data.pokedex.pokemon.*
+import fr.uge.pokedex.data.pokedex.Parser
 
 class PokemonParser(override val context: Context) : Parser<Pokemon> {
     private val maxPokemonId: Int = 650

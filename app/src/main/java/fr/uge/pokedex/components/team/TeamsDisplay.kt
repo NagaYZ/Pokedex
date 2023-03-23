@@ -21,9 +21,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
+import fr.uge.pokedex.service.PokedexReceiver
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
-import fr.uge.pokedex.data.team.TeamFactGenerator
+import fr.uge.pokedex.service.team.TeamFactGenerator
 import fr.uge.pokedex.data.user.*
 import fr.uge.pokedex.theme.Purple500
 import kotlinx.coroutines.runBlocking
@@ -134,7 +134,7 @@ fun DisplayTeams(
         DeleteTeam(teamId, context)
         delete = false
         //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
-        PokedexReceiver.newIntent(context, "teamDeleted", "Team " + teamName + " Deleted")
+        PokedexReceiver.newIntent(context, "teamDeleted", "Team Deleted")
     }
 
     if (showNewTeamDialog) {
@@ -313,16 +313,14 @@ fun NewTeamDialog(
 
     }
     if (createTeam) {
-        if (name == "") {
-            name = "Team de " + profile.getProfileName()
-        }
-        //Toast.makeText(context, name, Toast.LENGTH_SHORT).show()
+
         if (edit) {
 
             editTeam(team.values.toList(), teamId, context, name)
-            PokedexReceiver.newIntent(context, "teamEdited", "Team " + name + "Edited")        } else {
+            PokedexReceiver.newIntent(context, "teamEdited", "Team Edited")
+        } else {
             addTeamToDatabase(team.values.toList(), profile, context, name)
-            PokedexReceiver.newIntent(context, "teamCreated", "Team " + name + " Created")
+            PokedexReceiver.newIntent(context, "teamCreated", "Team Created")
         }
         close()
     }

@@ -1,4 +1,4 @@
-package fr.uge.pokedex.data.team
+package fr.uge.pokedex.service.team
 
 enum class FactCategory {
     WEAKNESS,

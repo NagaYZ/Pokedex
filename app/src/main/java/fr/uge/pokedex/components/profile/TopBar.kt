@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.user.PokedexAppDatabase
-import fr.uge.pokedex.service.MusicButton
+import fr.uge.pokedex.service.music.MusicButton
 import kotlinx.coroutines.runBlocking
 
 @Composable

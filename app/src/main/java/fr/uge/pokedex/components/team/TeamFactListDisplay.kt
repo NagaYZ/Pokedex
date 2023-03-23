@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import fr.uge.pokedex.data.team.FactCategory
-import fr.uge.pokedex.data.team.TeamFact
+import fr.uge.pokedex.service.team.FactCategory
+import fr.uge.pokedex.service.team.TeamFact
 
 @Preview
 @Composable

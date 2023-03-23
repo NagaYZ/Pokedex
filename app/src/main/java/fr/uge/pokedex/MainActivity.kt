@@ -20,13 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
+import fr.uge.pokedex.service.PokedexReceiver
 import fr.uge.pokedex.components.navigation.BottomNavigationMenu
 import fr.uge.pokedex.components.navigation.NavigationGraph
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.components.profile.TopBar
 import fr.uge.pokedex.data.pokedex.PokedexStorageService
-import fr.uge.pokedex.service.PokemonMusicService
+import fr.uge.pokedex.service.music.PokemonMusicService
 import fr.uge.pokedex.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {

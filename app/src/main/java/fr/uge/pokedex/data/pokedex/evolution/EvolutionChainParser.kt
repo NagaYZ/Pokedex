@@ -1,9 +1,7 @@
-package fr.uge.pokedex.utils.parser
+package fr.uge.pokedex.data.pokedex.evolution
 
 import android.content.Context
-import fr.uge.pokedex.data.pokedex.evolution.Evolution
-import fr.uge.pokedex.data.pokedex.evolution.EvolutionChain
-import fr.uge.pokedex.data.pokedex.evolution.EvolutionTrigger
+import fr.uge.pokedex.data.pokedex.Parser
 
 class EvolutionChainParser(override val context: Context) : Parser<EvolutionChain> {
     private val maxPokemonId: Long = 649

@@ -2,7 +2,6 @@ package fr.uge.pokedex.data.pokedex.move
 
 import android.content.Context
 import fr.uge.pokedex.data.pokedex.Repository
-import fr.uge.pokedex.utils.parser.MoveParser
 
 class MoveRepository(
     context: Context
