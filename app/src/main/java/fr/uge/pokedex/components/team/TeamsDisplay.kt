@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.bluetooth.BluetoothDeviceOpt
-import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.service.PokedexReceiver
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.service.team.TeamFactGenerator
