@@ -17,13 +17,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.components.navigation.Route
 import fr.uge.pokedex.data.user.PokedexAppDatabase
-import fr.uge.pokedex.data.user.Profile
+import fr.uge.pokedex.service.MusicButton
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun TopBar(navController: NavHostController, currentProfileId: Long) {
+fun TopBar(
+    navController: NavHostController,
+    currentProfileId: Long,
+    onClick: () -> Unit,
+    audioState: Boolean
+) {
     val context = LocalContext.current
-    val profile = runBlocking {PokedexAppDatabase.getConnection(context).profileDao().getProfile(currentProfileId)}
+    val profile = runBlocking {
+        PokedexAppDatabase.getConnection(context).profileDao().getProfile(currentProfileId)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,8 +39,6 @@ fun TopBar(navController: NavHostController, currentProfileId: Long) {
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
@@ -50,14 +55,22 @@ fun TopBar(navController: NavHostController, currentProfileId: Long) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
+            verticalArrangement = Arrangement.SpaceEvenly,
+
+            ) {
             Text(
-                text = if(profile != null) profile.getProfileName() else "",
+                text = if (profile != null) profile.getProfileName() else "",
                 style = MaterialTheme.typography.button,
                 modifier = Modifier.padding(12.dp),
                 color = Color.White
             )
+        }
+
+        Column(
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier.weight(1f)
+        ) {
+            MusicButton(audioState, onClick)
         }
     }
 }

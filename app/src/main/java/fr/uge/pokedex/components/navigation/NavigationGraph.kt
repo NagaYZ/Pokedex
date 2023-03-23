@@ -11,17 +11,16 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import fr.uge.pokedex.components.pokedex.PokedexDisplay
-import fr.uge.pokedex.components.team.DisplayTeams
-import fr.uge.pokedex.components.search.FilterBar
 import fr.uge.pokedex.components.card.PokemonCardDisplay
+import fr.uge.pokedex.components.pokedex.PokedexDisplay
 import fr.uge.pokedex.components.profile.ProfilesScreen
+import fr.uge.pokedex.components.search.FilterBar
+import fr.uge.pokedex.components.team.DisplayTeams
 import fr.uge.pokedex.data.pokedex.PokedexStorageService
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.user.Favorite
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import kotlinx.coroutines.runBlocking
-
 
 sealed class Route(val title: String, val path: String) {
     object Pokedex : Route("Pokedex", "pokedex")
@@ -39,6 +38,8 @@ fun NavigationGraph(
     navController: NavHostController,
     setCurrentProfile: (profileId: Long) -> Unit,
     profileId: Long,
+    onClick: () -> Unit,
+    audioState: Boolean,
     pokemonMap: Map<Long, Pokemon> = PokedexStorageService.getPokemonData()
 ) {
     val context = LocalContext.current
@@ -57,7 +58,6 @@ fun NavigationGraph(
                 }
 
                 PokedexDisplay(pokemonList = filteredPokemon,
-                    profile = profile,
                     favoriteList = favoriteList,
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null){
@@ -103,10 +103,7 @@ fun NavigationGraph(
         composable(route = Route.Favorite.path) {
             //Call favorite composable
             var favoriteList by remember{ mutableStateOf(runBlocking {  PokedexAppDatabase.getConnection(context).profileDao().getProfileWithFavorites(profileId).favorites }) }
-//            val favorites = favoriteList
-
             val favoritesPokemon = favoriteList.map { favorite -> pokemonMap.get(favorite.getPokemonId())!! }.toList()
-
             var filteredPokemons by remember {
                 mutableStateOf(mutableListOf<Pokemon>())
             }
@@ -119,7 +116,6 @@ fun NavigationGraph(
                 PokedexDisplay(
                     sizeGrid = 1,
                     pokemonList = filteredPokemons,
-                    profile = profile,
                     favoriteList = favoriteList,
                     clickFavorite = { pokemonId, favorite ->
                         if(favorite != null){
@@ -151,7 +147,7 @@ fun NavigationGraph(
 
         composable(route = Route.Profiles.path){
             //Call profiles composable
-            ProfilesScreen(navController, setCurrentProfile)
+            ProfilesScreen(navController, setCurrentProfile, onClick, audioState)
         }
     }
 }

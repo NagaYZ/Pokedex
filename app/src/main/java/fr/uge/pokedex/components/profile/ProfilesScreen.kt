@@ -3,31 +3,35 @@ package fr.uge.pokedex.components.profile
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import fr.uge.pokedex.data.user.Profile
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import fr.uge.pokedex.R
 import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.data.user.PokedexAppDatabase
+import fr.uge.pokedex.data.user.Profile
+import fr.uge.pokedex.service.MusicButton
 import kotlinx.coroutines.runBlocking
-
 
 @Composable
 fun ProfilesScreen(
     navController: NavHostController,
-    setCurrentProfile: (profileId: Long) -> Unit
+    setCurrentProfile: (profileId: Long) -> Unit,
+    onClick: () -> Unit,
+    audioState: Boolean
 ) {
 
     val context = LocalContext.current
@@ -35,7 +39,7 @@ fun ProfilesScreen(
 
     var showNewProfileDialog by remember { mutableStateOf(false) }
     var showEditProfileDialog by remember { mutableStateOf(false) }
-    var profilesList by remember { mutableStateOf(runBlocking {profileDao.getAllProfiles()}) }
+    var profilesList by remember { mutableStateOf(runBlocking { profileDao.getAllProfiles() }) }
 
     var profileByRememberToEdit: Profile by remember { mutableStateOf(Profile("")) }
 
@@ -64,7 +68,13 @@ fun ProfilesScreen(
 
         Column {
 
-            Column(modifier = Modifier.fillMaxSize().weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 UgePokedexLogo()
             }
             Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -73,23 +83,33 @@ fun ProfilesScreen(
                     Icon(
                         painter = painterResource(id = R.drawable.pok),
                         contentDescription = "Ball",
-                        modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
+                        modifier = Modifier
+                            .scale(1f)
+                            .height(25.dp)
+                            .padding(horizontal = 10.dp),
                         tint = Color.Unspecified
                     )
                     Text(text = "Profiles", style = MaterialTheme.typography.h6)
                     Icon(
                         painter = painterResource(id = R.drawable.pok),
                         contentDescription = "Ball",
-                        modifier = Modifier.scale(1f).height(25.dp).padding(horizontal = 10.dp),
+                        modifier = Modifier
+                            .scale(1f)
+                            .height(25.dp)
+                            .padding(horizontal = 10.dp),
                         tint = Color.Unspecified
                     )
                 }
 
                 Spacer(Modifier.padding(top = 5.dp, bottom = 5.dp))
 
-                LazyColumn(modifier = Modifier
-                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top){
-                    items(items = profilesList, key = {it.getId()}){profile ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    items(items = profilesList, key = { it.getId() }) { profile ->
 
                         ProfileItem(profile = profile, navController = navController,
                             onDeleteProfile = { profileToDelete: Profile ->
@@ -110,8 +130,6 @@ fun ProfilesScreen(
             }
         }
 
-
-
         //Add new profile button
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -122,6 +140,17 @@ fun ProfilesScreen(
                 showNewProfileDialog = true
             }) {
                 Icon(Icons.Rounded.Add, "Add profile")
+            }
+        }
+
+        //Audio control button
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Box(modifier = Modifier.padding(20.dp)) {
+                MusicButton(audioState, onClick)
             }
         }
     }
@@ -149,23 +178,33 @@ fun ProfilesScreen(
 
 }
 
-
 @Composable
-fun UgePokedexLogo(){
+fun UgePokedexLogo() {
     Row() {
         Icon(
             painter = painterResource(id = R.drawable.icon_pkm_25),
             contentDescription = "Ball",
-            modifier = Modifier.scale(5f).height(50.dp).padding(horizontal = 10.dp),
+            modifier = Modifier
+                .scale(5f)
+                .height(50.dp)
+                .padding(horizontal = 10.dp),
             tint = Color.Unspecified
         )
         Spacer(Modifier.padding(end = 10.dp))
-        Text(text = "UGE Pokedex", style = MaterialTheme.typography.h3, color = MaterialTheme.colors.primary, fontWeight = FontWeight.ExtraBold)
+        Text(
+            text = "UGE Pokedex",
+            style = MaterialTheme.typography.h3,
+            color = MaterialTheme.colors.primary,
+            fontWeight = FontWeight.ExtraBold
+        )
         Spacer(Modifier.padding(start = 10.dp))
         Icon(
             painter = painterResource(id = R.drawable.icon_pkm_151),
             contentDescription = "Ball",
-            modifier = Modifier.scale(5f).height(60.dp).padding(horizontal = 10.dp),
+            modifier = Modifier
+                .scale(5f)
+                .height(60.dp)
+                .padding(horizontal = 10.dp),
             tint = Color.Unspecified,
         )
     }

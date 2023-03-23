@@ -23,8 +23,6 @@ object PokedexStorageService {
         this.pokemonRepository = PokemonRepository(context)
         this.abilityRepository = AbilityRepository(context)
         this.evolutionChainRepository = EvolutionChainRepository(context)
-//        this.moveRepository = MoveRepository(context)
-//        this.locationRepository = LocationRepository(context)
     }
 
     fun getPokemon(id: Long): Pokemon? {
