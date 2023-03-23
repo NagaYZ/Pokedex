@@ -3,7 +3,6 @@ package fr.uge.pokedex.components.team
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,8 +24,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import fr.uge.pokedex.bluetooth.BluetoothDeviceOpt
 import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
+import fr.uge.pokedex.service.PokedexReceiver
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
-import fr.uge.pokedex.data.team.TeamFactGenerator
+import fr.uge.pokedex.service.team.TeamFactGenerator
 import fr.uge.pokedex.data.user.*
 import fr.uge.pokedex.theme.Purple500
 import kotlinx.coroutines.runBlocking
@@ -78,8 +78,6 @@ private fun addTeamToDatabase(
         runBlocking { teamMemberDao.addTeamMember(TeamMember(pokemon, teamId)) }
     }
 }
-
-
 
 @Composable
 fun DisplayTeams(
@@ -143,7 +141,7 @@ fun DisplayTeams(
         DeleteTeam(teamId, context)
         delete = false
         //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
-        PokedexReceiver.newIntent(context, "teamDeleted", "Team Deleted")
+        PokedexReceiver.newIntent(context, "teamDeleted", "Team " + teamName + " Deleted")
     }
 
     if (share) {
@@ -333,17 +331,14 @@ fun NewTeamDialog(
 
     }
     if (createTeam) {
-        if (name == "") {
-            name = "Team de " + profile.getProfileName()
-        }
-        Toast.makeText(context, name, Toast.LENGTH_SHORT).show()
+
         if (edit) {
 
             editTeam(team.values.toList(), teamId, context, name)
-            PokedexReceiver.newIntent(context, "teamEdited", "Team Edited")
+            PokedexReceiver.newIntent(context, "teamEdited", "Team " + name + " Edited")
         } else {
             addTeamToDatabase(team.values.toList(), profile, context, name)
-            PokedexReceiver.newIntent(context, "teamCreated", "Team Created")
+            PokedexReceiver.newIntent(context, "teamCreated", "Team " + name + " Created")
         }
         close()
     }

@@ -1,9 +1,7 @@
-package fr.uge.pokedex.utils.parser
+package fr.uge.pokedex.data.pokedex.location
 
 import android.content.Context
-import fr.uge.pokedex.data.pokedex.location.Area
-import fr.uge.pokedex.data.pokedex.location.Location
-import fr.uge.pokedex.data.pokedex.location.Region
+import fr.uge.pokedex.data.pokedex.Parser
 
 class LocationParser(override val context: Context) : Parser<Location> {
     override fun loadData(): Map<Long, Location> {

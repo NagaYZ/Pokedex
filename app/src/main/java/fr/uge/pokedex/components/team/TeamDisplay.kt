@@ -48,7 +48,11 @@ fun TeamDisplay(
 
         ) {
             Text(
-                pokemon_team.team.getTeamName(),
+                if (pokemon_team.team.getTeamName() == "") {
+                    "Team $index"
+                } else {
+                    pokemon_team.team.getTeamName()
+                },
                 Modifier
                     .weight(1f)
                     .clickable { showTeam(pokemon_team.team.getTeamId()) },

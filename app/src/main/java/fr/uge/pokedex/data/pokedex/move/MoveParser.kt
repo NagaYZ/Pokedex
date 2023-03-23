@@ -1,11 +1,11 @@
-package fr.uge.pokedex.utils.parser
+package fr.uge.pokedex.data.pokedex.move
 
 import android.content.Context
-import fr.uge.pokedex.data.pokedex.move.Move
 import fr.uge.pokedex.data.pokedex.pokemon.DamageClass
 import fr.uge.pokedex.data.pokedex.pokemon.Generation
 import fr.uge.pokedex.data.pokedex.pokemon.Type
 import fr.uge.pokedex.data.pokedex.pokemon.VersionGroup
+import fr.uge.pokedex.data.pokedex.Parser
 
 class MoveParser(override val context: Context) : Parser<Move> {
     override fun loadData(): Map<Long, Move> {

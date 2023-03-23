@@ -1,4 +1,4 @@
-package fr.uge.pokedex.service
+package fr.uge.pokedex.service.music
 
 import android.app.Service
 import android.content.Intent

@@ -1,4 +1,4 @@
-package fr.uge.pokedex.service
+package fr.uge.pokedex.service.music
 
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -12,7 +12,8 @@ fun MusicButton(audioState: Boolean, onClick: () -> Unit) {
     Button(
         onClick = {
             onClick()
-        }
+        },
+        elevation = null
     ) {
         if (audioState) {
             Icon(painter = painterResource(R.drawable.icon_audio), "Pause Audio Button")

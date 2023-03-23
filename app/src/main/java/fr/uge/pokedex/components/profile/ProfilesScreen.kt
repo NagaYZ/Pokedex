@@ -20,10 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.uge.pokedex.R
-import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
+import fr.uge.pokedex.service.PokedexReceiver
 import fr.uge.pokedex.data.user.PokedexAppDatabase
 import fr.uge.pokedex.data.user.Profile
-import fr.uge.pokedex.service.MusicButton
+import fr.uge.pokedex.service.music.MusicButton
 import kotlinx.coroutines.runBlocking
 
 @Composable

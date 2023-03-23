@@ -1,4 +1,4 @@
-package fr.uge.pokedex.broadcastReceiver
+package fr.uge.pokedex.service
 
 import android.content.BroadcastReceiver
 import android.content.Context

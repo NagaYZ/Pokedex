@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
+import fr.uge.pokedex.service.PokedexReceiver
 import fr.uge.pokedex.data.user.Favorite
 
 @Composable
