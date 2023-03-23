@@ -1,4 +1,4 @@
-package fr.uge.pokedex.service
+package fr.uge.pokedex.service.music
 
 import androidx.compose.material.Button
 import androidx.compose.material.Icon

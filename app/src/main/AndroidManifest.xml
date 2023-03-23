@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pokedex"
         tools:targetApi="31">
-        <receiver android:name=".broadcastReceiver.PokedexReceiver"
+        <receiver android:name=".service.PokedexReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -39,7 +39,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".service.PokemonMusicService" />
+        <service android:name=".service.music.PokemonMusicService" />
     </application>
 
 </manifest>

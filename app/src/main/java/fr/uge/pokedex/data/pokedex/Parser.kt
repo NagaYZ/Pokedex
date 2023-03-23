@@ -1,4 +1,4 @@
-package fr.uge.pokedex.utils.parser
+package fr.uge.pokedex.data.pokedex
 
 import android.content.Context
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader

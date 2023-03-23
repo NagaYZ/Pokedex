@@ -1,8 +1,8 @@
-package fr.uge.pokedex.utils.parser
+package fr.uge.pokedex.data.pokedex.ability
 
 import android.content.Context
-import fr.uge.pokedex.data.pokedex.ability.Ability
 import fr.uge.pokedex.data.pokedex.pokemon.Generation
+import fr.uge.pokedex.data.pokedex.Parser
 
 class AbilityParser(override val context: Context) : Parser<Ability> {
     override fun loadData(): Map<Long, Ability> {
