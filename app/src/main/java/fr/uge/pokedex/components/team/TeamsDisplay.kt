@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import fr.uge.pokedex.bluetooth.BluetoothDevice
+import fr.uge.pokedex.bluetooth.BluetoothDeviceOpt
 import fr.uge.pokedex.broadcastReceiver.PokedexReceiver
 import fr.uge.pokedex.data.pokedex.pokemon.Pokemon
 import fr.uge.pokedex.data.team.TeamFactGenerator
@@ -147,10 +147,14 @@ fun DisplayTeams(
     }
 
     if (share) {
-        BluetoothDevice().enableBluetooth(activity = activity)
-        share = false
-        //Toast.makeText(context, "Team deleted successfully", Toast.LENGTH_SHORT).show()
-        PokedexReceiver.newIntent(context, "teamShared", "Team Shared")
+        if(BluetoothDeviceOpt().enableBluetooth(activity = activity)){
+            val pairedDevice = BluetoothDeviceOpt().findPairDevice()
+            BluetoothDeviceOpt().bluetoothDialog(pairedDevice = pairedDevice.toList()){
+                var deviceChoose = it
+                share = false
+            }
+        }
+        //PokedexReceiver.newIntent(context, "teamShared", "Team " + teamName +" Shared")
     }
 
     if (showNewTeamDialog) {
